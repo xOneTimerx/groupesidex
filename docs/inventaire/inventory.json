@@ -1,0 +1,2727 @@
+{
+ "templates": [
+  {
+   "id": 69,
+   "title": "- Header / Footer",
+   "parent": 0,
+   "rules": {
+    "order": "0",
+    "single_all": "true",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 59274,
+   "elements": 120,
+   "element_types": {
+    "oxy_header": 1,
+    "oxy_header_row": 2,
+    "oxy_header_left": 2,
+    "ct_div_block": 40,
+    "ct_image": 10,
+    "ct_code_block": 23,
+    "ct_link_text": 1,
+    "ct_span": 1,
+    "oxy_header_center": 2,
+    "oxy_header_right": 2,
+    "oxy-pro-menu": 2,
+    "ct_link": 8,
+    "ct_fancy_icon": 16,
+    "ct_inner_content": 1,
+    "ct_section": 1,
+    "oxy_nav_menu": 3,
+    "oxy_dynamic_list": 1,
+    "oxy-off-canvas": 2,
+    "oxy-horizontal-slide-menu": 1,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 73,
+   "title": "- Page Merci",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "merci"
+    ],
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 4845,
+   "elements": 15,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 5,
+    "ct_code_block": 6,
+    "ct_fancy_icon": 3
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 74,
+   "title": "- 404",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "404_page": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 3703,
+   "elements": 8,
+   "element_types": {
+    "ct_section": 1,
+    "ct_image": 1,
+    "ct_headline": 1,
+    "ct_span": 3,
+    "ct_text_block": 1,
+    "ct_link_button": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": false
+  },
+  {
+   "id": 75,
+   "title": "Articles - Single",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "post"
+    ],
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 13659,
+   "elements": 36,
+   "element_types": {
+    "ct_section": 3,
+    "ct_div_block": 12,
+    "ct_code_block": 7,
+    "ct_text_block": 4,
+    "ct_span": 4,
+    "oxy-post-modified-date": 1,
+    "ct_fancy_icon": 1,
+    "oxy-reading-time": 1,
+    "oxy-table-of-contents": 1,
+    "oxy_dynamic_list": 1,
+    "ct_reusable": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "photo"
+   ],
+   "reusables": [
+    "186"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 77,
+   "title": "Articles - Archive",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "blog_posts": "true",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "archive_post_types": [
+     "post"
+    ],
+    "archive_among_taxonomies": [
+     "all_categories",
+     "all_tags"
+    ],
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 4240,
+   "elements": 11,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 2,
+    "ct_code_block": 4,
+    "oxy_dynamic_list": 1,
+    "ct_reusable": 1,
+    "oxy-wpgb-facet": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "186"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 78,
+   "title": "Pages - Autres",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "4"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 2170,
+   "elements": 6,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 1,
+    "ct_headline": 1,
+    "ct_span": 2,
+    "ct_text_block": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": false
+  },
+  {
+   "id": 88,
+   "title": "- Résultats de recherche",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "search_page": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 2795,
+   "elements": 11,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 3,
+    "ct_headline": 1,
+    "ct_span": 3,
+    "oxy_dynamic_list": 1,
+    "ct_text_block": 2
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": false
+  },
+  {
+   "id": 120,
+   "title": "Page - Carrières",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "3"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 17801,
+   "elements": 45,
+   "element_types": {
+    "ct_section": 7,
+    "ct_div_block": 12,
+    "ct_code_block": 17,
+    "oxy_dynamic_list": 2,
+    "ct_image": 4,
+    "oxy_gallery": 1,
+    "oxy-pro-accordion": 1,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 149,
+   "title": "= CTA Principal",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part",
+    "order": "0",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    }
+   },
+   "json_bytes": 4244,
+   "elements": 11,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 4,
+    "ct_code_block": 5,
+    "ct_image": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 186,
+   "title": "Articles - Card",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part"
+   },
+   "json_bytes": 2218,
+   "elements": 6,
+   "element_types": {
+    "ct_link": 1,
+    "ct_image": 1,
+    "ct_div_block": 1,
+    "ct_code_block": 3
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 191,
+   "title": "Formulaires - Single",
+   "parent": 0,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "28"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 6262,
+   "elements": 13,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 4,
+    "ct_link": 2,
+    "ct_fancy_icon": 1,
+    "ct_text_block": 2,
+    "ct_code_block": 2,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 337,
+   "title": "= En-tête",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part",
+    "order": "0",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    }
+   },
+   "json_bytes": 3872,
+   "elements": 8,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 2,
+    "ct_code_block": 4,
+    "ct_image": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1582,
+   "title": "Projets - Archive",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "archive_post_types": [
+     "projets"
+    ],
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 16830,
+   "elements": 46,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 13,
+    "ct_code_block": 11,
+    "oxy-wpgb-facet": 8,
+    "oxy_toggle": 6,
+    "oxy_dynamic_list": 1,
+    "ct_link": 1,
+    "oxy_superbox": 1,
+    "ct_image": 1,
+    "ct_fancy_icon": 1,
+    "ct_reusable": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1584,
+   "title": "Projets - Single",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "projets"
+    ],
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 10048,
+   "elements": 23,
+   "element_types": {
+    "ct_section": 5,
+    "ct_div_block": 4,
+    "ct_reusable": 2,
+    "ct_code_block": 9,
+    "oxy_gallery": 1,
+    "ct_link": 1,
+    "ct_fancy_icon": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "galerie"
+   ],
+   "reusables": [
+    "1819",
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1593,
+   "title": "Page - Revêtements",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "31"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 17659,
+   "elements": 50,
+   "element_types": {
+    "ct_section": 3,
+    "ct_div_block": 19,
+    "ct_code_block": 17,
+    "ct_image": 2,
+    "oxy_tabs": 1,
+    "oxy_dynamic_list": 3,
+    "ct_link_button": 1,
+    "ct_span": 1,
+    "ct_reusable": 3
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "texte_etape",
+    "texte_de",
+    "lien_soumission_btn_texte"
+   ],
+   "reusables": [
+    "1621",
+    "1624",
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1615,
+   "title": "Types - Single",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "etapes"
+    ],
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 7499,
+   "elements": 22,
+   "element_types": {
+    "ct_section": 3,
+    "ct_div_block": 5,
+    "ct_code_block": 8,
+    "oxy_dynamic_list": 1,
+    "ct_image": 1,
+    "oxy-pro-accordion": 2,
+    "ct_reusable": 2
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "1621",
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1621,
+   "title": "= Bloc - Inspirations",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part"
+   },
+   "json_bytes": 5021,
+   "elements": 12,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 3,
+    "ct_image": 2,
+    "ct_code_block": 4,
+    "oxy-wpgb-grid": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1624,
+   "title": "= Bloc - FAQ",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part"
+   },
+   "json_bytes": 2055,
+   "elements": 5,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 1,
+    "ct_code_block": 2,
+    "oxy-pro-accordion": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1634,
+   "title": "= En-tête (Centrée)",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part",
+    "order": "0",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    }
+   },
+   "json_bytes": 2832,
+   "elements": 6,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 1,
+    "ct_code_block": 4
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1640,
+   "title": "Page - Documents techniques",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "71"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 9710,
+   "elements": 23,
+   "element_types": {
+    "ct_reusable": 1,
+    "ct_code_block": 8,
+    "ct_section": 2,
+    "oxy_dynamic_list": 3,
+    "ct_div_block": 7,
+    "oxy-lightbox": 1,
+    "ct_image": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "sections",
+    "onglets",
+    "image",
+    "documents"
+   ],
+   "reusables": [
+    "1634"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1648,
+   "title": "Page - Foire aux questions",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "2"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 1229,
+   "elements": 4,
+   "element_types": {
+    "ct_reusable": 2,
+    "ct_section": 1,
+    "oxy-pro-accordion": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "1634",
+    "149"
+   ],
+   "has_code_blocks": false
+  },
+  {
+   "id": 1654,
+   "title": "Page - À propos",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "29"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 22139,
+   "elements": 55,
+   "element_types": {
+    "ct_section": 5,
+    "ct_div_block": 15,
+    "ct_code_block": 19,
+    "ct_image": 6,
+    "oxy-carousel-builder": 1,
+    "oxy_dynamic_list": 3,
+    "oxy_gallery": 1,
+    "ct_text_block": 2,
+    "ct_span": 2,
+    "ct_reusable": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "usine_galerie"
+   ],
+   "reusables": [
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1688,
+   "title": "Page - Accueil",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "72"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 33649,
+   "elements": 85,
+   "element_types": {
+    "ct_code_block": 21,
+    "ct_section": 4,
+    "ct_div_block": 30,
+    "ct_text_block": 8,
+    "ct_span": 5,
+    "ct_image": 7,
+    "ct_headline": 2,
+    "oxy_dynamic_list": 3,
+    "ct_link": 1,
+    "ct_fancy_icon": 1,
+    "ct_reusable": 2,
+    "oxy-carousel-builder": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "1621",
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1726,
+   "title": "Page - Nous joindre",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "32"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 14173,
+   "elements": 42,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 15,
+    "ct_code_block": 15,
+    "ct_fancy_icon": 7,
+    "oxy-fluent-form": 1,
+    "oxy_dynamic_list": 1,
+    "ct_image": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1761,
+   "title": "Page - Professionnels",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "74"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 14210,
+   "elements": 44,
+   "element_types": {
+    "ct_reusable": 1,
+    "ct_section": 4,
+    "oxy_dynamic_list": 4,
+    "ct_div_block": 13,
+    "ct_image": 4,
+    "ct_code_block": 16,
+    "oxy-pro-accordion": 1,
+    "oxy-carousel-builder": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "337"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 1819,
+   "title": "= Breadcrumbs",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part"
+   },
+   "json_bytes": 493,
+   "elements": 1,
+   "element_types": {
+    "ct_code_block": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 51496,
+   "title": "Page - Soumission",
+   "parent": 69,
+   "rules": {
+    "order": "5",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "249"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 5594,
+   "elements": 17,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 7,
+    "ct_code_block": 5,
+    "ct_fancy_icon": 3,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 53300,
+   "title": "BK-old-etapes-revetement-250407",
+   "parent": 0,
+   "rules": {
+    "type": "reusable_part"
+   },
+   "json_bytes": 11603,
+   "elements": 28,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 11,
+    "ct_image": 2,
+    "ct_code_block": 12,
+    "oxy_dynamic_list": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "texte_etape",
+    "texte_de",
+    "lien_soumission_btn_texte"
+   ],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 53501,
+   "title": "Page - Concours",
+   "parent": 69,
+   "rules": {
+    "order": "0",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 17722,
+   "elements": 44,
+   "element_types": {
+    "ct_section": 4,
+    "ct_div_block": 12,
+    "ct_code_block": 13,
+    "ct_image": 4,
+    "ct_link_button": 1,
+    "ct_span": 2,
+    "oxy_dynamic_list": 3,
+    "ct_link": 1,
+    "ct_fancy_icon": 1,
+    "ct_text_block": 1,
+    "oxy-fluent-form": 1,
+    "oxy-carousel-builder": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 54620,
+   "title": "FAQ - Single",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "faq"
+    ],
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 3219,
+   "elements": 7,
+   "element_types": {
+    "ct_section": 2,
+    "ct_div_block": 1,
+    "ct_code_block": 4
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 54732,
+   "title": "!Page - Développement durable",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "270"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 27449,
+   "elements": 67,
+   "element_types": {
+    "ct_section": 5,
+    "ct_div_block": 25,
+    "ct_code_block": 22,
+    "ct_link_button": 2,
+    "ct_span": 4,
+    "ct_image": 5,
+    "ct_text_block": 2,
+    "oxy_dynamic_list": 1,
+    "ct_reusable": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [
+    "149"
+   ],
+   "has_code_blocks": true
+  },
+  {
+   "id": 54802,
+   "title": "Auteurs - Single",
+   "parent": 69,
+   "rules": {
+    "order": "0",
+    "taxonomies": {
+     "names": [],
+     "values": []
+    },
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 3006,
+   "elements": 6,
+   "element_types": {
+    "ct_section": 1,
+    "ct_div_block": 3,
+    "ct_image": 1,
+    "ct_code_block": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 54834,
+   "title": "!Page - Revêtement - GEO",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "276"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 39540,
+   "elements": 121,
+   "element_types": {
+    "ct_section": 10,
+    "ct_div_block": 38,
+    "ct_code_block": 42,
+    "ct_text_block": 6,
+    "ct_link_button": 4,
+    "ct_span": 4,
+    "ct_fancy_icon": 8,
+    "oxy_dynamic_list": 3,
+    "oxy-dynamic-tabs": 1,
+    "ct_link": 1,
+    "oxy_superbox": 1,
+    "ct_image": 1,
+    "oxy-pro-accordion": 1,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "lien_soumission_btn_texte"
+   ],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 55016,
+   "title": "Page - Prix",
+   "parent": 69,
+   "rules": {
+    "order": "6",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "287"
+     ]
+    },
+    "ate_taxonomies": "true"
+   },
+   "json_bytes": 127433,
+   "elements": 273,
+   "element_types": {
+    "ct_section": 14,
+    "ct_div_block": 89,
+    "ct_text_block": 95,
+    "ct_headline": 34,
+    "ct_code_block": 16,
+    "ct_link_button": 4,
+    "ct_fancy_icon": 7,
+    "oxy-pro-accordion": 13,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "lien_soumission_btn_texte"
+   ],
+   "reusables": [],
+   "has_code_blocks": true
+  },
+  {
+   "id": 55123,
+   "title": "!Page - Ville",
+   "parent": 69,
+   "rules": {
+    "order": "1",
+    "post_types": [
+     "page"
+    ],
+    "taxonomies": {
+     "names": [
+      "types_page"
+     ],
+     "values": [
+      "288"
+     ]
+    },
+    "ate_taxonomies": "true",
+    "post_of_parents": [
+     ""
+    ]
+   },
+   "json_bytes": 39531,
+   "elements": 107,
+   "element_types": {
+    "ct_section": 10,
+    "ct_div_block": 33,
+    "ct_code_block": 40,
+    "ct_text_block": 6,
+    "ct_link_button": 2,
+    "ct_span": 2,
+    "ct_fancy_icon": 8,
+    "oxy_dynamic_list": 1,
+    "ct_link": 1,
+    "oxy_superbox": 1,
+    "ct_image": 1,
+    "oxy-pro-accordion": 1,
+    "oxy-fluent-form": 1
+   },
+   "shortcodes": [],
+   "acf_fields": [
+    "lien_soumission_btn_texte"
+   ],
+   "reusables": [],
+   "has_code_blocks": true
+  }
+ ],
+ "content": [
+  {
+   "post_type": "etapes",
+   "lang": "en",
+   "n": "19"
+  },
+  {
+   "post_type": "etapes",
+   "lang": "fr",
+   "n": "18"
+  },
+  {
+   "post_type": "etapes_cachees",
+   "lang": "en",
+   "n": "15"
+  },
+  {
+   "post_type": "etapes_cachees",
+   "lang": "fr",
+   "n": "15"
+  },
+  {
+   "post_type": "faq",
+   "lang": "en",
+   "n": "2"
+  },
+  {
+   "post_type": "faq",
+   "lang": "fr",
+   "n": "2"
+  },
+  {
+   "post_type": "merci",
+   "lang": "en",
+   "n": "3"
+  },
+  {
+   "post_type": "merci",
+   "lang": "fr",
+   "n": "3"
+  },
+  {
+   "post_type": "page",
+   "lang": "en",
+   "n": "20"
+  },
+  {
+   "post_type": "page",
+   "lang": "fr",
+   "n": "24"
+  },
+  {
+   "post_type": "post",
+   "lang": "en",
+   "n": "33"
+  },
+  {
+   "post_type": "post",
+   "lang": "fr",
+   "n": "36"
+  },
+  {
+   "post_type": "projets",
+   "lang": "en",
+   "n": "213"
+  },
+  {
+   "post_type": "projets",
+   "lang": "fr",
+   "n": "210"
+  }
+ ],
+ "public_post_types": [
+  "post",
+  "page",
+  "attachment",
+  "oxy_user_library",
+  "etapes",
+  "etapes_cachees",
+  "faq",
+  "merci",
+  "projets"
+ ],
+ "public_taxonomies": [
+  "category",
+  "post_tag",
+  "post_format",
+  "etapes"
+ ],
+ "advanced_scripts": [
+  {
+   "id": 7,
+   "title": "Configuration",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 4764,
+   "tracking": false
+  },
+  {
+   "id": 8,
+   "title": "Optimisation + Sécurité",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 3083,
+   "tracking": false
+  },
+  {
+   "id": 9,
+   "title": "Recherche",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 265,
+   "tracking": false
+  },
+  {
+   "id": 10,
+   "title": "Oxygen",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 25609,
+   "tracking": false
+  },
+  {
+   "id": 11,
+   "title": "Scripts [HEADER]",
+   "type": "text/html",
+   "location": "front",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 601,
+   "tracking": false
+  },
+  {
+   "id": 12,
+   "title": "Scripts [FOOTER]",
+   "type": "text/html",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 13,
+   "title": "WPML",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 1383,
+   "tracking": false
+  },
+  {
+   "id": 15,
+   "title": "[TIPPY] TippyJS",
+   "type": "url/javascript",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 16,
+   "title": "[TIPPY] PopperJS",
+   "type": "url/javascript",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 17,
+   "title": "[TIPPY] Attribute Init",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "",
+   "bytes": 30,
+   "tracking": false
+  },
+  {
+   "id": 18,
+   "title": "Conditions d'affichage [OXYGEN]",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 6507,
+   "tracking": false
+  },
+  {
+   "id": 19,
+   "title": "= Essentials",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 20,
+   "title": "Projet",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 21,
+   "title": "= Header/Footer",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 22,
+   "title": "- Scripts",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 23,
+   "title": "Images",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 685,
+   "tracking": false
+  },
+  {
+   "id": 25,
+   "title": "Avis Google",
+   "type": "application/x-httpd-php",
+   "location": "front",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 516,
+   "tracking": false
+  },
+  {
+   "id": 27,
+   "title": "En-tête",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "",
+   "bytes": 885,
+   "tracking": false
+  },
+  {
+   "id": 30,
+   "title": "Initialisation de la page",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 266,
+   "tracking": false
+  },
+  {
+   "id": 67,
+   "title": "Projets - Tableau",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 3578,
+   "tracking": false
+  },
+  {
+   "id": 68,
+   "title": "Projets - Tableau",
+   "type": "text/css",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 1519,
+   "tracking": false
+  },
+  {
+   "id": 76,
+   "title": "WP Gridbuilder",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 533,
+   "tracking": false
+  },
+  {
+   "id": 79,
+   "title": "GSAP",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 80,
+   "title": "[GSAP] Main library",
+   "type": "url/javascript",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 81,
+   "title": "[GSAP] ScrollTrigger",
+   "type": "url/javascript",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 82,
+   "title": "[GSAP] SplitText",
+   "type": "text/javascript",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 15599,
+   "tracking": false
+  },
+  {
+   "id": 84,
+   "title": "Titles reveal",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 633,
+   "tracking": false
+  },
+  {
+   "id": 85,
+   "title": "[GSAP] Text plugin",
+   "type": "url/javascript",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 86,
+   "title": "Revêtements - Étapes",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 3526,
+   "tracking": false
+  },
+  {
+   "id": 137,
+   "title": "Types",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 220,
+   "tracking": false
+  },
+  {
+   "id": 138,
+   "title": "OxyExtras - Accordéons Fix",
+   "type": "text/css",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 4453,
+   "tracking": false
+  },
+  {
+   "id": 139,
+   "title": "Snippets",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 44373,
+   "tracking": false
+  },
+  {
+   "id": 141,
+   "title": "Projets - Tableau",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 672,
+   "tracking": false
+  },
+  {
+   "id": 142,
+   "title": "Lightbox - Revêtements",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 143,
+   "title": "Glightbox - CSS",
+   "type": "url/css",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 144,
+   "title": "Glightbox - JS",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 212,
+   "tracking": false
+  },
+  {
+   "id": 146,
+   "title": "Documents",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 181,
+   "tracking": false
+  },
+  {
+   "id": 244,
+   "title": "Populer le champ de dropdown avec le contenu d'un repeater",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 1837,
+   "tracking": false
+  },
+  {
+   "id": 245,
+   "title": "Populer champ Poste Recherché dans formulaire Carrières",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 179,
+   "tracking": false
+  },
+  {
+   "id": 246,
+   "title": "Diagnostic Overflow",
+   "type": "text/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "",
+   "bytes": 205,
+   "tracking": false
+  },
+  {
+   "id": 248,
+   "title": "Glightbox - Call",
+   "type": "url/javascript",
+   "location": "all",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 262,
+   "title": "Fix - WP Rocket",
+   "type": "text/html",
+   "location": "all",
+   "hook": "wp_head",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 278,
+   "tracking": false
+  },
+  {
+   "id": 264,
+   "title": "Métas - Taxonomies",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 674,
+   "tracking": false
+  },
+  {
+   "id": 266,
+   "title": "Count ACF repeater rows",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 647,
+   "tracking": false
+  },
+  {
+   "id": 269,
+   "title": "Sticky CTA on scroll",
+   "type": "text/javascript",
+   "location": "front",
+   "hook": "wp_footer",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 680,
+   "tracking": false
+  },
+  {
+   "id": 272,
+   "title": "Schémas",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 273,
+   "title": "FoundingDate",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 497,
+   "tracking": false
+  },
+  {
+   "id": 274,
+   "title": "Auteurs",
+   "type": "folder",
+   "location": "",
+   "hook": "",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 0,
+   "tracking": false
+  },
+  {
+   "id": 275,
+   "title": "Auteurs - Title dans l'onglet",
+   "type": "application/x-httpd-php",
+   "location": "all",
+   "hook": "plugins_loaded",
+   "shortcode": "",
+   "status": "1",
+   "bytes": 567,
+   "tracking": false
+  }
+ ],
+ "acf_groups": [
+  {
+   "key": "group_5ece7fc885a27",
+   "title": "Configuration du site web",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "options_page",
+      "operator": "==",
+      "value": "configuration"
+     }
+    ]
+   ],
+   "fields": 38
+  },
+  {
+   "key": "group_6449311f9cf3b",
+   "title": "- Contenu",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "options_page",
+      "operator": "==",
+      "value": "contenu"
+     }
+    ]
+   ],
+   "fields": 65
+  },
+  {
+   "key": "group_64501f6174fa9",
+   "title": "- Liens",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "options_page",
+      "operator": "==",
+      "value": "liens"
+     }
+    ]
+   ],
+   "fields": 23
+  },
+  {
+   "key": "group_5ef24082eaeda",
+   "title": "Champs",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "merci"
+     }
+    ]
+   ],
+   "fields": 2
+  },
+  {
+   "key": "group_641e0204c5aaa",
+   "title": "// Bouton",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "block",
+      "operator": "==",
+      "value": ""
+     }
+    ]
+   ],
+   "fields": 3
+  },
+  {
+   "key": "group_62fe41997ceaa",
+   "title": "// Section",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "block",
+      "operator": "==",
+      "value": ""
+     }
+    ]
+   ],
+   "fields": 4
+  },
+  {
+   "key": "group_641e03a95d947",
+   "title": "= En-tête",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "block",
+      "operator": "==",
+      "value": ""
+     }
+    ]
+   ],
+   "fields": 5
+  },
+  {
+   "key": "group_6a60cabd639e3",
+   "title": "Articles - Single",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "post"
+     }
+    ]
+   ],
+   "fields": 1
+  },
+  {
+   "key": "group_5fcf911da5e77",
+   "title": "Custom Product Badge",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "product"
+     }
+    ]
+   ],
+   "fields": 1
+  },
+  {
+   "key": "group_644ad3ba04707",
+   "title": "Documents techniques",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:documents-techniques"
+     }
+    ]
+   ],
+   "fields": 12
+  },
+  {
+   "key": "group_64235bf89f882",
+   "title": "Formulaires - Single",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:formulaires"
+     }
+    ]
+   ],
+   "fields": 3
+  },
+  {
+   "key": "group_642f15a614ed8",
+   "title": "Inneo",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:a-propos"
+     }
+    ]
+   ],
+   "fields": 29
+  },
+  {
+   "key": "group_644aeda03df3c",
+   "title": "Inneo",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:professionnels"
+     }
+    ]
+   ],
+   "fields": 20
+  },
+  {
+   "key": "group_644adb5f5e229",
+   "title": "Page - Accueil",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:accueil"
+     }
+    ]
+   ],
+   "fields": 26
+  },
+  {
+   "key": "group_60872cab4b865",
+   "title": "Page - Carrières",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:carrieres"
+     }
+    ]
+   ],
+   "fields": 26
+  },
+  {
+   "key": "group_683855c7b6f47",
+   "title": "Page - Concours",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:concours"
+     }
+    ]
+   ],
+   "fields": 22
+  },
+  {
+   "key": "group_6a2867ada3011",
+   "title": "Page - Développement durable",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:developpement-durable"
+     }
+    ]
+   ],
+   "fields": 23
+  },
+  {
+   "key": "group_642f1e22bd6d1",
+   "title": "Page - Foire aux questions",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:foire-aux-questions"
+     }
+    ]
+   ],
+   "fields": 8
+  },
+  {
+   "key": "group_642f1b1a2b284",
+   "title": "Page - Nous joindre",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:nous-joindre"
+     }
+    ]
+   ],
+   "fields": 11
+  },
+  {
+   "key": "group_642ddce7d6294",
+   "title": "Page - Revêtements",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:revetements"
+     }
+    ]
+   ],
+   "fields": 26
+  },
+  {
+   "key": "group_6a7b6adf34802",
+   "title": "Pages - GEO",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:page-geo"
+     }
+    ]
+   ],
+   "fields": 54
+  },
+  {
+   "key": "group_tkville",
+   "title": "Pages - Ville",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_taxonomy",
+      "operator": "==",
+      "value": "types_page:page-ville"
+     }
+    ]
+   ],
+   "fields": 59
+  },
+  {
+   "key": "group_642f17df10782",
+   "title": "Projets - Single",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "projets"
+     }
+    ]
+   ],
+   "fields": 13
+  },
+  {
+   "key": "group_tactik_schema_description",
+   "title": "Schéma (Tactik) — tactik_schema_description",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "villes"
+     }
+    ]
+   ],
+   "fields": 1
+  },
+  {
+   "key": "group_642de11a87cd5",
+   "title": "Types - Single",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "etapes"
+     }
+    ],
+    [
+     {
+      "param": "post_type",
+      "operator": "==",
+      "value": "etapes_cachees"
+     }
+    ]
+   ],
+   "fields": 13
+  },
+  {
+   "key": "group_6a612018116f6",
+   "title": "Utilisateurs",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "user_form",
+      "operator": "==",
+      "value": "edit"
+     }
+    ]
+   ],
+   "fields": 1
+  },
+  {
+   "key": "group_6464e5f7e61ac",
+   "title": "Étapes - Taxonomie",
+   "active": true,
+   "location": [
+    [
+     {
+      "param": "taxonomy",
+      "operator": "==",
+      "value": "etapes"
+     }
+    ]
+   ],
+   "fields": 1
+  }
+ ],
+ "acf_options_pages": [
+  "configuration",
+  "contenu",
+  "liens"
+ ],
+ "menus": [
+  {
+   "id": 69,
+   "name": "Footer - Liens principaux",
+   "items": 4,
+   "lang": "fr"
+  },
+  {
+   "id": 70,
+   "name": "Footer - Liens secondaires",
+   "items": 5,
+   "lang": "fr"
+  },
+  {
+   "id": 5,
+   "name": "Footer - Liens supplémentaires",
+   "items": 3,
+   "lang": "fr"
+  },
+  {
+   "id": 6,
+   "name": "Header - Menu principal",
+   "items": 19,
+   "lang": "fr"
+  },
+  {
+   "id": 73,
+   "name": "Header - Menu secondaire",
+   "items": 3,
+   "lang": "fr"
+  },
+  {
+   "id": 140,
+   "name": "Menu - Mobile",
+   "items": 22,
+   "lang": "fr"
+  },
+  {
+   "id": 69,
+   "name": "Footer - Liens principaux",
+   "items": 4,
+   "lang": "fr"
+  },
+  {
+   "id": 70,
+   "name": "Footer - Liens secondaires",
+   "items": 5,
+   "lang": "fr"
+  },
+  {
+   "id": 5,
+   "name": "Footer - Liens supplémentaires",
+   "items": 3,
+   "lang": "fr"
+  },
+  {
+   "id": 6,
+   "name": "Header - Menu principal",
+   "items": 19,
+   "lang": "fr"
+  },
+  {
+   "id": 73,
+   "name": "Header - Menu secondaire",
+   "items": 3,
+   "lang": "fr"
+  },
+  {
+   "id": 140,
+   "name": "Menu - Mobile",
+   "items": 22,
+   "lang": "fr"
+  }
+ ],
+ "menu_locations": [],
+ "fluent_forms": [
+  {
+   "id": "2",
+   "title": "Contact",
+   "status": "published"
+  },
+  {
+   "id": "3",
+   "title": "Soumission",
+   "status": "published"
+  },
+  {
+   "id": "5",
+   "title": "Candidature",
+   "status": "published"
+  },
+  {
+   "id": "7",
+   "title": "EN - Soumission",
+   "status": "published"
+  },
+  {
+   "id": "8",
+   "title": "EN - Candidature",
+   "status": "published"
+  },
+  {
+   "id": "9",
+   "title": "EN - Contact",
+   "status": "published"
+  },
+  {
+   "id": "10",
+   "title": "Incident de confidentialité",
+   "status": "published"
+  },
+  {
+   "id": "11",
+   "title": "EN - Incident de confidentialité",
+   "status": "published"
+  },
+  {
+   "id": "13",
+   "title": "Concours",
+   "status": "published"
+  },
+  {
+   "id": "14",
+   "title": "EN-Concours",
+   "status": "published"
+  }
+ ],
+ "fluent_entries_last30": 50,
+ "wpgb_grids": [
+  {
+   "id": "2",
+   "name": "Inspirations",
+   "type": "metro",
+   "source": "post_type"
+  }
+ ],
+ "wpgb_facets": [
+  {
+   "id": "1",
+   "name": "En voir davantage",
+   "type": "load_more"
+  },
+  {
+   "id": "2",
+   "name": "Type de projet",
+   "type": "checkbox"
+  },
+  {
+   "id": "3",
+   "name": "Essence",
+   "type": "checkbox"
+  },
+  {
+   "id": "4",
+   "name": "Modèle",
+   "type": "checkbox"
+  },
+  {
+   "id": "5",
+   "name": "Fini",
+   "type": "checkbox"
+  },
+  {
+   "id": "6",
+   "name": "Finition",
+   "type": "checkbox"
+  },
+  {
+   "id": "7",
+   "name": "Recherche",
+   "type": "search"
+  },
+  {
+   "id": "8",
+   "name": "Types revêtements",
+   "type": "checkbox"
+  }
+ ],
+ "tablepress": [
+  {
+   "ID": "54564",
+   "post_title": "2026-pourquoi-bois-quebec-degagements-minimaux"
+  },
+  {
+   "ID": "54567",
+   "post_title": "2026-pourquoi-bois-quebec-perfomence"
+  },
+  {
+   "ID": "54596",
+   "post_title": "2026-Why choose wood siding in Quebec"
+  },
+  {
+   "ID": "54598",
+   "post_title": "2026-Why choose wood siding in Quebec_perfo"
+  }
+ ],
+ "settings": {
+  "front_page": 66,
+  "posts_page": 1793,
+  "permalink": "/%postname%/",
+  "wpml_languages": [
+   "en",
+   "fr"
+  ],
+  "oxygen_global_colors": {
+   "colorsIncrement": 81,
+   "setsIncrement": 15,
+   "colors": [
+    {
+     "id": 1,
+     "name": "Accent 1",
+     "value": "#ec8626",
+     "set": 2
+    },
+    {
+     "id": 2,
+     "name": "Accent 2",
+     "value": "#71645c",
+     "set": 2
+    },
+    {
+     "id": 3,
+     "name": "Background Light",
+     "value": "#f8f8f8",
+     "set": 2
+    },
+    {
+     "id": 4,
+     "name": "Background Dark",
+     "value": "#232122",
+     "set": 2
+    },
+    {
+     "id": 5,
+     "name": "Background Light Alternative",
+     "value": "#ffffff",
+     "set": 2
+    },
+    {
+     "id": 6,
+     "name": "Background Dark Alternative",
+     "value": "#353535",
+     "set": 2
+    },
+    {
+     "id": 7,
+     "name": "Heading Light",
+     "value": "#ffffff",
+     "set": 2
+    },
+    {
+     "id": 8,
+     "name": "Heading Dark",
+     "value": "#232122",
+     "set": 2
+    },
+    {
+     "id": 9,
+     "name": "Text Light",
+     "value": "rgba(255,255,255,0.8)",
+     "set": 2
+    },
+    {
+     "id": 10,
+     "name": "Text Dark",
+     "value": "#232122",
+     "set": 2
+    },
+    {
+     "id": 11,
+     "name": "Border Light",
+     "value": "#dedede",
+     "set": 2
+    },
+    {
+     "id": 12,
+     "name": "Border Dark",
+     "value": "rgba(71,71,71,0.5)",
+     "set": 2
+    },
+    {
+     "id": 60,
+     "name": "Footer - Text Light",
+     "value": "rgba(255,255,255,0.5)",
+     "set": 10
+    },
+    {
+     "id": 69,
+     "name": "Breadcrumbs",
+     "value": "#a8a8a8",
+     "set": 10
+    },
+    {
+     "id": 70,
+     "name": "Border",
+     "value": "rgba(112,112,112,0.2)",
+     "set": 10
+    }
+   ],
+   "sets": [
+    {
+     "id": 2,
+     "name": "core"
+    },
+    {
+     "id": 10,
+     "name": "Footer"
+    },
+    {
+     "id": 15,
+     "name": "Copied Colors"
+    }
+   ]
+  },
+  "oxygen_global_settings": {
+   "fonts": {
+    "Text": "Arial, Helvetica, sans-serif",
+    "Display": "Heebo"
+   },
+   "scripts": {
+    "scroll_to_hash": "true",
+    "scroll_to_hash_time": "0",
+    "scroll_to_hash_offset": "200"
+   },
+   "indicateParents": "true",
+   "classSuggestionsLimit": "5",
+   "headings": {
+    "H1": {
+     "font-size-unit": "px",
+     "font-size": "42",
+     "font-weight": "400",
+     "color": "color(8)",
+     "line-height": ""
+    },
+    "H2": {
+     "font-size-unit": "px",
+     "font-size": "36",
+     "font-weight": "400",
+     "color": "color(8)"
+    },
+    "H3": {
+     "font-size-unit": "px",
+     "font-size": "32",
+     "font-weight": "400",
+     "color": "color(8)"
+    },
+    "H4": {
+     "font-size-unit": "px",
+     "font-size": "20",
+     "font-weight": "400",
+     "color": "color(8)"
+    },
+    "H5": {
+     "font-size-unit": "px",
+     "font-size": "18",
+     "font-weight": "400",
+     "color": "color(8)"
+    },
+    "H6": {
+     "font-size-unit": "px",
+     "font-size": "16",
+     "font-weight": "400",
+     "color": "color(8)"
+    }
+   },
+   "body_text": {
+    "font-size-unit": "px",
+    "font-size": "18",
+    "font-weight": "400",
+    "line-height": "1.6",
+    "color": "#7e7e7e"
+   },
+   "links": {
+    "all": {
+     "color": "color(1)",
+     "font-weight": "",
+     "text-decoration": "none",
+     "hover_color": "",
+     "hover_text-decoration": "none"
+    },
+    "text_link": {
+     "color": "",
+     "font-weight": "",
+     "text-decoration": "",
+     "hover_color": "",
+     "hover_text-decoration": ""
+    },
+    "link_wrapper": {
+     "color": "",
+     "font-weight": "",
+     "text-decoration": "",
+     "hover_color": "",
+     "hover_text-decoration": ""
+    },
+    "button": {
+     "border-radius-unit": "px",
+     "font-weight": "",
+     "border-radius": "3"
+    }
+   },
+   "sections": {
+    "container-padding-top-unit": "px",
+    "container-padding-bottom-unit": "px",
+    "container-padding-left-unit": "px",
+    "container-padding-right-unit": "px",
+    "container-padding-top": "125",
+    "container-padding-bottom": "125",
+    "container-padding-left": "20",
+    "container-padding-right": "20"
+   },
+   "columns": {
+    "padding-top": "20",
+    "padding-top-unit": "px",
+    "padding-bottom": "20",
+    "padding-bottom-unit": "px",
+    "padding-left": "20",
+    "padding-left-unit": "px",
+    "padding-right": "20",
+    "padding-right-unit": "px"
+   },
+   "aos": {
+    "type": "",
+    "duration": "",
+    "easing": "",
+    "offset": "",
+    "delay": "",
+    "anchor-placement": "",
+    "once": "",
+    "mirror": "",
+    "disable": ""
+   },
+   "max-width": "1600",
+   "breakpoints": {
+    "tablet": "992",
+    "phone-landscape": "768",
+    "phone-portrait": "480"
+   }
+  },
+  "universal_css_url": "//stg-groupesidexcom-staging.kinsta.cloud/wp-content/uploads/oxygen/css/universal.css",
+  "mu_plugins": [
+   "00-tm-host-normalize.php",
+   "kinsta-mu-plugins.php",
+   "sidex-en-image-alt.php",
+   "sidex-markdown-negotiation.php",
+   "sidex-author-meta.php",
+   "sidex-phone-outage-popup.php",
+   "sidex-faq-schema.php",
+   "zz-dev-mail-killswitch.php",
+   "tm-oxygen-cache-purge.php",
+   "tm-login-edge-bypass.php",
+   "tm-security-headers.php",
+   "05-tm-rocket-config-alias.php",
+   "tm-update-mail.php",
+   "tm-lead-source.php"
+  ]
+ }
+}

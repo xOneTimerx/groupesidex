@@ -1,0 +1,791 @@
+[
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/cedre-blanc/",
+  "key": "post-506",
+  "kind": "etapes",
+  "lang": "fr",
+  "id": 506,
+  "noindex": false,
+  "template": 1615,
+  "template_title": "Types - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/cedre-rouge/",
+  "key": "post-508",
+  "kind": "etapes",
+  "lang": "fr",
+  "id": 508,
+  "noindex": false,
+  "template": 1615,
+  "template_title": "Types - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/white-cedar/",
+  "key": "post-49331",
+  "kind": "etapes",
+  "lang": "en",
+  "id": 49331,
+  "noindex": false,
+  "template": 1615,
+  "template_title": "Types - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/red-cedar/",
+  "key": "post-49333",
+  "kind": "etapes",
+  "lang": "en",
+  "id": 49333,
+  "noindex": false,
+  "template": 1615,
+  "template_title": "Types - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/faq/quel-est-le-meilleur-bois-pour-un-mur-interieur/",
+  "key": "post-54606",
+  "kind": "faq",
+  "lang": "fr",
+  "id": 54606,
+  "noindex": false,
+  "template": 54620,
+  "template_title": "FAQ - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/faq/pourquoi-choisir-un-mur-en-bois-interieur/",
+  "key": "post-54624",
+  "kind": "faq",
+  "lang": "fr",
+  "id": 54624,
+  "noindex": false,
+  "template": 54620,
+  "template_title": "FAQ - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/faq/what-is-the-best-wood-for-an-interior-wall/",
+  "key": "post-54617",
+  "kind": "faq",
+  "lang": "en",
+  "id": 54617,
+  "noindex": false,
+  "template": 54620,
+  "template_title": "FAQ - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/faq/why-choose-an-interior-wood-wall/",
+  "key": "post-54627",
+  "kind": "faq",
+  "lang": "en",
+  "id": 54627,
+  "noindex": false,
+  "template": 54620,
+  "template_title": "FAQ - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/merci/formulaire/",
+  "key": "post-37",
+  "kind": "merci",
+  "lang": "fr",
+  "id": 37,
+  "noindex": true,
+  "template": 73,
+  "template_title": "- Page Merci"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/merci/soumission/",
+  "key": "post-115",
+  "kind": "merci",
+  "lang": "fr",
+  "id": 115,
+  "noindex": true,
+  "template": 73,
+  "template_title": "- Page Merci"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/thank-you/form/",
+  "key": "post-49365",
+  "kind": "merci",
+  "lang": "en",
+  "id": 49365,
+  "noindex": true,
+  "template": 73,
+  "template_title": "- Page Merci"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/thank-you/quote/",
+  "key": "post-49367",
+  "kind": "merci",
+  "lang": "en",
+  "id": 49367,
+  "noindex": true,
+  "template": 73,
+  "template_title": "- Page Merci"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/",
+  "key": "post-66",
+  "kind": "page",
+  "lang": "fr",
+  "id": 66,
+  "noindex": false,
+  "types_page": [
+   "Accueil"
+  ],
+  "template": 1688,
+  "template_title": "Page - Accueil"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/revetement-exterieur-bois-quebec/",
+  "key": "post-52419",
+  "kind": "page",
+  "lang": "fr",
+  "id": 52419,
+  "noindex": false,
+  "types_page": [
+   "Accueil"
+  ],
+  "template": 1688,
+  "template_title": "Page - Accueil"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/html-sitemap/",
+  "key": "post-79",
+  "kind": "page",
+  "lang": "fr",
+  "id": 79,
+  "noindex": true,
+  "types_page": [
+   "Autres"
+  ],
+  "template": 78,
+  "template_title": "Pages - Autres"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/politiques-confidentialite/",
+  "key": "post-82",
+  "kind": "page",
+  "lang": "fr",
+  "id": 82,
+  "noindex": true,
+  "types_page": [
+   "Autres"
+  ],
+  "template": 78,
+  "template_title": "Pages - Autres"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/contact/",
+  "key": "post-121",
+  "kind": "page",
+  "lang": "fr",
+  "id": 121,
+  "noindex": false,
+  "types_page": [
+   "Nous joindre"
+  ],
+  "template": 1726,
+  "template_title": "Page - Nous joindre"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/revetement-exterieur-bois/",
+  "key": "post-1585",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1585,
+  "noindex": false,
+  "types_page": [
+   "Revêtements"
+  ],
+  "template": 1593,
+  "template_title": "Page - Revêtements"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/lambris-interieur-bois/",
+  "key": "post-1611",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1611,
+  "noindex": false,
+  "types_page": [
+   "Revêtements"
+  ],
+  "template": 1593,
+  "template_title": "Page - Revêtements"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/documents/",
+  "key": "post-1635",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1635,
+  "noindex": false,
+  "types_page": [
+   "Documents techniques"
+  ],
+  "template": 1640,
+  "template_title": "Page - Documents techniques"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/foire-aux-questions/",
+  "key": "post-1645",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1645,
+  "noindex": false,
+  "types_page": [
+   "Foire aux questions"
+  ],
+  "template": 1648,
+  "template_title": "Page - Foire aux questions"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/a-propos/",
+  "key": "post-1650",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1650,
+  "noindex": false,
+  "types_page": [
+   "À propos"
+  ],
+  "template": 1654,
+  "template_title": "Page - À propos"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/collection-harmonia/",
+  "key": "post-51048",
+  "kind": "page",
+  "lang": "fr",
+  "id": 51048,
+  "noindex": false,
+  "types_page": [
+   "À propos"
+  ],
+  "template": 1654,
+  "template_title": "Page - À propos"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/carrieres/",
+  "key": "post-1656",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1656,
+  "noindex": false,
+  "types_page": [
+   "Carrières"
+  ],
+  "template": 120,
+  "template_title": "Page - Carrières"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/professionnels/",
+  "key": "post-1757",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1757,
+  "noindex": false,
+  "types_page": [
+   "Professionnels"
+  ],
+  "template": 1761,
+  "template_title": "Page - Professionnels"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/programme-sidaccess/",
+  "key": "post-50281",
+  "kind": "page",
+  "lang": "fr",
+  "id": 50281,
+  "noindex": false,
+  "types_page": [
+   "Professionnels"
+  ],
+  "template": 1761,
+  "template_title": "Page - Professionnels"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/blogue/",
+  "key": "post-1793",
+  "kind": "page",
+  "lang": "fr",
+  "id": 1793,
+  "noindex": false,
+  "types_page": [
+   "Blogue"
+  ],
+  "template": null,
+  "template_title": "— aucun (repli Oxygen/404 ?)"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/concours/",
+  "key": "post-53480",
+  "kind": "page",
+  "lang": "fr",
+  "id": 53480,
+  "noindex": false,
+  "types_page": [
+   "Concours"
+  ],
+  "template": null,
+  "template_title": "— aucun (repli Oxygen/404 ?)"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/",
+  "key": "post-49298",
+  "kind": "page",
+  "lang": "en",
+  "id": 49298,
+  "noindex": false,
+  "types_page": [
+   "Accueil"
+  ],
+  "template": 1688,
+  "template_title": "Page - Accueil"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/about-us/",
+  "key": "post-49303",
+  "kind": "page",
+  "lang": "en",
+  "id": 49303,
+  "noindex": false,
+  "types_page": [
+   "À propos"
+  ],
+  "template": 1654,
+  "template_title": "Page - À propos"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/harmonia-collection/",
+  "key": "post-51235",
+  "kind": "page",
+  "lang": "en",
+  "id": 51235,
+  "noindex": false,
+  "types_page": [
+   "À propos"
+  ],
+  "template": 1654,
+  "template_title": "Page - À propos"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/exterior-wood-siding/",
+  "key": "post-49307",
+  "kind": "page",
+  "lang": "en",
+  "id": 49307,
+  "noindex": false,
+  "types_page": [
+   "Revêtements"
+  ],
+  "template": 1593,
+  "template_title": "Page - Revêtements"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/interior-wood-paneling/",
+  "key": "post-49311",
+  "kind": "page",
+  "lang": "en",
+  "id": 49311,
+  "noindex": false,
+  "types_page": [
+   "Revêtements"
+  ],
+  "template": 1593,
+  "template_title": "Page - Revêtements"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/careers/",
+  "key": "post-49313",
+  "kind": "page",
+  "lang": "en",
+  "id": 49313,
+  "noindex": false,
+  "types_page": [
+   "Carrières"
+  ],
+  "template": 120,
+  "template_title": "Page - Carrières"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/contact/",
+  "key": "post-49315",
+  "kind": "page",
+  "lang": "en",
+  "id": 49315,
+  "noindex": false,
+  "types_page": [
+   "Nous joindre"
+  ],
+  "template": 1726,
+  "template_title": "Page - Nous joindre"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/professionals/",
+  "key": "post-49318",
+  "kind": "page",
+  "lang": "en",
+  "id": 49318,
+  "noindex": false,
+  "types_page": [
+   "Professionnels"
+  ],
+  "template": 1761,
+  "template_title": "Page - Professionnels"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/sidaccess-program/",
+  "key": "post-50361",
+  "kind": "page",
+  "lang": "en",
+  "id": 50361,
+  "noindex": false,
+  "types_page": [
+   "Professionnels"
+  ],
+  "template": 1761,
+  "template_title": "Page - Professionnels"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/frequently-asked-questions/",
+  "key": "post-49325",
+  "kind": "page",
+  "lang": "en",
+  "id": 49325,
+  "noindex": false,
+  "types_page": [
+   "Foire aux questions"
+  ],
+  "template": 1648,
+  "template_title": "Page - Foire aux questions"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/documents/",
+  "key": "post-49328",
+  "kind": "page",
+  "lang": "en",
+  "id": 49328,
+  "noindex": false,
+  "types_page": [
+   "Documents techniques"
+  ],
+  "template": 1640,
+  "template_title": "Page - Documents techniques"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/blog/",
+  "key": "post-49372",
+  "kind": "page",
+  "lang": "en",
+  "id": 49372,
+  "noindex": false,
+  "types_page": [
+   "Blogue"
+  ],
+  "template": null,
+  "template_title": "— aucun (repli Oxygen/404 ?)"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/contests/",
+  "key": "post-53681",
+  "kind": "page",
+  "lang": "en",
+  "id": 53681,
+  "noindex": false,
+  "types_page": [
+   "Concours"
+  ],
+  "template": null,
+  "template_title": "— aucun (repli Oxygen/404 ?)"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/html-sitemap/",
+  "key": "post-49374",
+  "kind": "page",
+  "lang": "en",
+  "id": 49374,
+  "noindex": true,
+  "types_page": [
+   "Autres"
+  ],
+  "template": 78,
+  "template_title": "Pages - Autres"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/privacy-policy/",
+  "key": "post-49376",
+  "kind": "page",
+  "lang": "en",
+  "id": 49376,
+  "noindex": true,
+  "types_page": [
+   "Autres"
+  ],
+  "template": 78,
+  "template_title": "Pages - Autres"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/soumission/",
+  "key": "post-51492",
+  "kind": "page",
+  "lang": "fr",
+  "id": 51492,
+  "noindex": false,
+  "types_page": [
+   "Soumission"
+  ],
+  "template": 51496,
+  "template_title": "Page - Soumission"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/quote/",
+  "key": "post-51497",
+  "kind": "page",
+  "lang": "en",
+  "id": 51497,
+  "noindex": false,
+  "types_page": [
+   "Soumission"
+  ],
+  "template": 51496,
+  "template_title": "Page - Soumission"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/developpement-durable/",
+  "key": "post-54707",
+  "kind": "page",
+  "lang": "fr",
+  "id": 54707,
+  "noindex": false,
+  "types_page": [
+   "Développement durable"
+  ],
+  "template": 54732,
+  "template_title": "!Page - Développement durable"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/sustainable-development/",
+  "key": "post-54757",
+  "kind": "page",
+  "lang": "en",
+  "id": 54757,
+  "noindex": false,
+  "types_page": [
+   "Développement durable"
+  ],
+  "template": 54732,
+  "template_title": "!Page - Développement durable"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/bardeau-cedre/",
+  "key": "post-54832",
+  "kind": "page",
+  "lang": "fr",
+  "id": 54832,
+  "noindex": false,
+  "types_page": [
+   "Page GEO"
+  ],
+  "template": 54834,
+  "template_title": "!Page - Revêtement - GEO"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/prix/",
+  "key": "post-55015",
+  "kind": "page",
+  "lang": "fr",
+  "id": 55015,
+  "noindex": false,
+  "types_page": [
+   "Prix"
+  ],
+  "template": 55016,
+  "template_title": "Page - Prix"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/revetement-de-bois-sans-entretien/",
+  "key": "post-4894",
+  "kind": "post",
+  "lang": "fr",
+  "id": 4894,
+  "noindex": false,
+  "template": 75,
+  "template_title": "Articles - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/ameliorer-la-qualite-des-ouvrages-de-revetement-de-bois-massif-au-quebec/",
+  "key": "post-4900",
+  "kind": "post",
+  "lang": "fr",
+  "id": 4900,
+  "noindex": false,
+  "template": 75,
+  "template_title": "Articles - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/sidexalt-an-innovation-by-sidex/",
+  "key": "post-49490",
+  "kind": "post",
+  "lang": "en",
+  "id": 49490,
+  "noindex": false,
+  "template": 75,
+  "template_title": "Articles - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/sidexs-oldest-achievement-what-does-it-look-like-today/",
+  "key": "post-49497",
+  "kind": "post",
+  "lang": "en",
+  "id": 49497,
+  "noindex": false,
+  "template": 75,
+  "template_title": "Articles - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/projets/vertendre-100-de-la-reserve/",
+  "key": "post-539",
+  "kind": "projets",
+  "lang": "fr",
+  "id": 539,
+  "noindex": false,
+  "template": 1584,
+  "template_title": "Projets - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/projets/vertendre-106-de-la-reserve/",
+  "key": "post-542",
+  "kind": "projets",
+  "lang": "fr",
+  "id": 542,
+  "noindex": false,
+  "template": 1584,
+  "template_title": "Projets - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/projects/la-grande-passerelle/",
+  "key": "post-49382",
+  "kind": "projets",
+  "lang": "en",
+  "id": 49382,
+  "noindex": false,
+  "template": 1584,
+  "template_title": "Projets - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/projects/lecuyer/",
+  "key": "post-49716",
+  "kind": "projets",
+  "lang": "en",
+  "id": 49716,
+  "noindex": false,
+  "template": 1584,
+  "template_title": "Projets - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/categorie/choisir-son-revetement/",
+  "key": "term-277",
+  "kind": "tax:category",
+  "lang": "fr",
+  "id": 277,
+  "template": 77,
+  "template_title": "Articles - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/categorie/conseils-actualites/",
+  "key": "term-285",
+  "kind": "tax:category",
+  "lang": "fr",
+  "id": 285,
+  "template": 77,
+  "template_title": "Articles - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/projets/",
+  "key": "archive-projets-fr",
+  "kind": "archive:projets",
+  "lang": "fr",
+  "id": 0,
+  "template": 1582,
+  "template_title": "Projets - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/author/ariane-martin/",
+  "key": "author-3-fr",
+  "kind": "author",
+  "lang": "fr",
+  "id": 3,
+  "template": 54802,
+  "template_title": "Auteurs - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/author/tactikdev/",
+  "key": "author-1-fr",
+  "kind": "author",
+  "lang": "fr",
+  "id": 1,
+  "template": 54802,
+  "template_title": "Auteurs - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/sx-capture-404-x9z/",
+  "key": "404-fr",
+  "kind": "404",
+  "lang": "fr",
+  "id": 0,
+  "template": 74,
+  "template_title": "- 404"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/categorie/choosing-your-siding/",
+  "key": "term-278",
+  "kind": "tax:category",
+  "lang": "en",
+  "id": 278,
+  "template": 77,
+  "template_title": "Articles - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/categorie/maintenance-durability/",
+  "key": "term-280",
+  "kind": "tax:category",
+  "lang": "en",
+  "id": 280,
+  "template": 77,
+  "template_title": "Articles - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/projects/",
+  "key": "archive-projets-en",
+  "kind": "archive:projets",
+  "lang": "en",
+  "id": 0,
+  "template": 1582,
+  "template_title": "Projets - Archive"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/author/ariane-martin/",
+  "key": "author-3-en",
+  "kind": "author",
+  "lang": "en",
+  "id": 3,
+  "template": 54802,
+  "template_title": "Auteurs - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/author/tactikdev/",
+  "key": "author-1-en",
+  "kind": "author",
+  "lang": "en",
+  "id": 1,
+  "template": 54802,
+  "template_title": "Auteurs - Single"
+ },
+ {
+  "url": "https://stg-groupesidexcom-staging.kinsta.cloud/en/sx-capture-404-x9z/",
+  "key": "404-en",
+  "kind": "404",
+  "lang": "en",
+  "id": 0,
+  "template": 74,
+  "template_title": "- 404"
+ }
+]

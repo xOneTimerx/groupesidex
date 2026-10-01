@@ -1,0 +1,2202 @@
+[
+ {
+  "id": 69,
+  "title": "- Header / Footer",
+  "parent": 0,
+  "rules": {
+   "order": "0",
+   "single_all": "true",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 120,
+  "element_types": {
+   "oxy_header": 1,
+   "oxy_header_row": 2,
+   "oxy_header_left": 2,
+   "ct_div_block": 40,
+   "ct_image": 10,
+   "ct_code_block": 23,
+   "ct_link_text": 1,
+   "ct_span": 1,
+   "oxy_header_center": 2,
+   "oxy_header_right": 2,
+   "oxy-pro-menu": 2,
+   "ct_link": 8,
+   "ct_fancy_icon": 16,
+   "ct_inner_content": 1,
+   "ct_section": 1,
+   "oxy_nav_menu": 3,
+   "oxy_dynamic_list": 1,
+   "oxy-off-canvas": 2,
+   "oxy-horizontal-slide-menu": 1,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "adresse",
+   "courriel",
+   "fax",
+   "footer_label_nous_joindre",
+   "footer_label_projet",
+   "header_libelle_tonnes_ges",
+   "header_soumission_contenu",
+   "header_soumission_titre",
+   "heures_ouverture",
+   "image",
+   "libelle_sans_obligation",
+   "lien_contact_btn_lien",
+   "lien_contact_btn_texte",
+   "lien_cta_externe_btn_lien",
+   "lien_cta_externe_btn_texte",
+   "lien_google",
+   "lien_soumission_btn_texte",
+   "sous_titre",
+   "telephone",
+   "telephone_principal",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_home_url",
+   "home_url"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 23,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 2779,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_header",
+   "oxy_header_center",
+   "oxy_header_left",
+   "oxy_header_right",
+   "oxy_header_row",
+   "oxy_nav_menu"
+  ]
+ },
+ {
+  "id": 73,
+  "title": "- Page Merci",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "merci"
+   ],
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 15,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 5,
+   "ct_code_block": 6,
+   "ct_fancy_icon": 3
+  },
+  "acf_fields": [
+   "courriel",
+   "fax",
+   "lien_accueil_btn_texte",
+   "message_principal",
+   "message_secondaire",
+   "telephone_principal"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 6,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 591,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 74,
+  "title": "- 404",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "404_page": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 8,
+  "element_types": {
+   "ct_section": 1,
+   "ct_image": 1,
+   "ct_headline": 1,
+   "ct_span": 3,
+   "ct_text_block": 1,
+   "ct_link_button": 1
+  },
+  "acf_fields": [],
+  "php_functions": [
+   "acf_link_field",
+   "get_field",
+   "home_url"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 75,
+  "title": "Articles - Single",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "post"
+   ],
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 36,
+  "element_types": {
+   "ct_section": 3,
+   "ct_div_block": 12,
+   "ct_code_block": 7,
+   "ct_text_block": 4,
+   "ct_span": 4,
+   "oxy-post-modified-date": 1,
+   "ct_fancy_icon": 1,
+   "oxy-reading-time": 1,
+   "oxy-table-of-contents": 1,
+   "oxy_dynamic_list": 1,
+   "ct_reusable": 1
+  },
+  "acf_fields": [
+   "article_single_resume_en_bref",
+   "blogue_single_libelle_en_bref",
+   "blogue_single_libelle_mis_a_jour",
+   "blogue_single_libelle_publie_le",
+   "photo"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "author",
+   "date",
+   "featured_image",
+   "id",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "186"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 7,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 526,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 77,
+  "title": "Articles - Archive",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "blog_posts": "true",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "archive_post_types": [
+    "post"
+   ],
+   "archive_among_taxonomies": [
+    "all_categories",
+    "all_tags"
+   ],
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 11,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 2,
+   "ct_code_block": 4,
+   "oxy_dynamic_list": 1,
+   "ct_reusable": 1,
+   "oxy-wpgb-facet": 1
+  },
+  "acf_fields": [
+   "blogue_archive_contenu",
+   "blogue_archive_sous_titre",
+   "blogue_archive_titre",
+   "lien_contact_btn_lien",
+   "lien_contact_btn_texte"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [
+   "186"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 4,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 345,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 78,
+  "title": "Pages - Autres",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "4"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 6,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 1,
+   "ct_headline": 1,
+   "ct_span": 2,
+   "ct_text_block": 1
+  },
+  "acf_fields": [],
+  "php_functions": [],
+  "dynamic_data": [
+   "content",
+   "title"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 88,
+  "title": "- Résultats de recherche",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "search_page": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 11,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 3,
+   "ct_headline": 1,
+   "ct_span": 3,
+   "oxy_dynamic_list": 1,
+   "ct_text_block": 2
+  },
+  "acf_fields": [],
+  "php_functions": [
+   "the_search_query"
+  ],
+  "dynamic_data": [
+   "excerpt",
+   "phpfunction",
+   "title"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 120,
+  "title": "Page - Carrières",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "3"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 45,
+  "element_types": {
+   "ct_section": 7,
+   "ct_div_block": 12,
+   "ct_code_block": 17,
+   "oxy_dynamic_list": 2,
+   "ct_image": 4,
+   "oxy_gallery": 1,
+   "oxy-pro-accordion": 1,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "contenu",
+   "entete_btn_1_ancre",
+   "entete_btn_1_titre",
+   "entete_btn_2_ancre",
+   "entete_btn_2_titre",
+   "entete_contenu",
+   "entete_sous_titre",
+   "entete_titre",
+   "formulaire_contenu",
+   "formulaire_titre",
+   "image",
+   "postes_sous_titre",
+   "postes_titre",
+   "texte_animation",
+   "texte_appliquer",
+   "titre",
+   "vie_contenu",
+   "vie_image_droite",
+   "vie_image_gauche",
+   "vie_sous_titre",
+   "vie_titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 17,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1760,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_gallery"
+  ]
+ },
+ {
+  "id": 149,
+  "title": "= CTA Principal",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part",
+   "order": "0",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   }
+  },
+  "elements": 11,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 4,
+   "ct_code_block": 5,
+   "ct_image": 1
+  },
+  "acf_fields": [
+   "cta_contenu",
+   "cta_sous_titre",
+   "cta_titre",
+   "lien_cta_btn_lien",
+   "lien_cta_btn_texte",
+   "lien_cta_externe_btn_lien",
+   "lien_cta_externe_btn_texte"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 5,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 454,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 186,
+  "title": "Articles - Card",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part"
+  },
+  "elements": 6,
+  "element_types": {
+   "ct_link": 1,
+   "ct_image": 1,
+   "ct_div_block": 1,
+   "ct_code_block": 3
+  },
+  "acf_fields": [],
+  "php_functions": [],
+  "dynamic_data": [
+   "featured_image_id",
+   "permalink"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 3,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 213,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 191,
+  "title": "Formulaires - Single",
+  "parent": 0,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "28"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 13,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 4,
+   "ct_link": 2,
+   "ct_fancy_icon": 1,
+   "ct_text_block": 2,
+   "ct_code_block": 2,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "entete_contenu",
+   "entete_titre"
+  ],
+  "php_functions": [
+   "get_home_url"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 2,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 72,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 337,
+  "title": "= En-tête",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part",
+   "order": "0",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   }
+  },
+  "elements": 8,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 2,
+   "ct_code_block": 4,
+   "ct_image": 1
+  },
+  "acf_fields": [
+   "entete_image",
+   "lien_champ_acf"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 4,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 354,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 1582,
+  "title": "Projets - Archive",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "archive_post_types": [
+    "projets"
+   ],
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 46,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 13,
+   "ct_code_block": 11,
+   "oxy-wpgb-facet": 8,
+   "oxy_toggle": 6,
+   "oxy_dynamic_list": 1,
+   "ct_link": 1,
+   "oxy_superbox": 1,
+   "ct_image": 1,
+   "ct_fancy_icon": 1,
+   "ct_reusable": 1
+  },
+  "acf_fields": [
+   "projets_archive_contenu",
+   "projets_archive_sous_titre",
+   "projets_archive_titre",
+   "projets_filtrer_essence",
+   "projets_filtrer_fini",
+   "projets_filtrer_finition",
+   "projets_filtrer_modele",
+   "projets_filtrer_type",
+   "projets_filtrer_type_revetement"
+  ],
+  "php_functions": [],
+  "dynamic_data": [
+   "featured_image",
+   "permalink"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 10,
+   "js": 0,
+   "css": 1
+  },
+  "code_bytes": {
+   "php": 533,
+   "js": 0,
+   "css": 61
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_superbox",
+   "oxy_toggle"
+  ]
+ },
+ {
+  "id": 1584,
+  "title": "Projets - Single",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "projets"
+   ],
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 23,
+  "element_types": {
+   "ct_section": 5,
+   "ct_div_block": 4,
+   "ct_reusable": 2,
+   "ct_code_block": 9,
+   "oxy_gallery": 1,
+   "ct_link": 1,
+   "ct_fancy_icon": 1
+  },
+  "acf_fields": [
+   "architecte",
+   "architecte_url",
+   "description",
+   "entrepreneur",
+   "entrepreneur_url",
+   "no_commande",
+   "photographe",
+   "photographe_url",
+   "projet_no_commande",
+   "projet_texte_architecte",
+   "projet_texte_entrepreneur",
+   "projet_texte_photographe",
+   "projet_texte_retour",
+   "projet_texte_revetements"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "featured_image",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149",
+   "1819"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 9,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1463,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_gallery"
+  ]
+ },
+ {
+  "id": 1593,
+  "title": "Page - Revêtements",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "31"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 50,
+  "element_types": {
+   "ct_section": 3,
+   "ct_div_block": 19,
+   "ct_code_block": 17,
+   "ct_image": 2,
+   "oxy_tabs": 1,
+   "oxy_dynamic_list": 3,
+   "ct_link_button": 1,
+   "ct_span": 1,
+   "ct_reusable": 3
+  },
+  "acf_fields": [
+   "contenu",
+   "entete_image",
+   "image",
+   "libelle_etape_suivante",
+   "lien_champ_acf",
+   "lien_soumission_btn_texte",
+   "options_contenu",
+   "options_sous_titre",
+   "options_titre",
+   "sous_titre",
+   "texte_de",
+   "texte_etape",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149",
+   "1621",
+   "1624"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 17,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1223,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_tabs"
+  ]
+ },
+ {
+  "id": 1615,
+  "title": "Types - Single",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "etapes"
+   ],
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 22,
+  "element_types": {
+   "ct_section": 3,
+   "ct_div_block": 5,
+   "ct_code_block": 8,
+   "oxy_dynamic_list": 1,
+   "ct_image": 1,
+   "oxy-pro-accordion": 2,
+   "ct_reusable": 2
+  },
+  "acf_fields": [
+   "bloc_faq_sous_titre",
+   "bloc_faq_titre",
+   "entete_contenu",
+   "entete_liens",
+   "entete_sous_titre",
+   "entete_titre",
+   "fichier",
+   "lien_projets_btn_lien",
+   "lien_projets_btn_texte",
+   "lien_soumission_btn_texte",
+   "texte"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "featured_image",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149",
+   "1621"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 8,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 673,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 1621,
+  "title": "= Bloc - Inspirations",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part"
+  },
+  "elements": 12,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 3,
+   "ct_image": 2,
+   "ct_code_block": 4,
+   "oxy-wpgb-grid": 1
+  },
+  "acf_fields": [
+   "bloc_inspirations_contenu",
+   "bloc_inspirations_sous_titre",
+   "bloc_inspirations_titre",
+   "lien_projets_btn_lien",
+   "lien_projets_btn_texte"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 4,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 335,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 1624,
+  "title": "= Bloc - FAQ",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part"
+  },
+  "elements": 5,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 1,
+   "ct_code_block": 2,
+   "oxy-pro-accordion": 1
+  },
+  "acf_fields": [
+   "bloc_faq_sous_titre",
+   "bloc_faq_titre"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 2,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 99,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 1634,
+  "title": "= En-tête (Centrée)",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part",
+   "order": "0",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   }
+  },
+  "elements": 6,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 1,
+   "ct_code_block": 4
+  },
+  "acf_fields": [
+   "entete_contenu",
+   "lien_champ_acf"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 4,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 354,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 1640,
+  "title": "Page - Documents techniques",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "71"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 23,
+  "element_types": {
+   "ct_reusable": 1,
+   "ct_code_block": 8,
+   "ct_section": 2,
+   "oxy_dynamic_list": 3,
+   "ct_div_block": 7,
+   "oxy-lightbox": 1,
+   "ct_image": 1
+  },
+  "acf_fields": [
+   "code_video",
+   "document",
+   "document_ou_lien_externe",
+   "documents",
+   "image",
+   "lien",
+   "onglets",
+   "sections",
+   "titre",
+   "titre_document",
+   "titre_onglet",
+   "titre_section",
+   "videos_sous_titre",
+   "videos_titre"
+  ],
+  "php_functions": [],
+  "dynamic_data": [
+   "acfreparray"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "1634"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 8,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 2993,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 1648,
+  "title": "Page - Foire aux questions",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "2"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 4,
+  "element_types": {
+   "ct_reusable": 2,
+   "ct_section": 1,
+   "oxy-pro-accordion": 1
+  },
+  "acf_fields": [],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [
+   "149",
+   "1634"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 0,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 1654,
+  "title": "Page - À propos",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "29"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 55,
+  "element_types": {
+   "ct_section": 5,
+   "ct_div_block": 15,
+   "ct_code_block": 19,
+   "ct_image": 6,
+   "oxy-carousel-builder": 1,
+   "oxy_dynamic_list": 3,
+   "oxy_gallery": 1,
+   "ct_text_block": 2,
+   "ct_span": 2,
+   "ct_reusable": 1
+  },
+  "acf_fields": [
+   "annee_histoire",
+   "contenu",
+   "contenu_histoire",
+   "entete_image",
+   "entete_image_badge",
+   "equipe_contenu",
+   "equipe_titre",
+   "image",
+   "image_histoire",
+   "intro_contenu",
+   "intro_image_droite",
+   "intro_image_gauche",
+   "intro_sous_titre",
+   "intro_titre",
+   "lien_champ_acf",
+   "lien_cta_btn_lien",
+   "lien_cta_btn_texte",
+   "projets_titre",
+   "sous_titre",
+   "tagline_histoire",
+   "titre",
+   "titre_histoire",
+   "usine_titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 19,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1002,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_gallery"
+  ]
+ },
+ {
+  "id": 1688,
+  "title": "Page - Accueil",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "72"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 85,
+  "element_types": {
+   "ct_code_block": 21,
+   "ct_section": 4,
+   "ct_div_block": 30,
+   "ct_text_block": 8,
+   "ct_span": 5,
+   "ct_image": 7,
+   "ct_headline": 2,
+   "oxy_dynamic_list": 3,
+   "ct_link": 1,
+   "ct_fancy_icon": 1,
+   "ct_reusable": 2,
+   "oxy-carousel-builder": 1
+  },
+  "acf_fields": [
+   "btn_texte",
+   "contenu",
+   "hero_courte_description",
+   "hero_slider_slide_contenu_thumbnail",
+   "hero_slider_slide_img",
+   "hero_slider_slide_lien_thumbnail",
+   "hero_slider_slide_titre_thumbnail",
+   "hero_slider_thumbnail",
+   "hero_sous_titre",
+   "hero_titre",
+   "image",
+   "intro_contenu",
+   "intro_sous_titre",
+   "intro_titre",
+   "lien_a_propos_btn_lien",
+   "lien_a_propos_btn_texte",
+   "lien_cta_btn_lien",
+   "lien_cta_btn_texte",
+   "lien_cta_externe_btn_lien",
+   "lien_cta_externe_btn_texte",
+   "pourquoi_btn_texte",
+   "pourquoi_contenu",
+   "pourquoi_image",
+   "pourquoi_sous_titre",
+   "pourquoi_titre",
+   "produit",
+   "sous_titre",
+   "temoignages_bas_image",
+   "temoignages_bas_titre",
+   "temoignages_haut_contenu",
+   "temoignages_haut_image_1",
+   "temoignages_haut_image_2",
+   "temoignages_haut_sous_titre",
+   "temoignages_haut_titre",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149",
+   "1621"
+  ],
+  "wpgb": [],
+  "js_libs": [
+   "gsap"
+  ],
+  "code_blocks": {
+   "php": 20,
+   "js": 1,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1470,
+   "js": 1811,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 1726,
+  "title": "Page - Nous joindre",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "32"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 42,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 15,
+   "ct_code_block": 15,
+   "ct_fancy_icon": 7,
+   "oxy-fluent-form": 1,
+   "oxy_dynamic_list": 1,
+   "ct_image": 1
+  },
+  "acf_fields": [
+   "adresse",
+   "courriel",
+   "entete_contenu",
+   "entete_sous_titre",
+   "entete_titre",
+   "entete_usine_salle_montre",
+   "fax",
+   "heures_ouverture",
+   "image",
+   "lien_google",
+   "representants_sous_titre",
+   "representants_titre",
+   "sous_titre",
+   "telephone",
+   "telephone_principal",
+   "titre"
+  ],
+  "php_functions": [
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 15,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1005,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 1761,
+  "title": "Page - Professionnels",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "74"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 44,
+  "element_types": {
+   "ct_reusable": 1,
+   "ct_section": 4,
+   "oxy_dynamic_list": 4,
+   "ct_div_block": 13,
+   "ct_image": 4,
+   "ct_code_block": 16,
+   "oxy-pro-accordion": 1,
+   "oxy-carousel-builder": 1
+  },
+  "acf_fields": [
+   "btn_lien",
+   "btn_texte",
+   "contenu",
+   "image",
+   "lien_projets_btn_lien",
+   "lien_projets_btn_texte",
+   "revetements_image",
+   "revetements_sous_titre",
+   "revetements_titre",
+   "sous_titre",
+   "temoignages_image",
+   "temoignages_sous_titre",
+   "temoignages_titre",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field",
+   "get_sub_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "337"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 16,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 910,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 1819,
+  "title": "= Breadcrumbs",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part"
+  },
+  "elements": 1,
+  "element_types": {
+   "ct_code_block": 1
+  },
+  "acf_fields": [],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 1,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 102,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 51496,
+  "title": "Page - Soumission",
+  "parent": 69,
+  "rules": {
+   "order": "5",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "249"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 17,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 7,
+   "ct_code_block": 5,
+   "ct_fancy_icon": 3,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "courriel",
+   "fax",
+   "header_soumission_contenu",
+   "header_soumission_titre",
+   "telephone_principal"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 5,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 486,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 53300,
+  "title": "BK-old-etapes-revetement-250407",
+  "parent": 0,
+  "rules": {
+   "type": "reusable_part"
+  },
+  "elements": 28,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 11,
+   "ct_image": 2,
+   "ct_code_block": 12,
+   "oxy_dynamic_list": 1
+  },
+  "acf_fields": [
+   "contenu",
+   "intro_contenu",
+   "intro_image_droite",
+   "intro_image_gauche",
+   "intro_sous_titre",
+   "intro_titre",
+   "lien_projets_btn_lien",
+   "lien_projets_btn_texte",
+   "lien_soumission_btn_texte",
+   "texte_de",
+   "texte_etape",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [
+   "ScrollTrigger",
+   "gsap"
+  ],
+  "code_blocks": {
+   "php": 11,
+   "js": 1,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 776,
+   "js": 1171,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 53501,
+  "title": "Page - Concours",
+  "parent": 69,
+  "rules": {
+   "order": "0",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 44,
+  "element_types": {
+   "ct_section": 4,
+   "ct_div_block": 12,
+   "ct_code_block": 13,
+   "ct_image": 4,
+   "ct_link_button": 1,
+   "ct_span": 2,
+   "oxy_dynamic_list": 3,
+   "ct_link": 1,
+   "ct_fancy_icon": 1,
+   "ct_text_block": 1,
+   "oxy-fluent-form": 1,
+   "oxy-carousel-builder": 1
+  },
+  "acf_fields": [
+   "bloc_finalistes_contenu",
+   "bloc_finalistes_sous_titre",
+   "bloc_finalistes_titre",
+   "bouton_afficher_les_projets_finalistes_btn_texte",
+   "contenu",
+   "description_concours",
+   "finalistes_repeater",
+   "image",
+   "image_concours",
+   "image_ligne_du_temps",
+   "lien_",
+   "message_concours_ferme",
+   "nom",
+   "photo",
+   "sous_titre_nom_",
+   "titre",
+   "titre_concours",
+   "titre_jury",
+   "titre_lien_"
+  ],
+  "php_functions": [
+   "count_acf_repeater_rows",
+   "get_field"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 13,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 514,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 54620,
+  "title": "FAQ - Single",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "faq"
+   ],
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 7,
+  "element_types": {
+   "ct_section": 2,
+   "ct_div_block": 1,
+   "ct_code_block": 4
+  },
+  "acf_fields": [
+   "bloc_faq_sous_titre",
+   "lien_soumission_btn_texte"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 4,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 242,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 54732,
+  "title": "!Page - Développement durable",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "270"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 67,
+  "element_types": {
+   "ct_section": 5,
+   "ct_div_block": 25,
+   "ct_code_block": 22,
+   "ct_link_button": 2,
+   "ct_span": 4,
+   "ct_image": 5,
+   "ct_text_block": 2,
+   "oxy_dynamic_list": 1,
+   "ct_reusable": 1
+  },
+  "acf_fields": [
+   "bloc_co2_contenu_bloc_1",
+   "bloc_co2_contenu_bloc_2",
+   "bloc_mesurez_impact_btn_lien",
+   "bloc_mesurez_impact_btn_texte",
+   "bloc_mesurez_impact_sous_titre",
+   "bloc_mesurez_impact_titre",
+   "contenu",
+   "contenu_bloc_1",
+   "contenu_bloc_2",
+   "contenu_bloc_3",
+   "entete_btn_lien",
+   "entete_btn_texte",
+   "image",
+   "libelle_impact_reel",
+   "libelle_valeur_en_pieds",
+   "sous_titre",
+   "titre",
+   "titre_bloc_co2"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [
+   "149"
+  ],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 22,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 6958,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list"
+  ]
+ },
+ {
+  "id": 54802,
+  "title": "Auteurs - Single",
+  "parent": 69,
+  "rules": {
+   "order": "0",
+   "taxonomies": {
+    "names": [],
+    "values": []
+   },
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 6,
+  "element_types": {
+   "ct_section": 1,
+   "ct_div_block": 3,
+   "ct_image": 1,
+   "ct_code_block": 1
+  },
+  "acf_fields": [],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 1,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 767,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 54834,
+  "title": "!Page - Revêtement - GEO",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "276"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 121,
+  "element_types": {
+   "ct_section": 10,
+   "ct_div_block": 38,
+   "ct_code_block": 42,
+   "ct_text_block": 6,
+   "ct_link_button": 4,
+   "ct_span": 4,
+   "ct_fancy_icon": 8,
+   "oxy_dynamic_list": 3,
+   "oxy-dynamic-tabs": 1,
+   "ct_link": 1,
+   "oxy_superbox": 1,
+   "ct_image": 1,
+   "oxy-pro-accordion": 1,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "bloc_comparatif_titre",
+   "bloc_faq_sous_titre",
+   "bloc_finitions_sous_titre",
+   "bloc_grades_contenu",
+   "bloc_grades_sous_titre",
+   "bloc_le_materiau_contenu",
+   "bloc_le_materiau_image",
+   "bloc_le_materiau_sous_titre",
+   "bloc_le_materiau_titre",
+   "bloc_realisations_btn_lien",
+   "bloc_realisations_btn_texte",
+   "bloc_realisations_contenu",
+   "bloc_realisations_sous_titre",
+   "bloc_ressources_titre",
+   "bloc_soumission_titre",
+   "code_tableau",
+   "contenu",
+   "dimensions",
+   "entete_bouton_secondaire_btn_ancre",
+   "entete_bouton_secondaire_btn_texte",
+   "entete_titre",
+   "guide_installation_btn_texte",
+   "guide_installation_fichier_pdf",
+   "guide_installation_titre",
+   "image",
+   "libelle_bouton",
+   "libelle_sans_obligation",
+   "lien_soumission_btn_texte",
+   "prix",
+   "sous_titre",
+   "titre"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "acfreparray",
+   "custom_acf_content",
+   "featured_image",
+   "permalink",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 24,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 1071,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_superbox"
+  ]
+ },
+ {
+  "id": 55016,
+  "title": "Page - Prix",
+  "parent": 69,
+  "rules": {
+   "order": "6",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "287"
+    ]
+   },
+   "ate_taxonomies": "true"
+  },
+  "elements": 273,
+  "element_types": {
+   "ct_section": 14,
+   "ct_div_block": 89,
+   "ct_text_block": 95,
+   "ct_headline": 34,
+   "ct_code_block": 16,
+   "ct_link_button": 4,
+   "ct_fancy_icon": 7,
+   "oxy-pro-accordion": 13,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "libelle_sans_obligation",
+   "lien_soumission_btn_texte"
+  ],
+  "php_functions": [],
+  "dynamic_data": [],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 11,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 20891,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": []
+ },
+ {
+  "id": 55123,
+  "title": "!Page - Ville",
+  "parent": 69,
+  "rules": {
+   "order": "1",
+   "post_types": [
+    "page"
+   ],
+   "taxonomies": {
+    "names": [
+     "types_page"
+    ],
+    "values": [
+     "288"
+    ]
+   },
+   "ate_taxonomies": "true",
+   "post_of_parents": [
+    ""
+   ]
+  },
+  "elements": 107,
+  "element_types": {
+   "ct_section": 10,
+   "ct_div_block": 33,
+   "ct_code_block": 40,
+   "ct_text_block": 6,
+   "ct_link_button": 2,
+   "ct_span": 2,
+   "ct_fancy_icon": 8,
+   "oxy_dynamic_list": 1,
+   "ct_link": 1,
+   "oxy_superbox": 1,
+   "ct_image": 1,
+   "oxy-pro-accordion": 1,
+   "oxy-fluent-form": 1
+  },
+  "acf_fields": [
+   "bloc_comparatif_titre",
+   "bloc_faq_sous_titre",
+   "bloc_le_materiau_contenu",
+   "bloc_le_materiau_image",
+   "bloc_le_materiau_sous_titre",
+   "bloc_le_materiau_titre",
+   "bloc_realisations_btn_lien",
+   "bloc_realisations_btn_texte",
+   "bloc_realisations_contenu",
+   "bloc_realisations_sous_titre",
+   "bloc_soumission_titre",
+   "code_tableau",
+   "entete_bouton_secondaire_btn_ancre",
+   "entete_bouton_secondaire_btn_texte",
+   "entete_titre",
+   "libelle_sans_obligation",
+   "lien_soumission_btn_texte",
+   "ville_prix_contenu",
+   "ville_prix_sous_titre",
+   "ville_prix_titre",
+   "ville_produits_contenu",
+   "ville_produits_sous_titre",
+   "ville_rep_titre"
+  ],
+  "php_functions": [
+   "get_field"
+  ],
+  "dynamic_data": [
+   "custom_acf_content",
+   "featured_image",
+   "permalink",
+   "phpfunction"
+  ],
+  "shortcodes": [],
+  "reusables": [],
+  "wpgb": [],
+  "js_libs": [],
+  "code_blocks": {
+   "php": 19,
+   "js": 0,
+   "css": 0
+  },
+  "code_bytes": {
+   "php": 909,
+   "js": 0,
+   "css": 0
+  },
+  "oxyextras": [
+   "oxy_dynamic_list",
+   "oxy_superbox"
+  ]
+ }
+]

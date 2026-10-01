@@ -6,3 +6,5 @@ node_modules/
 wp-config.php
 .DS_Store
 /tmp/
+# Exports bruts du site (gabarits Oxygen, scripts) : hors dépôt, dans ~/sidex/oxygen-debuild/
+docs/oxygen-source/
