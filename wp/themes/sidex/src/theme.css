@@ -1,0 +1,23 @@
+/* Correctifs propres au thème (vides au départ : la parité vient du CSS d'Oxygen repris tel quel). */
+
+/* Largeurs des icônes Oxygen (Oxygen les imprimait en <style> par icône). */
+.ct-FontAwesomeicon-angle-down{width:0.64285714285714em}
+.ct-FontAwesomeicon-angle-right{width:0.32142857142857em}
+.ct-FontAwesomeicon-angle-up{width:0.64285714285714em}
+.ct-FontAwesomeicon-chain{width:0.92857142857143em}
+.ct-FontAwesomeicon-chevron-left{width:0.75em}
+.ct-FontAwesomeicon-chevron-right{width:0.67857142857143em}
+.ct-FontAwesomeicon-clock-o{width:0.85714285714286em}
+.ct-FontAwesomeicon-close{width:0.78571428571429em}
+.ct-FontAwesomeicon-cubes{width:1.2142857142857em}
+.ct-FontAwesomeicon-download{width:0.92857142857143em}
+.ct-FontAwesomeicon-facebook{width:0.57142857142857em}
+.ct-FontAwesomeicon-instagram{width:0.85714285714286em}
+.ct-FontAwesomeicon-linkedin{width:0.85714285714286em}
+.ct-FontAwesomeicon-map-marker{width:0.57142857142857em}
+.ct-FontAwesomeicon-phone{width:0.78571428571429em}
+.ct-FontAwesomeicon-question-circle-o{width:0.85714285714286em}
+.ct-FontAwesomeicon-search{width:0.92857142857143em}
+.ct-FontAwesomeicon-tree{width:0.85714285714286em}
+.ct-FontAwesomeicon-trophy{width:0.92857142857143em}
+.ct-FontAwesomeicon-truck{width:1.0357142857143em}
