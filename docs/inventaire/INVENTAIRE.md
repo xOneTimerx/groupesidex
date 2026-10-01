@@ -70,7 +70,7 @@ Actifs, à reprendre ailleurs avant la bascule :
 | 143/144/248 | GLightbox des couleurs | thème |
 | 138 | correctifs CSS des accordéons | disparaît avec les accordéons |
 | 262 Fix WP Rocket | fausse interaction après 500 ms | à revoir avec WP Rocket |
-| **11 Scripts [HEADER]** | **ClickRank.ai + Searchable Analytics** (`data-domain=groupesidex.com`) | **GTM** (décision d8). Coupé sur le staging le 25 sept. |
+| **11 Scripts [HEADER]** | **ClickRank.ai + Searchable Analytics** (`data-domain=groupesidex.com`) | **Abandonnés** (décision de Vincent, 1er oct.) : disparaissent avec Advanced Scripts. Coupés sur le staging le 25 sept. |
 
 Inactifs (ignorés) : 7, 8, 9, 10, 12, 13, 15-18, 23, 25, 27, 246.
 
