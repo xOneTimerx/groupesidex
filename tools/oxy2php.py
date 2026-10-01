@@ -290,7 +290,9 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
 
     if name == "ct_reusable":
         vid = str(orig.get("view_id") or o.get("view_id") or "")
-        return f"<?php sx_oxy_part({vid}); ?>"
+        # Dans une liste, Oxygen suffixe aussi les ids des parties réutilisables (-N) et ajoute data-id.
+        loop = f", (int) $sx_i{ctx.loop_depth}" if ctx.loop_depth else ""
+        return f"<?php sx_oxy_part({vid}{loop}); ?>"
 
     if name == "ct_inner_content":
         if ctx.tid == "69":

@@ -19,10 +19,19 @@ function sx_oxy(int $id): void
 	}
 }
 
-/** Partie réutilisable (ex-« reusable part » Oxygen). */
-function sx_oxy_part(int $id): void
+/**
+ * Partie réutilisable (ex-« reusable part » Oxygen). Dans une liste dynamique ($index > 0), Oxygen suffixe les ids
+ * de la partie par le rang (-N) et garde l'id d'origine en data-id : on fait de même sur le HTML produit.
+ */
+function sx_oxy_part(int $id, int $index = 0): void
 {
+	if ($index <= 0) {
+		sx_oxy($id);
+		return;
+	}
+	ob_start();
 	sx_oxy($id);
+	echo preg_replace_callback('/\sid="([^"]+)"(?![^>]*\bdata-id=)/', static fn($m) => ' id="' . $m[1] . '-' . $index . '" data-id="' . $m[1] . '"', (string) ob_get_clean());
 }
 
 /** CSS et JS du gabarit : le CSS s'imprime en place (comme les <link> d'Oxygen), le JS part au pied de page. */
@@ -355,7 +364,8 @@ function sx_accordion(string $id, string $classes, string $repeater, string $tit
 /** Image de la médiathèque (ex-ct_image « attachment »). */
 function sx_img(int $id, string $size, string $class, string $idattr, string $alt): string
 {
-	$attrs = ['class' => $class, 'alt' => $alt !== '' ? $alt : (string) get_post_meta($id, '_wp_attachment_image_alt', true)];
+	// Oxygen n'ajoutait pas loading="lazy" (WP Rocket s'en charge sur le live).
+	$attrs = ['class' => $class, 'alt' => $alt !== '' ? $alt : (string) get_post_meta($id, '_wp_attachment_image_alt', true), 'loading' => false];
 	$html = wp_get_attachment_image($id, $size, false, $attrs);
 	return $idattr !== '' ? preg_replace('/^<img /', '<img ' . $idattr . ' ', $html) : $html;
 }
