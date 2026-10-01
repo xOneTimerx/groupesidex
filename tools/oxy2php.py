@@ -439,7 +439,7 @@ def bg_style(orig, ctx):
     url = dyn(bg, ctx, "url")
     overlay = orig.get("overlay-color")
     if overlay:
-        return f' style="background-image:linear-gradient({overlay}, {overlay}), url({url});background-size:auto, {orig.get("background-size", "auto")};"'
+        return f' style="background-image:linear-gradient({overlay}, {overlay}), url({url});background-size:auto,  {orig.get("background-size") or "cover"};"'
     size = orig.get("background-size")
     return f' style="background-image:url({url});' + (f'background-size: {size};' if size else '') + '"'
 
