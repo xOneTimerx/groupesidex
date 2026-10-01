@@ -66,7 +66,7 @@ def dyn(expr, ctx, mode="html"):
         elif data == "permalink":
             call = "get_permalink()"
         elif data == "featured_image":
-            call = "(string) get_the_post_thumbnail_url(null, 'full')"
+            call = f"(string) get_the_post_thumbnail_url(null, {php_str(a.get('size') or 'full')})"
         elif data == "acfreparray":
             call = f"sx_sub({php_str(a.get('field', ''))})"
         elif data == "custom_acf_content":
@@ -82,8 +82,9 @@ def dyn(expr, ctx, mode="html"):
         elif data == "excerpt":
             call = "get_the_excerpt()"
         elif data == "author":
-            call = ("get_author_posts_url((int) get_the_author_meta('ID'))" if a.get("link") == "author_posts_url"
-                    else "get_the_author()")
+            # Comme Oxygen : avec link=author_posts_url, le nom de l'auteur dans un lien vers sa page.
+            call = ("\"<a href='\" . get_author_posts_url((int) get_the_author_meta('ID')) . \"'>\" . get_the_author() . '</a>'"
+                    if a.get("link") == "author_posts_url" else "get_the_author()")
         elif data == "content":
             call = "apply_filters('the_content', get_the_content())"
         else:
@@ -237,7 +238,7 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         if video:
             pre = ("<div class='oxy-video-container'><video autoplay loop playsinline muted>"
                    f"<source src='{dyn(video, ctx, 'url')}'></video><div class='oxy-video-overlay'></div></div>")
-        return f'<{tag}{ident}{cls}{extra}>{pre}<div class="ct-section-inner-wrap">{kids()}</div></{tag}>'
+        return f'<{tag}{ident}{cls}{bg_style(orig, ctx)}{extra}>{pre}<div class="ct-section-inner-wrap">{kids()}</div></{tag}>'
 
     if name in ("ct_div_block", "ct_new_columns"):
         tag = tag_of(orig, "div")
@@ -290,8 +291,9 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         return f"<?php sx_oxy_part({vid}); ?>"
 
     if name == "ct_inner_content":
-        call = "sx_page_template()" if ctx.tid == "69" else "sx_inner_content()"
-        return f'<div{ident}{class_attr("ct-inner-content", o)}><?php {call}; ?></div>'
+        if ctx.tid == "69":
+            return "<?php sx_page_template(); ?>"  # dans un gabarit parent, Oxygen n'imprime aucune enveloppe
+        return f'<div{ident}{class_attr("ct-inner-content", o)}><?php sx_inner_content(); ?></div>'
 
     if name == "oxy_dynamic_list":
         return render_dynamic_list(node, o, orig, sel, ident, extra, ctx)
@@ -300,7 +302,7 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         if orig.get("oxy-fluent-form_form_source") == "acf":
             form = f"(int) {dyn_expr(orig.get('oxy-fluent-form_acf_form_field', ''), ctx)}"
         else:
-            form = str(int(orig.get("oxy-fluent-form_form_id") or 0))
+            form = str(int(orig.get("oxy-fluent-form_fluent_form_id") or orig.get("oxy-fluent-form_form_id") or 0))
         return f'<div{ident}{class_attr("oxy-fluent-form", o)}{extra}><?php sx_fluent_form({form}); ?></div>'
 
     if name == "oxy-carousel-builder":
@@ -316,15 +318,35 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         css = ref_gallery_css(sel)
         if css:
             ctx.css.append(css)
-        opts = {k: orig.get(k) for k in ("gallery_source", "acf_field", "link", "gallery_thumbnail_size", "images", "image_ids") if orig.get(k)}
+        keys = ("gallery_source", "acf_field", "link", "gallery_thumbnail_size", "image_ids", "layout", "display", "gallery_captions", "lazy")
+        opts = {k: orig.get(k) for k in keys if orig.get(k) not in (None, "")}
         cls = " ".join(o.get("classes") or [])
-        layout = "masonry" if orig.get("layout") == "masonry" or orig.get("masonry") == "true" else "grid"
-        return f"<?php sx_gallery({php_str(sel)}, {php_str(cls)}, {php_str(layout)}, {php_str(json.dumps(opts, ensure_ascii=False))}); ?>"
+        return f"<?php sx_gallery({php_str(sel)}, {php_str(cls)}, {php_str(json.dumps(opts, ensure_ascii=False))}); ?>"
 
     if name == "oxy-pro-accordion":
-        return (f"<?php sx_accordion({php_str(sel)}, {php_str(' '.join(o.get('classes') or []))}, "
-                f"{php_str(orig.get('oxy-pro-accordion_repeater_field', ''))}, {php_str(orig.get('oxy-pro-accordion_title_field', ''))}, "
-                f"{php_str(orig.get('oxy-pro-accordion_content_field', ''))}, {php_str(orig.get('oxy-pro-accordion_toggle_icon', ''))}); ?>")
+        P = "oxy-pro-accordion_"
+        tag = orig.get(P + "title_tag", "h4")
+        icon = orig.get(P + "toggle_icon", "")
+        cls = " ".join(o.get("classes") or [])
+        if orig.get(P + "accordion_type") == "manual":
+            # Un seul élément : titre/sous-titre dans les options (dynamiques dans un répéteur), réponse = enfants.
+            base = sel.lstrip("-")
+            sfx = f"-<?php echo (int) $sx_i{ctx.loop_depth}; ?>" if ctx.loop_depth else ""
+            did = (lambda x: f' data-id="{x}"') if ctx.loop_depth else (lambda x: "")
+            init = orig.get(P + "initial_state", "closed")
+            return (f'<div{ident} class="oxy-pro-accordion {cls} "{extra}><div class="oxy-pro-accordion_inner" data-icon="animate" data-expand="300" '
+                    f'data-repeater="disable" data-repeater-first="false" data-acf="closed" data-type="manual" data-disablesibling="false"> '
+                    f'<div class="oxy-pro-accordion_item " data-init="{init}"><button id="header-{base}{sfx}" class="oxy-pro-accordion_header" '
+                    f'aria-expanded="false" aria-controls="body-{base}"{did("header-" + base)}><span class="oxy-pro-accordion_title-area">'
+                    f'<{tag} class="oxy-pro-accordion_title">{dyn(orig.get(P + "title_text", ""), ctx)}</{tag}>'
+                    f'<span class="oxy-pro-accordion_subtitle">{dyn(orig.get(P + "subtitle_text", ""), ctx)}</span></span>'
+                    f'<span class="oxy-pro-accordion_icon oxy-pro-accordion_icon-animate"><svg id="toggle-{base}{sfx}" class="oxy-pro-accordion_toggle-icon"{did("toggle-" + base)}>'
+                    f'<use xlink:href="#{icon}"></use></svg></span></button><div id="body-{base}{sfx}" class="oxy-pro-accordion_body" '
+                    f'aria-labelledby="header-{base}{sfx}" role="region"{did("body-" + base)}><div class="oxy-pro-accordion_content oxy-inner-content">'
+                    f'{kids()}</div></div></div></div></div>')
+        return (f"<?php sx_accordion({php_str(sel)}, {php_str(cls)}, {php_str(orig.get(P + 'repeater_field', ''))}, "
+                f"{php_str(orig.get(P + 'title_field', ''))}, {php_str(orig.get(P + 'content_field', ''))}, {php_str(icon)}, "
+                f"{php_str(tag)}, {php_str(orig.get(P + 'subtitle_field', ''))}, {php_str(orig.get(P + 'acf_inital', 'closed'))}); ?>")
 
     if name == "ct_modal":
         backdrop = ref_backdrop(sel, ctx) or '<div tabindex="-1" class="oxy-modal-backdrop">'
@@ -417,7 +439,7 @@ def bg_style(orig, ctx):
     url = dyn(bg, ctx, "url")
     overlay = orig.get("overlay-color")
     if overlay:
-        return f' style="background-image:linear-gradient({overlay}, {overlay}), url({url});background-size:auto,  {orig.get("background-size", "auto")};"'
+        return f' style="background-image:linear-gradient({overlay}, {overlay}), url({url});background-size:auto, {orig.get("background-size", "auto")};"'
     size = orig.get("background-size")
     return f' style="background-image:url({url});' + (f'background-size: {size};' if size else '') + '"'
 
@@ -432,6 +454,9 @@ def render_image(o, orig, ident, extra, ctx):
         return (f"<?php echo sx_img({aid_php}, {php_str(size)}, {php_str(cls)}, "
                 f"{php_str(ident.strip())}, {php_str(orig.get('alt', ''))}); ?>")
     src = dyn(orig.get("src", ""), ctx, "url")
+    if not orig.get("alt") and "data='featured_image'" in str(orig.get("src", "")):
+        # Oxygen reprend alors le texte alternatif de l'image mise en avant.
+        alt = "<?php echo esc_attr((string) get_post_meta((int) get_post_thumbnail_id(), '_wp_attachment_image_alt', true)); ?>"
     return f'<img{ident} alt="{alt}" src="{src}"{class_attr("ct-image", o)}{extra}/>'
 
 

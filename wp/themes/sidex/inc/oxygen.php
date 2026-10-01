@@ -14,7 +14,9 @@ function sx_theme_owns_request(): bool
 	if ($owns !== null) {
 		return $owns;
 	}
-	if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || defined('SHOW_CT_BUILDER')
+	// Les requêtes de WP Grid Builder (?wpgb-ajax=…) définissent DOING_AJAX mais rendent la page : elles restent au thème.
+	$wpgb = !empty($_GET['wpgb-ajax']);
+	if (is_admin() && !$wpgb || wp_doing_ajax() && !$wpgb || (defined('REST_REQUEST') && REST_REQUEST) || defined('SHOW_CT_BUILDER')
 		|| isset($_GET['ct_builder']) || isset($_GET['oxygen']) || is_feed() || is_embed()) {
 		return $owns = false;
 	}

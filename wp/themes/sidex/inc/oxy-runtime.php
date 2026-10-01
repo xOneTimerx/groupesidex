@@ -276,59 +276,75 @@ function sx_carousel_gallery(string $id, string $field, string $size, int $row):
 	echo '</div>';
 }
 
-/** Galerie Oxygen (grille ou maçonnerie) avec visionneuse. */
-function sx_gallery(string $id, string $classes, string $layout, string $json): void
+/**
+ * Galerie Oxygen : même balisage que component-framework/components/classes/gallery.class.php (dispositions flex,
+ * maçonnerie, grille ; légendes ; lien vers l'image). Son CSS (<style data-element-id>) est figé dans o-<gabarit>.css.
+ */
+function sx_gallery(string $id, string $classes, string $json): void
 {
-	$o = json_decode($json, true) ?: [];
-	$images = [];
-	if (($o['gallery_source'] ?? '') === 'acf' && !empty($o['acf_field'])) {
+	$o = (json_decode($json, true) ?: []) + ['layout' => 'flex', 'display' => '', 'link' => 'yes', 'gallery_source' => 'medialibrary', 'image_ids' => '', 'acf_field' => '', 'gallery_captions' => 'yes', 'gallery_thumbnail_size' => '', 'lazy' => ''];
+	$ids = [];
+	if ($o['gallery_source'] === 'acf' && $o['acf_field'] !== '') {
 		// Sur une archive, le champ vit dans la page d'options (même repli qu'Oxygen).
-		$images = get_field($o['acf_field']) ?: get_field($o['acf_field'], 'option');
-		$images = is_array($images) ? $images : [];
-	} elseif (!empty($o['image_ids'])) {
-		$images = array_map('intval', explode(',', $o['image_ids']));
+		$value = get_field($o['acf_field']) ?: get_field($o['acf_field'], 'option');
+		foreach ((array) $value as $image) {
+			$ids[] = is_array($image) ? (int) ($image['ID'] ?? $image['id'] ?? 0) : (int) $image;
+		}
+	} else {
+		$ids = array_map('intval', explode(',', (string) $o['image_ids']));
 	}
-	$class = trim('oxy-gallery ' . $classes . ' oxy-gallery-captions oxy-gallery-' . $layout);
-	echo '<div id="' . esc_attr($id) . '" class="' . esc_attr($class) . '" data-lightbox>';
+	$images = [];
+	foreach (array_filter($ids) as $aid) {
+		$meta = wp_get_attachment_metadata($aid);
+		if (!$meta) {
+			continue;
+		}
+		$images[] = [
+			'url' => esc_attr((string) wp_get_attachment_url($aid)),
+			'thumb' => esc_attr((string) (wp_get_attachment_image_src($aid, $o['gallery_thumbnail_size'])[0] ?? '')),
+			'width' => $meta['width'] ?? '', 'height' => $meta['height'] ?? '',
+			'caption' => esc_attr((string) wp_get_attachment_caption($aid)),
+			'alt' => esc_attr((string) get_post_meta($aid, '_wp_attachment_image_alt', true)),
+		];
+	}
+	$class = 'oxy-gallery' . ($classes !== '' ? ' ' . $classes : '') . ($o['gallery_captions'] === 'yes' ? ' oxy-gallery-captions' : '');
+	$class .= $o['layout'] === 'masonry' ? ' oxy-gallery-masonry' : ($o['display'] === 'grid' ? ' oxy-gallery-grid' : ' oxy-gallery-flex');
+	$lazy = $o['lazy'] ? 'loading="' . esc_attr($o['lazy']) . '" ' : '';
+	echo '<div id="' . esc_attr($id) . '" class="' . esc_attr($class) . '" >';
 	if (!$images) {
 		echo '<div class="oxygen-empty-gallery"></div>';
 	}
-	foreach ($images as $image) {
-		$aid = is_array($image) ? (int) ($image['ID'] ?? $image['id'] ?? 0) : (int) $image;
-		$src = $aid ? wp_get_attachment_image_src($aid, $o['gallery_thumbnail_size'] ?? 'full') : null;
-		$full = $aid ? wp_get_attachment_image_src($aid, 'full') : null;
-		if (!$src) {
-			continue;
+	foreach ($images as $img) {
+		$tag = $o['link'] === 'yes' ? 'a' : 'div';
+		$href = $o['link'] === 'yes' ? " href='" . $img['url'] . "' " : '';
+		$tagimg = '<img ' . $lazy . 'src="' . $img['thumb'] . '" data-original-src="' . $img['url'] . '" data-original-src-width="' . $img['width'] . '" data-original-src-height="' . $img['height'] . '" alt="' . $img['alt'] . '">';
+		if ($o['layout'] === 'flex' && $o['display'] !== 'grid') {
+			echo "<{$tag}{$href} class='oxy-gallery-item'><div class='oxy-gallery-item-sizer'><figure class='oxy-gallery-item-contents' style='background-image: url(" . $img['thumb'] . ");'>"
+				. $tagimg . '<figcaption>' . $img['caption'] . "</figcaption></figure></div></{$tag}>";
+		} else {
+			echo "<{$tag}{$href} class='oxy-gallery-item'><figure class='oxy-gallery-item-contents'>" . $tagimg . '<figcaption>' . $img['caption'] . "</figcaption></figure></{$tag}>";
 		}
-		$alt = (string) get_post_meta($aid, '_wp_attachment_image_alt', true);
-		$caption = (string) wp_get_attachment_caption($aid);
-		printf(
-			"<a href='%s' class='oxy-gallery-item'><figure class='oxy-gallery-item-contents'><img src=\"%s\" data-original-src=\"%s\" data-original-src-width=\"%d\" data-original-src-height=\"%d\" alt=\"%s\" loading=\"lazy\"><figcaption>%s</figcaption></figure></a>",
-			esc_url($full[0]), esc_url($src[0]), esc_url($full[0]), (int) $full[1], (int) $full[2], esc_attr($alt), esc_html($caption)
-		);
 	}
 	echo '</div>';
 }
 
-/** Accordéon (ex-OxyExtras Pro Accordion, source ACF) : même balisage qu'OxyExtras, premier élément ouvert. */
-function sx_accordion(string $id, string $classes, string $repeater, string $title, string $content, string $icon): void
+/** Accordéon (ex-OxyExtras Pro Accordion, source ACF) : même balisage qu'OxyExtras ; l'état initial est porté par data-acf. */
+function sx_accordion(string $id, string $classes, string $repeater, string $title, string $content, string $icon, string $tag = 'h4', string $subtitle = '', string $initial = 'closed'): void
 {
-	if (!have_rows($repeater)) {
-		return;
-	}
 	$base = ltrim($id, '-');
-	echo '<div id="' . esc_attr($id) . '" class="oxy-pro-accordion ' . esc_attr($classes) . ' "><div class="oxy-pro-accordion_inner" data-icon="animate" data-expand="300" data-repeater="disable" data-repeater-first="false" data-acf="open" data-type="acf" data-disablesibling="false" data-accordion>';
+	$tag = preg_match('/^(h[1-6]|div|p|span)$/', $tag) ? $tag : 'h4';
+	echo '<div id="' . esc_attr($id) . '" class="oxy-pro-accordion ' . esc_attr($classes) . ' "><div class="oxy-pro-accordion_inner" data-icon="animate" data-expand="300" data-repeater="disable" data-repeater-first="false" data-acf="' . ($initial === 'open' ? 'open' : 'closed') . '" data-type="acf" data-disablesibling="false">';
 	$i = 0;
-	while (have_rows($repeater)) {
+	while ($repeater !== '' && have_rows($repeater)) {
 		the_row();
 		$i++;
 		$head = 'header-' . $base . '-' . $i;
 		$body = 'body-' . $base . '-' . $i;
-		echo '<div class="oxy-pro-accordion_item"' . ($i === 1 ? ' data-init="open"' : '') . '>';
-		printf('<button id="%s" class="oxy-pro-accordion_header" aria-controls="%s" aria-expanded="false" type="button">', esc_attr($head), esc_attr($body));
-		printf('<span class="oxy-pro-accordion_title-area"><h4 class="oxy-pro-accordion_title">%s</h4><span class="oxy-pro-accordion_subtitle"></span></span>', wp_kses_post((string) get_sub_field($title)));
+		echo '<div class="oxy-pro-accordion_item">';
+		printf('<button id="%s" class="oxy-pro-accordion_header" aria-controls="%s" aria-expanded=false>', esc_attr($head), esc_attr($body));
+		printf('<span class="oxy-pro-accordion_title-area"><%1$s class="oxy-pro-accordion_title">%2$s</%1$s><span class="oxy-pro-accordion_subtitle">%3$s</span></span>', $tag, wp_kses_post((string) get_sub_field($title)), $subtitle !== '' ? wp_kses_post((string) get_sub_field($subtitle)) : '');
 		printf('<span class="oxy-pro-accordion_icon oxy-pro-accordion_icon-animate"><svg id="toggle-%s" class="oxy-pro-accordion_toggle-icon"><use xlink:href="#%s"></use></svg></span></button>', esc_attr($id), esc_attr($icon));
-		printf('<div id="%s" class="oxy-pro-accordion_body" aria-labelledby="%s" role="region"><div class="oxy-pro-accordion_content">%s</div></div>', esc_attr($body), esc_attr($head), wp_kses_post((string) get_sub_field($content)));
+		printf('<div id="%s" class="oxy-pro-accordion_body" aria-labelledby="%s" role="region"><div class="oxy-pro-accordion_content">%s</div></div>', esc_attr($body), esc_attr($head), (string) get_sub_field($content));
 		echo '</div>';
 	}
 	echo '</div></div>';
