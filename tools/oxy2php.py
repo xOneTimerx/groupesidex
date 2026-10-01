@@ -214,7 +214,9 @@ def render(node, ctx):
     nick = o.get("nicename", "")
     ident = elem_id(sel, ctx) + data_id(sel, ctx)
     extra = custom_attrs(orig, ctx) + aos_attrs(orig)
-    cond = conditions(orig, ctx)
+    # Oxygen n'applique pas les conditions d'affichage à l'enveloppe d'une liste dynamique (vérifié sur 1615 :
+    # la liste « entete_liens » est imprimée sur les 38 fiches Type alors que le champ est vide).
+    cond = None if name == "oxy_dynamic_list" else conditions(orig, ctx)
     html = render_node(name, node, o, orig, sel, ident, extra, ctx)
     if nick and not re.match(r"^[\w ]+\(#\d+\)$", nick) and name in ("ct_section", "ct_div_block", "oxy_dynamic_list", "ct_reusable"):
         html = f"<?php /* {esc(nick).replace('*/', '')} */ ?>" + html
