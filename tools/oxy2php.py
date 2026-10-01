@@ -315,13 +315,14 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         return f"{opening}{kids()}</div></div>"
 
     if name == "oxy_gallery":
+        # Oxygen imprime le CSS de la galerie en ligne, juste avant elle : ce <style> compte comme frère
+        # précédent pour les utilitaires « owl » (* + *) et donne sa marge haute à la galerie.
         css = ref_gallery_css(sel)
-        if css:
-            ctx.css.append(css)
+        style = f'<style data-element-id="#{sel}">{css}</style>' if css else ""
         keys = ("gallery_source", "acf_field", "link", "gallery_thumbnail_size", "image_ids", "layout", "display", "gallery_captions", "lazy")
         opts = {k: orig.get(k) for k in keys if orig.get(k) not in (None, "")}
         cls = " ".join(o.get("classes") or [])
-        return f"<?php sx_gallery({php_str(sel)}, {php_str(cls)}, {php_str(json.dumps(opts, ensure_ascii=False))}); ?>"
+        return f"{style}<?php sx_gallery({php_str(sel)}, {php_str(cls)}, {php_str(json.dumps(opts, ensure_ascii=False))}); ?>"
 
     if name == "oxy-pro-accordion":
         P = "oxy-pro-accordion_"
@@ -440,8 +441,8 @@ def bg_style(orig, ctx):
     overlay = orig.get("overlay-color")
     if overlay:
         return f' style="background-image:linear-gradient({overlay}, {overlay}), url({url});background-size:auto,  {orig.get("background-size") or "cover"};"'
-    size = orig.get("background-size")
-    return f' style="background-image:url({url});' + (f'background-size: {size};' if size else '') + '"'
+    # Sans superposition, Oxygen imprime toujours la taille (auto par défaut).
+    return f' style="background-image:url({url});background-size: {orig.get("background-size") or "auto"};"'
 
 
 def render_image(o, orig, ident, extra, ctx):

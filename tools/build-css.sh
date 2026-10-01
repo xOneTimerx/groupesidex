@@ -11,7 +11,8 @@ HOSTS='(https?:)?//(stg-groupesidexcom-staging\.kinsta\.cloud|groupesidexcom\.ki
 strip() { sed -E "s#${HOSTS}(/wp-content/)#\4#g"; }
 {
   echo "/* Thème Sidex — base (ex-feuilles d'Oxygen, OxyNinja, Oxy Toolbox, Advanced Scripts 68). Généré par tools/build-css.sh. */"
-  for f in aos.css oxygen.css core-sss.min.css splide.min.css style.css; do echo "/* ── $f ── */"; cat "$SRC/plugin-css/$f"; echo; done
+  # gallery.css : Oxygen l'imprimait en ligne sur les pages avec une galerie.
+  for f in aos.css oxygen.css core-sss.min.css splide.min.css style.css gallery.css; do echo "/* ── $f ── */"; cat "$SRC/plugin-css/$f"; echo; done
   echo "/* ── Advanced Scripts 68 Projets - Tableau ── */"; cat "$AS/as-68.txt"; echo
 } | strip > $T/assets/app.css
 {

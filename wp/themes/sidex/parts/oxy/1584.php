@@ -36,4 +36,48 @@ defined('ABSPATH') || exit;
 	</a>
 <?php } ?>		</div><?php endif; ?><?php if (sx_compare(sx_fn('get_field', 'no_commande'), 'is_not_blank', '')) : ?><div id="code_block-34-1584" class="ct-code-block"><span class="c-bold c-heading-dark"><?php the_field("projet_no_commande", "option") ?></span>
 
-<div class="c-text-dark"><?php the_field("no_commande"); ?></div>	</div><?php endif; ?></div></div></section><?php /* Revêtements */ ?><section id="section-7-1584" class="ct-section"><div class="ct-section-inner-wrap"><?php /* Rangée */ ?><div id="div_block-8-1584" class="ct-div-block c-bg-light c-full-width c-owl-m c-padding-l"><h2 id="code_block-10-1584" class="ct-code-block c-h6 c-heading-dark"><?php the_field("projet_texte_revetements", "option") ?></h2><div id="code_block-21-1584" class="ct-code-block c-full-width"><?php output_tableau(); ?></div></div></div></section><?php /* Galerie */ ?><section id="section-11-1584" class="ct-section c-owl-l"><div class="ct-section-inner-wrap"><?php if ((bool) get_field('galerie')) : ?><?php sx_gallery('_gallery-12-1584', '', '{"gallery_source": "acf", "acf_field": "galerie", "gallery_thumbnail_size": "full", "layout": "false", "display": "grid", "gallery_captions": "no"}'); ?><?php endif; ?><?php /* Retour */ ?><div id="div_block-29-1584" class="ct-div-block c-padding-top-m c-padding-bottom-m c-full-width"><a id="link-31-1584" class="ct-link c-inline c-columns-gap-m c-heading-dark" href="<?php echo esc_attr(sx_fn('get_field', 'lien_projets_btn_lien', 'option')); ?>" target="_self"><div id="fancy_icon-30-1584" class="ct-fancy-icon"><svg id="svg-fancy_icon-30-1584"><use xlink:href="#Lineariconsicon-arrow-left"></use></svg></div><div id="code_block-32-1584" class="ct-code-block"><?php the_field("projet_texte_retour", "option") ?></div></a></div></div></section><?php /* CTA */ ?><?php sx_oxy_part(149); ?>
+<div class="c-text-dark"><?php the_field("no_commande"); ?></div>	</div><?php endif; ?></div></div></section><?php /* Revêtements */ ?><section id="section-7-1584" class="ct-section"><div class="ct-section-inner-wrap"><?php /* Rangée */ ?><div id="div_block-8-1584" class="ct-div-block c-bg-light c-full-width c-owl-m c-padding-l"><h2 id="code_block-10-1584" class="ct-code-block c-h6 c-heading-dark"><?php the_field("projet_texte_revetements", "option") ?></h2><div id="code_block-21-1584" class="ct-code-block c-full-width"><?php output_tableau(); ?></div></div></div></section><?php /* Galerie */ ?><section id="section-11-1584" class="ct-section c-owl-l"><div class="ct-section-inner-wrap"><?php if ((bool) get_field('galerie')) : ?><style data-element-id="#_gallery-12-1584">#_gallery-12-1584.oxy-gallery-captions .oxy-gallery-item .oxy-gallery-item-contents figcaption:not(:empty) {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: rgba(0,0,0,0.75); /* caption background color */
+                padding: 1em;
+                color: #ffffff;  /* caption text color */
+                font-weight: bold;
+                -webkit-font-smoothing: antialiased;
+                font-size: 1em;
+                text-align: center;
+                line-height: var(--oxy-small-line-height);
+                /*pointer-events: none;*/
+                transition: 0.3s ease-in-out opacity;
+                display: block;
+            }
+
+                
+            #_gallery-12-1584.oxy-gallery-captions .oxy-gallery-item .oxy-gallery-item-contents figcaption:not(:empty) {
+                opacity: 0;
+            }
+            #_gallery-12-1584.oxy-gallery-captions .oxy-gallery-item:hover .oxy-gallery-item-contents figcaption {
+                opacity: 1;
+            }
+
+                    
+            /* hover effects */
+            #_gallery-12-1584.oxy-gallery .oxy-gallery-item {
+              opacity: ;
+              transition: 0.3s ease-in-out opacity;
+            }
+
+            #_gallery-12-1584.oxy-gallery .oxy-gallery-item:hover {
+              opacity: ;
+            }
+
+        
+            #_gallery-12-1584 .oxy-gallery-item .oxy-gallery-item-contents {
+                height: 100%;
+            }
+            #_gallery-12-1584 .oxy-gallery-item .oxy-gallery-item-contents img {
+                height: 100%;
+                object-fit: cover;
+            }</style><?php sx_gallery('_gallery-12-1584', '', '{"gallery_source": "acf", "acf_field": "galerie", "gallery_thumbnail_size": "full", "layout": "false", "display": "grid", "gallery_captions": "no"}'); ?><?php endif; ?><?php /* Retour */ ?><div id="div_block-29-1584" class="ct-div-block c-padding-top-m c-padding-bottom-m c-full-width"><a id="link-31-1584" class="ct-link c-inline c-columns-gap-m c-heading-dark" href="<?php echo esc_attr(sx_fn('get_field', 'lien_projets_btn_lien', 'option')); ?>" target="_self"><div id="fancy_icon-30-1584" class="ct-fancy-icon"><svg id="svg-fancy_icon-30-1584"><use xlink:href="#Lineariconsicon-arrow-left"></use></svg></div><div id="code_block-32-1584" class="ct-code-block"><?php the_field("projet_texte_retour", "option") ?></div></a></div></div></section><?php /* CTA */ ?><?php sx_oxy_part(149); ?>

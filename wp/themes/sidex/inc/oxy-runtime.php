@@ -73,7 +73,9 @@ function sx_fn(string $function, string ...$args): string
 	$value = call_user_func_array($function, $args);
 	$echoed = (string) ob_get_clean();
 	if (is_array($value)) {
-		$value = isset($value['url']) ? $value['url'] : implode(',', array_filter($value, 'is_scalar'));
+		// Liens et images ACF : leur URL. Autre tableau (répéteur…) : Oxygen le convertissait en chaîne, soit « Array »
+		// s'il n'est pas vide, ce qui rend vraies les conditions « non vide » sur un répéteur.
+		$value = isset($value['url']) ? $value['url'] : ($value ? 'Array' : '');
 	}
 	return $echoed . (is_scalar($value) ? (string) $value : '');
 }
