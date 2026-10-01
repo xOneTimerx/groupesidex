@@ -252,6 +252,8 @@ def render_node(name, node, o, orig, sel, ident, extra, ctx):
         if orig.get("code-js"):
             ctx.js.append(f"/* {sel} */\n" + SIGN.sub("", orig["code-js"]).replace("%%ELEMENT_ID%%", sel))
         code = SIGN.sub("", orig.get("code-php", "") or "")
+        if orig.get("unwrap") == "true":
+            return code  # option « unwrap » d'Oxygen : le contenu seul, sans l'enveloppe ct-code-block
         return f"<{tag}{ident}{class_attr('ct-code-block', o)}{extra}>{code}</{tag}>"
 
     if name == "ct_text_block":

@@ -19,6 +19,8 @@ async function shot(browser, name, url, width) {
   });
   await new Promise(r => setTimeout(r, 2500));
   await p.evaluate(() => {
+    // Les animations liées à ScrollTrigger restent en pause tant qu'elles ne sont pas déclenchées : on les termine.
+    if (window.ScrollTrigger) { ScrollTrigger.getAll().forEach(t => { if (t.animation) t.animation.progress(1); }); }
     if (window.gsap) { gsap.globalTimeline.progress(1); gsap.globalTimeline.pause(); }
     for (let i = 1; i < 99999; i++) clearInterval(i); // arrête le carrousel du héros (setInterval 7,5 s)
     document.querySelectorAll('img[loading="lazy"]').forEach(img => { img.loading = 'eager'; });
