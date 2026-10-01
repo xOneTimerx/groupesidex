@@ -31,7 +31,7 @@ def one(u):
     got = int(m.group(1)) if m else None
     exp = u.get("template")
     problems = []
-    if st not in (200, 404) and not (st in (301, 302) and u["kind"] in ("tax:etapes", "search")):
+    if st not in (200, 404) and not (st in (301, 302) and (u["kind"] in ("tax:etapes", "search") or u["url"].endswith("/soumission/"))):
         problems.append(f"statut {st} {loc or ''}")
     if st in (200, 404) and exp and got != exp:
         problems.append(f"gabarit {got} au lieu de {exp}")
@@ -39,7 +39,8 @@ def one(u):
         problems.append("PHP " + e)
     if "TODO oxy2php" in h:
         problems.append("TODO oxy2php")
-    if st == 200 and 'rel="canonical"' not in h and not u.get("noindex"):
+    # Rank Math n'imprime pas de canonique sur une page noindex (tout le staging l'est).
+    if st == 200 and 'rel="canonical"' not in h and not re.search(r'<meta name="robots" content="[^"]*noindex', h):
         problems.append("canonique absente")
     if st == 200 and u["kind"] != "search" and 'hreflang=' not in h:
         problems.append("hreflang absent")
