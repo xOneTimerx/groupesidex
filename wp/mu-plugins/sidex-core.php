@@ -10,6 +10,10 @@
 
 defined('ABSPATH') || exit;
 
+/* Oxygen désactivait wptexturize sur tout le site (component-init.php) : les textes gardent leurs apostrophes et
+   guillemets droits, comme sur le site actuel. Sans cela, l'apostrophe typographique, plus large, change la mise en page. */
+add_filter('run_wptexturize', '__return_false');
+
 add_action('plugins_loaded', static function () {
 	if (in_array('erropix-advanced-scripts/advanced-scripts.php', (array) get_option('active_plugins', []), true)) {
 		return;

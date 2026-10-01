@@ -44,7 +44,8 @@ const TESTS = [
       p.on('pageerror', e => errors.push(e.message.split('\n')[0].slice(0, 120)));
       await p.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140 Safari/537.36');
       await p.setViewport({ width, height: 900 });
-      const url = base + path + (variant ? (path.includes('?') ? '&' : '?') + variant : '');
+      // Référence : ?oxygen=1 sur le même site, ou un autre site (REF_BASE, ex. le site en ligne) une fois Oxygen désactivé.
+      const url = variant ? (process.env.REF_BASE ? process.env.REF_BASE + path : base + path + (path.includes('?') ? '&' : '?') + variant) : base + path;
       try {
         await p.goto(url, { waitUntil: 'networkidle2', timeout: 150000 });
         await sleep(1200);
@@ -53,7 +54,7 @@ const TESTS = [
       await p.close();
     }
     n++; const ok = out[0].r === out[1].r; same += ok;
-    console.log(`${ok ? 'OK ' : '≠  '} ${name} — thème ${out[0].r} / Oxygen ${out[1].r}${out[0].e.length ? '  [erreurs JS thème : ' + out[0].e.join(' ; ') + ']' : ''}`);
+    console.log(`${ok ? 'OK ' : '≠  '} ${name} — thème ${out[0].r} / ${process.env.REF_BASE ? 'en ligne' : 'Oxygen'} ${out[1].r}${out[0].e.length ? '  [erreurs JS thème : ' + out[0].e.join(' ; ') + ']' : ''}`);
   }
   console.log(`\n${same}/${n} comportements identiques`);
   await b.close();
