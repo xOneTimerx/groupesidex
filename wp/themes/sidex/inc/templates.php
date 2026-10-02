@@ -66,6 +66,17 @@ function sx_template_parts(int $id, array &$seen = []): array
 	return $ids;
 }
 
+/* Oxygen n'avait aucun gabarit pour les archives de la taxonomie « etapes » (/etapes/<terme>/, /en/steps/<terme>/) :
+   le site actuel y répond 404. La règle de réécriture « etapes/([^/]+) » n'y produit aucune variable de requête
+   (query_var désactivé), WordPress sert alors l'accueil et redirect_canonical redirige en 301 vers « / ». */
+add_filter('request', static function (array $vars) {
+	global $wp;
+	if (!is_admin() && preg_match('#^(en/)?(etapes|steps)/[^/]+/?$#', (string) $wp->request) && !array_filter($vars)) {
+		return ['error' => '404'];
+	}
+	return $vars;
+});
+
 add_action('wp', static function () {
 	if (is_admin() || !sx_theme_owns_request()) {
 		return;
