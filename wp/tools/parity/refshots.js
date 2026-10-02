@@ -6,7 +6,8 @@ const [,, list, outDir = 'out/ref', widths = '390,768,1024,1440,1920'] = process
 const pages = JSON.parse(fs.readFileSync(list, 'utf8'));
 fs.mkdirSync(outDir, { recursive: true });
 const freezeCss = `*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-[data-aos]{opacity:1!important;transform:none!important}.lineChild,.lineParent{transform:none!important;opacity:1!important}`;
+[data-aos]{opacity:1!important;transform:none!important}.lineChild,.lineParent{transform:none!important;opacity:1!important}
+#crisp-chatbox,.crisp-client,.cky-consent-container,.cky-overlay,#cookie-law-info-bar,.cmplz-cookiebanner{display:none!important}`;
 
 async function shot(browser, name, url, width) {
   const p = await browser.newPage();
