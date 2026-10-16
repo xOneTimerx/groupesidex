@@ -23,3 +23,17 @@ function sx_menu(int $id, string $ul_class, bool $container = true): void
 		'depth' => 0,
 	]);
 }
+
+/* Articles : le gabarit imprime déjà le titre en <h1> ; les <h1> saisis dans le contenu (articles EN surtout)
+   deviennent des <h2> (un seul <h1> par page). La classe sx-h1 garde leur apparence (src/theme.css). */
+add_filter('the_content', static function (string $content): string {
+	if (!is_singular('post') || get_the_ID() !== get_queried_object_id()) {
+		return $content;
+	}
+	return (string) preg_replace_callback('/<h1\b([^>]*)>(.*?)<\/h1>/is', static function (array $m): string {
+		$attrs = preg_match('/\sclass="/i', $m[1])
+			? preg_replace('/\sclass="/i', ' class="sx-h1 ', $m[1], 1)
+			: ' class="sx-h1"' . $m[1];
+		return '<h2' . $attrs . '>' . $m[2] . '</h2>';
+	}, $content);
+}, 20);

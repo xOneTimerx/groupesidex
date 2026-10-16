@@ -14,6 +14,7 @@ defined('ABSPATH') || exit;
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+<a class="sx-skip-link" href="#main"><?php echo sx_lang() === 'en' ? 'Skip to content' : 'Passer au contenu'; ?></a>
 <?php sx_oxy(69); ?>
 <?php wp_footer(); ?>
 </body>

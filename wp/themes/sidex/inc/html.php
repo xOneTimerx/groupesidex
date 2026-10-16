@@ -1,0 +1,184 @@
+<?php
+/**
+ * Retouches du HTML final (audit du 16 oct. 2026) : performance du premier affichage et accessibilité.
+ *
+ * Appliquées sur la page entière plutôt que dans chaque gabarit converti : elles visent aussi le contenu ACF
+ * et les extensions. Aucune ne change la mise en page : attributs seulement (dimensions, chargement différé,
+ * priorité, noms accessibles, rôles), plus une balise <link rel="preload"> dans <head>.
+ * sx_html_filter() est pure (HTML → HTML) : testable hors WordPress.
+ */
+
+defined('ABSPATH') || exit;
+
+add_action('template_redirect', static function () {
+	if (!sx_theme_owns_request() || is_feed() || is_robots() || isset($_GET['format'])) {
+		return;
+	}
+	ob_start(static fn(string $html): string => sx_html_filter($html, [
+		'home' => home_url('/'),
+		'site' => get_bloginfo('name'),
+		'lang' => sx_lang(),
+		'uploads' => wp_get_upload_dir(),
+	]));
+}, 1000);
+
+/**
+ * @param array{home:string,site:string,lang:string,uploads:array{baseurl:string,basedir:string}} $ctx
+ */
+function sx_html_filter(string $html, array $ctx): string
+{
+	if (stripos($html, '<html') === false) {
+		return $html;
+	}
+	$html = sx_html_images($html, $ctx);
+	$html = sx_html_links($html, $ctx);
+	$html = sx_html_triggers($html, $ctx);
+
+	// Icônes du sprite : décoratives (le nom vient du lien ou du bouton qui les porte).
+	$html = preg_replace('/<svg id="svg-(?![^>]*aria-hidden)/', '<svg aria-hidden="true" focusable="false" id="svg-', $html);
+
+	// Jumeau Markdown : URL absolue (les agents la lisent hors contexte de page).
+	$origin = preg_replace('#^(https?://[^/]+).*$#', '$1', $ctx['home']);
+	$html = preg_replace('#(<link\b[^>]*type="text/markdown"[^>]*\bhref=")/#', '$1' . $origin . '/', $html);
+
+	return $html;
+}
+
+/**
+ * Images : la première image du premier écran (fond de la première section ou première <img>) est préchargée en
+ * priorité haute ; les <img> plus bas sont différées (loading="lazy") ; les <img> des téléversements sans
+ * dimensions reçoivent width/height (ratio réservé, moins de décalage de mise en page).
+ */
+function sx_html_images(string $html, array $ctx): string
+{
+	$main = strpos($html, '<main');
+	if ($main === false) {
+		return $html;
+	}
+	$first = strpos($html, '<section', $main);
+	$fold = $first === false ? $main : (strpos($html, '</section>', $first) ?: $main);
+	$end = strpos($html, '</main>', $main) ?: strlen($html);
+	$second = strpos($html, '</section>', $fold + 10);
+	$fold2 = $second !== false && $second < $end ? $second : $end;
+
+	// Candidat LCP : fond de la première section, sinon première <img> matricielle des deux premières sections.
+	$lcp_img = null;
+	$hero = $first !== false ? substr($html, $first, $fold - $first) : '';
+	if (preg_match('/background-image:[^;"]*url\(([^)]+\.(?:webp|jpe?g|png|avif))\)/i', $hero, $m)) {
+		$url = html_entity_decode(trim($m[1], '\'" '));
+		$preload = '<link rel="preload" as="image" href="' . htmlspecialchars($url, ENT_QUOTES) . '" fetchpriority="high">';
+		$html = preg_replace('/<meta charset="[^"]*"\s*\/?>/i', '$0' . "\n" . $preload, $html, 1);
+		$offset = strlen($preload) + 1;
+		$main += $offset;
+		$fold += $offset;
+	} elseif (preg_match('/<img\b(?![^>]*\.svg)[^>]*>/i', substr($html, $main, $fold2 - $main), $m, PREG_OFFSET_CAPTURE)) {
+		$lcp_img = $main + $m[0][1];
+	}
+
+	return preg_replace_callback('/<img\b[^>]*>/i', static function (array $m) use ($ctx, $main, $fold, $lcp_img) {
+		[$tag, $pos] = $m[0];
+		$add = '';
+		if (!preg_match('/\swidth=/i', $tag) && !preg_match('/\ssrcset=/i', $tag) && ($size = sx_html_upload_size($tag, $ctx))) {
+			$add .= ' width="' . $size[0] . '" height="' . $size[1] . '"';
+		}
+		if ($pos === $lcp_img) {
+			if (!str_contains($tag, 'fetchpriority=')) {
+				$add .= ' fetchpriority="high"';
+			}
+			$tag = preg_replace('/\sloading="lazy"/i', '', $tag);
+			$add .= str_contains($tag, 'data-no-lazy') ? '' : ' data-no-lazy="1"';
+		} elseif ($pos > $fold && !preg_match('/\sloading=|ignore-lazyload|data-no-lazy/i', $tag)) {
+			$add .= ' loading="lazy"';
+		}
+		if ($pos > $main && !preg_match('/\sdecoding=/i', $tag)) {
+			$add .= ' decoding="async"';
+		}
+		return $add === '' ? $tag : preg_replace('/\s*\/?>$/', $add . '$0', $tag, 1);
+	}, $html, -1, $count, PREG_OFFSET_CAPTURE);
+}
+
+/** Dimensions intrinsèques d'une image des téléversements (fichier local), sinon null. */
+function sx_html_upload_size(string $tag, array $ctx): ?array
+{
+	static $cache = [];
+	if (!preg_match('/\ssrc="([^"]+)"/i', $tag, $m) || preg_match('/\.svg(\?|$)/i', $m[1])) {
+		return null;
+	}
+	$path = parse_url(html_entity_decode($m[1]), PHP_URL_PATH) ?: '';
+	$base = parse_url($ctx['uploads']['baseurl'], PHP_URL_PATH) ?: '/wp-content/uploads';
+	if (!str_starts_with($path, $base . '/')) {
+		return null;
+	}
+	$file = $ctx['uploads']['basedir'] . substr(rawurldecode($path), strlen($base));
+	if (!array_key_exists($file, $cache)) {
+		$info = is_file($file) ? @getimagesize($file) : false;
+		$cache[$file] = $info && $info[0] > 0 && $info[1] > 0 ? [(int) $info[0], (int) $info[1]] : null;
+	}
+	return $cache[$file];
+}
+
+/** Liens sans texte (logo à alt vide, icône seule) : nom accessible déduit de la cible. */
+function sx_html_links(string $html, array $ctx): string
+{
+	$en = $ctx['lang'] === 'en';
+	$home = rtrim($ctx['home'], '/');
+	$social = ['facebook.com' => 'Facebook', 'instagram.com' => 'Instagram', 'linkedin.com' => 'LinkedIn', 'youtube.com' => 'YouTube',
+		'pinterest.' => 'Pinterest', 'tiktok.com' => 'TikTok', 'x.com' => 'X', 'twitter.com' => 'X'];
+
+	return preg_replace_callback('/<a\b([^>]*)>(.*?)<\/a>/is', static function (array $m) use ($en, $home, $social, $ctx) {
+		[$all, $attrs, $inner] = $m;
+		if (preg_match('/\saria-label(ledby)?=/i', $attrs) || !preg_match('/\shref="([^"]*)"/i', $attrs, $h)) {
+			return $all;
+		}
+		$alts = preg_match_all('/<img\b[^>]*\salt="([^"]+)"/i', $inner, $a) ? implode(' ', $a[1]) : '';
+		if (trim(html_entity_decode(strip_tags($inner))) !== '' || trim($alts) !== '') {
+			return $all;
+		}
+		$href = html_entity_decode($h[1]);
+		$label = null;
+		if (str_starts_with($href, 'tel:')) {
+			$label = ($en ? 'Call ' : 'Appeler le ') . trim(substr($href, 4));
+		} elseif (str_starts_with($href, 'mailto:')) {
+			$label = ($en ? 'Email ' : 'Écrire à ') . trim(substr($href, 7));
+		} elseif ($href === '' || $href === '/' || rtrim($href, '/') === $home || rtrim($href, '/') === $home . '/en') {
+			$label = $ctx['site'] . ($en ? ' — home' : ' — accueil');
+		} else {
+			foreach ($social as $domain => $name) {
+				if (preg_match('#^https?://([a-z0-9-]+\.)*' . preg_quote($domain, '#') . '#i', $href)) {
+					$label = $name;
+					break;
+				}
+			}
+		}
+		if ($label === null) {
+			return $all;
+		}
+		if (str_contains($attrs, 'target="_blank"')) {
+			$label .= $en ? ' (new tab)' : ' (nouvel onglet)';
+		}
+		return '<a aria-label="' . htmlspecialchars($label, ENT_QUOTES) . '"' . $attrs . '>' . $inner . '</a>';
+	}, $html);
+}
+
+/**
+ * Déclencheurs des panneaux (menu, soumission) : des <div>/<span> cliquables (OxyExtras). On les rend
+ * atteignables au clavier (role="button", tabindex) ; assets/js/a11y.js les active avec Entrée/Espace.
+ * Icône seule : nom selon l'icône (menu ou fermer).
+ */
+function sx_html_triggers(string $html, array $ctx): string
+{
+	$en = $ctx['lang'] === 'en';
+	return preg_replace_callback('/<(div|span)\b([^>]*\bclass="[^"]*\bmulti-trigger(?:-soumission)?\b[^"]*"[^>]*)>/i', static function (array $m) use ($html, $en) {
+		[$tag, $name, $attrs] = $m;
+		if (preg_match('/\srole=/i', $attrs)) {
+			return $tag;
+		}
+		$add = ' role="button" tabindex="0"';
+		// Icône seule (ct-fancy-icon) : le <svg> qui suit indique l'action (menu ou fermer).
+		if (str_contains($attrs, 'ct-fancy-icon') && !preg_match('/\saria-label=/i', $attrs)
+			&& preg_match('/^\s*<svg[^>]*>\s*<use xlink:href="#[^"]*-(menu|cross|close)"/i', substr($html, (int) strpos($html, $tag) + strlen($tag), 200), $icon)) {
+			$add .= ' aria-label="' . ($icon[1] === 'menu' ? 'Menu' : ($en ? 'Close' : 'Fermer')) . '"';
+		}
+		return '<' . $name . $add . $attrs . '>';
+	}, $html);
+}

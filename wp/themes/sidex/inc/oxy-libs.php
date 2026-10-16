@@ -9,6 +9,7 @@ const SX_OXY_LIBS = [
 	120 => ['photoswipe'],
 	1582 => ['extras-wpgb'],
 	1584 => ['photoswipe'],
+	1593 => ['glightbox'],
 	1621 => ['extras-wpgb'],
 	1640 => ['fancybox'],
 	1654 => ['flickity', 'photoswipe'],
