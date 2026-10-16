@@ -46,8 +46,8 @@ function sx_html_filter(string $html, array $ctx): string
 
 /**
  * Images : la première image du premier écran (fond de la première section ou première <img>) est préchargée en
- * priorité haute ; les <img> plus bas sont différées (loading="lazy") ; les <img> des téléversements sans
- * dimensions reçoivent width/height (ratio réservé, moins de décalage de mise en page).
+ * priorité haute ; les <img> des téléversements sans dimensions reçoivent width/height (ratio réservé) ; les <img>
+ * dimensionnées plus bas sont différées (loading="lazy").
  */
 function sx_html_images(string $html, array $ctx): string
 {
@@ -87,7 +87,8 @@ function sx_html_images(string $html, array $ctx): string
 			}
 			$tag = preg_replace('/\sloading="lazy"/i', '', $tag);
 			$add .= str_contains($tag, 'data-no-lazy') ? '' : ' data-no-lazy="1"';
-		} elseif ($pos > $fold && !preg_match('/\sloading=|ignore-lazyload|data-no-lazy/i', $tag)) {
+		} elseif ($pos > $fold && preg_match('/\swidth=/i', $tag . $add) && !preg_match('/\sloading=|ignore-lazyload|data-no-lazy/i', $tag)) {
+			// Seulement les images dimensionnées : une image différée sans ratio ferait bouger la page (et les déclencheurs GSAP).
 			$add .= ' loading="lazy"';
 		}
 		if ($pos > $main && !preg_match('/\sdecoding=/i', $tag)) {
