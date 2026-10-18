@@ -11,6 +11,7 @@ for f in $(find wp/themes/sidex wp/mu-plugins -name '*.php'); do php -l "$f" >/d
 
 rsync -az --delete --exclude src/ wp/themes/sidex/ "$HOST:$ROOT/wp-content/themes/sidex/"
 rsync -az wp/mu-plugins/sidex-core.php wp/mu-plugins/sidex-oxygen-bridge.php wp/mu-plugins/sidex-html-sitemap-wpml.php "$HOST:$ROOT/wp-content/mu-plugins/"
-# WP Rocket est actif sur le staging depuis le 2 oct. 2026 : vider aussi son cache (sinon l'ancien HTML reste servi).
-ssh "$HOST" "cd $ROOT && (wp eval 'if (function_exists(\"rocket_clean_domain\")) rocket_clean_domain();' >/dev/null 2>&1; wp kinsta cache purge --all >/dev/null 2>&1) || true"
+# WP Rocket est actif sur le staging depuis le 2 oct. 2026 : vider son cache HTML ET ses copies minifiées
+# (cache/min garde l'ancien JS du thème sous la même URL, rocket_clean_domain ne les touche pas).
+ssh "$HOST" "cd $ROOT && (wp eval 'if (function_exists(\"rocket_clean_domain\")) rocket_clean_domain(); if (function_exists(\"rocket_clean_minify\")) rocket_clean_minify();' >/dev/null 2>&1; wp kinsta cache purge --all >/dev/null 2>&1) || true"
 echo "✓ thème déployé sur https://stg-groupesidexcom-staging.kinsta.cloud/ (ancien rendu : ?oxygen=1)"
