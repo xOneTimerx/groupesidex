@@ -31,13 +31,13 @@ add_action('wp_enqueue_scripts', static function () {
 	$js('sidex-a11y', 'js/a11y.js');
 }, 20);
 
-// Préconnexion à Google Fonts (la feuille Heebo est demandée dès <head>).
-add_filter('wp_resource_hints', static function (array $urls, string $relation) {
-	if ($relation === 'preconnect' && sx_theme_owns_request()) {
-		$urls[] = ['href' => 'https://fonts.gstatic.com', 'crossorigin'];
+// Préconnexion à Google Fonts (la feuille Heebo est demandée dès <head>). Imprimée directement : sur le site, une
+// extension écrase la liste « preconnect » du filtre wp_resource_hints (vu sur le staging le 18 oct. 2026).
+add_action('wp_head', static function () {
+	if (sx_theme_owns_request()) {
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 	}
-	return $urls;
-}, 10, 2);
+}, 1);
 
 /** Bibliothèque d'un élément d'extension (OxyExtras, galerie Oxygen), chargée seulement par les gabarits qui l'utilisent. */
 function sx_lib(string $lib): void
