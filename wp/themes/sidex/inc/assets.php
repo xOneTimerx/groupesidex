@@ -11,8 +11,6 @@ add_action('wp_enqueue_scripts', static function () {
 	if (!sx_theme_owns_request()) {
 		return;
 	}
-	// display=swap : le texte s'affiche tout de suite dans la police de repli (premier affichage plus rapide sur mobile).
-	wp_enqueue_style('sidex-heebo', 'https://fonts.googleapis.com/css?family=Heebo:100,200,300,400,500,600,700,800,900&display=swap', [], null);
 	wp_enqueue_style('sidex', sx_asset_url('app.css'), [], sx_asset_version('app.css'));
 	add_action('wp_enqueue_scripts', static function () {
 		wp_enqueue_style('sidex-site', sx_asset_url('site.css'), ['sidex'], sx_asset_version('site.css'));
@@ -31,13 +29,39 @@ add_action('wp_enqueue_scripts', static function () {
 	$js('sidex-a11y', 'js/a11y.js');
 }, 20);
 
-// Préconnexion à Google Fonts (la feuille Heebo est demandée dès <head>).
-add_filter('wp_resource_hints', static function (array $urls, string $relation) {
-	if ($relation === 'preconnect' && sx_theme_owns_request()) {
-		$urls[] = ['href' => 'https://fonts.gstatic.com', 'crossorigin'];
+/* Heebo auto-hébergée (police variable 100–900, sous-ensembles latin et latin étendu de Google Fonts, licence OFL :
+   assets/fonts/OFL.txt) : plus de feuille ni de connexion à fonts.googleapis.com / fonts.gstatic.com avant le texte,
+   et plus d'adresse IP des visiteurs envoyée à Google. Le latin (accents français compris) est préchargé ;
+   le latin étendu ne se télécharge que si la page en contient un caractère. display=swap : texte affiché tout de suite. */
+add_action('wp_head', static function () {
+	if (!sx_theme_owns_request()) {
+		return;
 	}
-	return $urls;
-}, 10, 2);
+	$font = static fn(string $file) => esc_url(sx_asset_url('fonts/' . $file) . '?ver=' . sx_asset_version('fonts/' . $file));
+	echo '<link rel="preload" href="' . $font('heebo-latin.woff2') . '" as="font" type="font/woff2" crossorigin>' . "\n";
+	echo "<style id=\"sidex-heebo\">\n"
+		. "@font-face{font-family:'Heebo';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . $font('heebo-latin-ext.woff2') . ") format('woff2');"
+		. 'unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}' . "\n"
+		. "@font-face{font-family:'Heebo';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . $font('heebo-latin.woff2') . ") format('woff2');"
+		. 'unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}' . "\n"
+		. "</style>\n";
+}, 2);
+
+/* reCAPTCHA de Fluent Forms (≈ 380 Ko de Google, sur chaque page : le formulaire de soumission est dans le panneau
+   du gabarit 69) : chargé seulement quand un formulaire qui en a un approche de l'écran (panneau ouvert, formulaire
+   de page) ou reçoit le doigt, le clic ou le focus. Le widget est alors dessiné par Fluent Forms (reinitExtras), comme
+   à l'initialisation. Code : assets/js/recaptcha-lazy.js, imprimé en ligne (pas de requête de plus). */
+add_filter('script_loader_tag', static function (string $tag, string $handle, string $src) {
+	if ($handle !== 'google-recaptcha' || !sx_theme_owns_request() || is_admin()) {
+		return $tag;
+	}
+	$src = add_query_arg('onload', 'sxRecaptchaReady', html_entity_decode($src));
+	$js = (string) file_get_contents(SIDEX_DIR . '/assets/js/recaptcha-lazy.js');
+	$lazy = '<script id="google-recaptcha-js" data-src="' . esc_attr($src) . '">' . "\n" . $js . '</script>';
+	// Seule la balise du fichier est remplacée (scripts en ligne « before/after » d'une extension conservés).
+	$out = preg_replace_callback('#<script\b[^>]*\bid=["\']google-recaptcha-js["\'][^>]*></script>#', static fn() => $lazy, $tag, 1, $done);
+	return $done && is_string($out) ? $out : $tag;
+}, 10, 3);
 
 /** Bibliothèque d'un élément d'extension (OxyExtras, galerie Oxygen), chargée seulement par les gabarits qui l'utilisent. */
 function sx_lib(string $lib): void
