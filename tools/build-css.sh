@@ -23,3 +23,5 @@ strip() { sed -E "s#${HOSTS}(/wp-content/)#\4#g"; }
 } | strip > $T/assets/site.css
 grep -cE "$HOSTS" $T/assets/app.css $T/assets/site.css || true
 echo "✓ app.css $(wc -c < $T/assets/app.css) o, site.css $(wc -c < $T/assets/site.css) o"
+# Feuilles réduites par gabarit (assets/css/t/), à partir du relevé tools/out/css-usage.json (tools/css_usage.py).
+python3 tools/split_css.py >/dev/null && echo "✓ feuilles par gabarit : $(ls $T/assets/css/t | wc -l) fichiers"
