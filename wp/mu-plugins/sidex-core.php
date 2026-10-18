@@ -58,8 +58,9 @@ add_action('plugins_loaded', static function () {
 		}
 	});
 	foreach (['do_feed', 'do_feed_rdf', 'do_feed_rss', 'do_feed_rss2', 'do_feed_atom', 'do_feed_rss2_comments', 'do_feed_atom_comments'] as $feed) {
+		// Flux désactivés volontairement : 410 (Gone) plutôt que le 500 par défaut de wp_die() (audit du 16 oct. 2026).
 		add_action($feed, static function () {
-			wp_die(__('No feed available, please visit the <a href="' . esc_url(home_url('/')) . '">homepage</a>!'));
+			wp_die(__('No feed available, please visit the <a href="' . esc_url(home_url('/')) . '">homepage</a>!'), '', ['response' => 410]);
 		}, 1);
 	}
 	remove_action('wp_head', 'feed_links_extra', 3);
