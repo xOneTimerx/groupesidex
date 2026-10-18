@@ -47,22 +47,6 @@ add_action('wp_head', static function () {
 		. "</style>\n";
 }, 2);
 
-/* reCAPTCHA de Fluent Forms (≈ 380 Ko de Google, sur chaque page : le formulaire de soumission est dans le panneau
-   du gabarit 69) : chargé seulement quand un formulaire qui en a un approche de l'écran (panneau ouvert, formulaire
-   de page) ou reçoit le doigt, le clic ou le focus. Le widget est alors dessiné par Fluent Forms (reinitExtras), comme
-   à l'initialisation. Code : assets/js/recaptcha-lazy.js, imprimé en ligne (pas de requête de plus). */
-add_filter('script_loader_tag', static function (string $tag, string $handle, string $src) {
-	if ($handle !== 'google-recaptcha' || !sx_theme_owns_request() || is_admin()) {
-		return $tag;
-	}
-	$src = add_query_arg('onload', 'sxRecaptchaReady', html_entity_decode($src));
-	$js = (string) file_get_contents(SIDEX_DIR . '/assets/js/recaptcha-lazy.js');
-	$lazy = '<script id="google-recaptcha-js" data-src="' . esc_attr($src) . '">' . "\n" . $js . '</script>';
-	// Seule la balise du fichier est remplacée (scripts en ligne « before/after » d'une extension conservés).
-	$out = preg_replace_callback('#<script\b[^>]*\bid=["\']google-recaptcha-js["\'][^>]*></script>#', static fn() => $lazy, $tag, 1, $done);
-	return $done && is_string($out) ? $out : $tag;
-}, 10, 3);
-
 /** Bibliothèque d'un élément d'extension (OxyExtras, galerie Oxygen), chargée seulement par les gabarits qui l'utilisent. */
 function sx_lib(string $lib): void
 {
