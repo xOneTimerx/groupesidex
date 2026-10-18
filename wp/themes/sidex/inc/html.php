@@ -43,7 +43,7 @@ function sx_html_filter(string $html, array $ctx, ?array &$errors = null): strin
 	$steps = [
 		'images' => static fn(string $h) => sx_html_images($h, $ctx),
 		'backgrounds' => static fn(string $h) => sx_html_hero_backgrounds($h),
-		'styles' => static fn(string $h) => sx_html_unused_styles($h),
+		'unused' => static fn(string $h) => sx_html_unused_assets($h),
 		'links' => static fn(string $h) => sx_html_links($h, $ctx),
 		'triggers' => static fn(string $h) => sx_html_triggers($h, $ctx),
 		// Icônes du sprite : décoratives (le nom vient du lien ou du bouton qui les porte).
@@ -76,10 +76,9 @@ function sx_html_filter(string $html, array $ctx, ?array &$errors = null): strin
 /**
  * Images : la première image du premier écran (fond de la première section ou première <img>) est préchargée en
  * priorité haute ; les <img> des téléversements sans dimensions reçoivent width/height (ratio réservé) ; les <img>
- * dimensionnées plus bas sont différées (loading="lazy") ; les <img> des téléversements sans srcset reçoivent les
- * tailles intermédiaires de WordPress ($ctx['srcset']) : le mobile ne télécharge plus l'original de 1200 à 1700 px.
- * sizes="auto, 100vw" : largeur affichée réelle pour les images différées, sinon la largeur de l'écran (jamais plus
- * grand que l'original, qui reste la plus grande taille du srcset).
+ * dimensionnées plus bas sont différées (loading="lazy") ; ces images différées, si elles n'ont pas de srcset,
+ * reçoivent les tailles intermédiaires de WordPress ($ctx['srcset']) avec sizes="auto, 100vw" : le navigateur choisit
+ * selon la largeur réellement affichée (le mobile ne télécharge plus l'original de 1200 à 1700 px pour une vignette).
  */
 function sx_html_images(string $html, array $ctx): ?string
 {
@@ -119,10 +118,6 @@ function sx_html_images(string $html, array $ctx): ?string
 		if (!preg_match('/\swidth=/i', $tag) && !preg_match('/\ssrcset=/i', $tag) && ($size = sx_html_upload_size($tag, $ctx))) {
 			$add .= ' width="' . $size[0] . '" height="' . $size[1] . '"';
 		}
-		if (isset($ctx['srcset']) && !preg_match('/\ssrcset=/i', $tag) && preg_match('/\ssrc="([^"]+)"/i', $tag, $src)
-			&& ($set = ($ctx['srcset'])(html_entity_decode($src[1])))) {
-			$add .= ' srcset="' . htmlspecialchars($set, ENT_QUOTES) . '"' . (preg_match('/\ssizes=/i', $tag) ? '' : ' sizes="auto, 100vw"');
-		}
 		if ($pos === $lcp_img) {
 			if (!str_contains($tag, 'fetchpriority=')) {
 				$add .= ' fetchpriority="high"';
@@ -130,11 +125,17 @@ function sx_html_images(string $html, array $ctx): ?string
 			$tag = preg_replace('/\sloading="lazy"/i', '', $tag);
 			$add .= str_contains($tag, 'data-no-lazy') ? '' : ' data-no-lazy="1"';
 		} elseif ($pos > $fold && preg_match('/\swidth=/i', $tag . $add) && !preg_match('/\sloading=|ignore-lazyload|data-no-lazy/i', $tag)) {
-			// Seulement les images dimensionnées : une image différée sans ratio ferait bouger la page (et les déclencheurs GSAP).
+			// Seulement les images dimensionnées : une image différée sans ratio ferait bouger la page (et les révélations de titres).
 			$add .= ' loading="lazy"';
 		}
 		if ($pos > $main && !preg_match('/\sdecoding=/i', $tag)) {
 			$add .= ' decoding="async"';
+		}
+		// srcset seulement sur les images différées : sizes="auto" (largeur réellement affichée) n'est valable qu'avec
+		// loading="lazy" ; une image du premier écran garderait sizes="100vw" et demanderait une source trop grande.
+		if (isset($ctx['srcset']) && preg_match('/\sloading="lazy"/i', $tag . $add) && !preg_match('/\ssrcset=/i', $tag) && preg_match('/\ssrc="([^"]+)"/i', $tag, $src)
+			&& ($set = ($ctx['srcset'])(html_entity_decode($src[1])))) {
+			$add .= ' srcset="' . htmlspecialchars($set, ENT_QUOTES) . '"' . (preg_match('/\ssizes=/i', $tag) ? '' : ' sizes="auto, 100vw"');
 		}
 		return $add === '' ? $tag : preg_replace('/\s*\/?>$/', $add . '$0', $tag, 1);
 	}, $html, -1, $count, PREG_OFFSET_CAPTURE);
@@ -222,16 +223,24 @@ function sx_html_hero_backgrounds(string $html): ?string
 }
 
 /**
- * Feuilles d'extension chargées sur toutes les pages alors que seul un élément précis s'en sert : retirées de <head>
- * (une requête bloquant l'affichage de moins) quand la page n'a pas cet élément. TablePress : 4 articles seulement.
+ * Fichiers enfilés sur toutes les pages alors que seul un élément précis s'en sert : retirés quand la page n'a pas
+ * cet élément (contenu ACF compris, d'où le contrôle sur le HTML final). TablePress : 4 articles seulement ;
+ * AOS (14 Ko) : éléments data-aos ou lignes verticales (oxygen-inline.js ne l'appelle que s'il est là).
  */
-function sx_html_unused_styles(string $html): ?string
+function sx_html_unused_assets(string $html): ?string
 {
 	$body = stripos($html, '<body');
-	if ($body === false || stripos($html, 'tablepress', $body) !== false) {
+	if ($body === false) {
 		return $html;
 	}
-	return preg_replace('#<link\b[^>]*\bid=[\'"]tablepress-default-css[\'"][^>]*>\s*#i', '', $html, 1);
+	$page = substr($html, $body);
+	if (stripos($page, 'tablepress') === false) {
+		$html = preg_replace('#<link\b[^>]*\bid=[\'"]tablepress-default-css[\'"][^>]*>\s*#i', '', $html, 1);
+	}
+	if (is_string($html) && !preg_match('/\sdata-aos=|\bclass="[^"]*\bvertical-line\b/i', $page)) {
+		$html = preg_replace('#<script\b[^>]*\bid=[\'"]sidex-aos-js[\'"][^>]*></script>\s*#i', '', $html, 1);
+	}
+	return $html;
 }
 
 /** Liens sans texte (logo à alt vide, icône seule) : nom accessible déduit de la cible. */

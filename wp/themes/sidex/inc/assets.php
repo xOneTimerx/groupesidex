@@ -7,25 +7,41 @@
 
 defined('ABSPATH') || exit;
 
+/**
+ * app.css / site.css réduits au gabarit de la page (assets/css/t/<feuille>-<gabarit>.css, tools/split_css.py) :
+ * 248 Ko de règles complètes → les seules dont les classes existent sur les pages de ce gabarit. Feuille complète
+ * pour un gabarit sans relevé (recherche, auteur) ou si le fichier réduit manque.
+ */
+function sx_sheet(string $name): string
+{
+	$file = 'css/t/' . $name . '-' . (int) ($GLOBALS['sx_template'] ?? 0) . '.css';
+	return is_file(SIDEX_DIR . '/assets/' . $file) ? $file : $name . '.css';
+}
+
 add_action('wp_enqueue_scripts', static function () {
 	if (!sx_theme_owns_request()) {
 		return;
 	}
-	wp_enqueue_style('sidex', sx_asset_url('app.css'), [], sx_asset_version('app.css'));
+	$app = sx_sheet('app');
+	wp_enqueue_style('sidex', sx_asset_url($app), [], sx_asset_version($app));
 	add_action('wp_enqueue_scripts', static function () {
-		wp_enqueue_style('sidex-site', sx_asset_url('site.css'), ['sidex'], sx_asset_version('site.css'));
+		$site = sx_sheet('site');
+		wp_enqueue_style('sidex-site', sx_asset_url($site), ['sidex'], sx_asset_version($site));
 	}, 40);
 
 	$js = static function (string $handle, string $file, array $deps = []) {
 		wp_enqueue_script($handle, sx_asset_url($file), $deps, sx_asset_version($file), ['in_footer' => true]);
 	};
 	// Splide et TextPlugin (GSAP) retirés : aucun élément ni script du site ne les utilisait (audit du 16 oct. 2026).
+	// GSAP + ScrollTrigger + SplitText ne servaient plus qu'à la révélation des titres : js/title-reveal.js (natif).
+	// GSAP reste pour le diaporama de l'accueil (o-1688.js, inc/oxy-runtime.php). AOS : retiré des pages sans
+	// élément data-aos par inc/html.php.
+	wp_register_script('sidex-gsap', sx_asset_url('vendor/gsap.min.js'), [], sx_asset_version('vendor/gsap.min.js'), ['in_footer' => true]);
 	$js('sidex-aos', 'vendor/aos.js');
 	$js('sidex-external-links', 'vendor/oxy-toolbox-external-links.js', ['jquery']);
-	$js('sidex-gsap', 'vendor/gsap.min.js');
-	$js('sidex-gsap-scrolltrigger', 'vendor/ScrollTrigger.min.js', ['sidex-gsap']);
 	$js('sidex', 'js/oxygen-inline.js', ['jquery', 'sidex-aos']);
-	$js('sidex-advanced-scripts', 'js/advanced-scripts.js', ['jquery', 'sidex-gsap', 'sidex-gsap-scrolltrigger', 'sidex']);
+	$js('sidex-advanced-scripts', 'js/advanced-scripts.js', ['jquery', 'sidex']);
+	$js('sidex-title-reveal', 'js/title-reveal.js');
 	$js('sidex-a11y', 'js/a11y.js');
 }, 20);
 
