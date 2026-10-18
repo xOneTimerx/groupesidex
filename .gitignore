@@ -8,3 +8,5 @@ wp-config.php
 /tmp/
 # Exports bruts du site (gabarits Oxygen, scripts) : hors dépôt, dans ~/sidex/oxygen-debuild/
 docs/oxygen-source/
+__pycache__/
+*.pyc
