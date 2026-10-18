@@ -20,6 +20,7 @@ add_action('template_redirect', static function () {
 			'site' => get_bloginfo('name'),
 			'lang' => sx_lang(),
 			'uploads' => wp_get_upload_dir(),
+			'srcset' => 'sx_upload_srcset',
 		], $errors);
 		// Une étape a échoué (HTML d'origine conservé pour elle) : une seule ligne de journal par jour, pas par requête.
 		if ($errors && !get_transient('sx_html_filter_error')) {
@@ -31,7 +32,7 @@ add_action('template_redirect', static function () {
 }, 1000);
 
 /**
- * @param array{home:string,site:string,lang:string,uploads:array{baseurl:string,basedir:string}} $ctx
+ * @param array{home:string,site:string,lang:string,uploads:array{baseurl:string,basedir:string},srcset?:callable(string):?string} $ctx
  */
 function sx_html_filter(string $html, array $ctx, ?array &$errors = null): string
 {
@@ -41,6 +42,8 @@ function sx_html_filter(string $html, array $ctx, ?array &$errors = null): strin
 	}
 	$steps = [
 		'images' => static fn(string $h) => sx_html_images($h, $ctx),
+		'backgrounds' => static fn(string $h) => sx_html_hero_backgrounds($h),
+		'styles' => static fn(string $h) => sx_html_unused_styles($h),
 		'links' => static fn(string $h) => sx_html_links($h, $ctx),
 		'triggers' => static fn(string $h) => sx_html_triggers($h, $ctx),
 		// Icônes du sprite : décoratives (le nom vient du lien ou du bouton qui les porte).
@@ -73,7 +76,10 @@ function sx_html_filter(string $html, array $ctx, ?array &$errors = null): strin
 /**
  * Images : la première image du premier écran (fond de la première section ou première <img>) est préchargée en
  * priorité haute ; les <img> des téléversements sans dimensions reçoivent width/height (ratio réservé) ; les <img>
- * dimensionnées plus bas sont différées (loading="lazy").
+ * dimensionnées plus bas sont différées (loading="lazy") ; les <img> des téléversements sans srcset reçoivent les
+ * tailles intermédiaires de WordPress ($ctx['srcset']) : le mobile ne télécharge plus l'original de 1200 à 1700 px.
+ * sizes="auto, 100vw" : largeur affichée réelle pour les images différées, sinon la largeur de l'écran (jamais plus
+ * grand que l'original, qui reste la plus grande taille du srcset).
  */
 function sx_html_images(string $html, array $ctx): ?string
 {
@@ -113,6 +119,10 @@ function sx_html_images(string $html, array $ctx): ?string
 		if (!preg_match('/\swidth=/i', $tag) && !preg_match('/\ssrcset=/i', $tag) && ($size = sx_html_upload_size($tag, $ctx))) {
 			$add .= ' width="' . $size[0] . '" height="' . $size[1] . '"';
 		}
+		if (isset($ctx['srcset']) && !preg_match('/\ssrcset=/i', $tag) && preg_match('/\ssrc="([^"]+)"/i', $tag, $src)
+			&& ($set = ($ctx['srcset'])(html_entity_decode($src[1])))) {
+			$add .= ' srcset="' . htmlspecialchars($set, ENT_QUOTES) . '"' . (preg_match('/\ssizes=/i', $tag) ? '' : ' sizes="auto, 100vw"');
+		}
 		if ($pos === $lcp_img) {
 			if (!str_contains($tag, 'fetchpriority=')) {
 				$add .= ' fetchpriority="high"';
@@ -148,6 +158,80 @@ function sx_html_upload_size(string $tag, array $ctx): ?array
 		$cache[$file] = $info && $info[0] > 0 && $info[1] > 0 ? [(int) $info[0], (int) $info[1]] : null;
 	}
 	return $cache[$file];
+}
+
+/**
+ * srcset d'une image des téléversements (tailles intermédiaires de WordPress), sinon null. GIF exclus : leurs tailles
+ * intermédiaires ne sont pas animées.
+ */
+function sx_upload_srcset(string $url): ?string
+{
+	static $cache = [];
+	if (preg_match('/\.(svg|gif)(\?|$)/i', $url)) {
+		return null;
+	}
+	if (!array_key_exists($url, $cache)) {
+		$abs = str_starts_with($url, '/') ? preg_replace('#^(https?://[^/]+).*$#', '$1', wp_get_upload_dir()['baseurl']) . $url : $url;
+		$id = attachment_url_to_postid($abs);
+		$meta = $id ? wp_get_attachment_metadata($id) : false;
+		$set = null;
+		if (is_array($meta) && !empty($meta['width']) && !empty($meta['height'])) {
+			$size = [(int) $meta['width'], (int) $meta['height']];
+			$set = wp_calculate_image_srcset($size, $abs, $meta, $id) ?: null;
+		}
+		$cache[$url] = $set;
+	}
+	return $cache[$url];
+}
+
+/**
+ * Diaporama du premier écran (accueil : 4 diapositives en image de fond) : seule la première image se charge tout de
+ * suite (c'est l'élément LCP, préchargé) ; les suivantes passent en data-sx-bg et un petit script les remet au
+ * chargement de la page, au plus tard 4 s après (la 2e diapositive arrive à 7,5 s). Sur mobile, ≈ 400 Ko de moins en
+ * concurrence avec l'image LCP.
+ */
+function sx_html_hero_backgrounds(string $html): ?string
+{
+	$main = strpos($html, '<main');
+	$first = $main === false ? false : strpos($html, '<section', $main);
+	$end = $first === false ? false : strpos($html, '</section>', $first);
+	if ($end === false) {
+		return $html;
+	}
+	$seen = 0;
+	$hero = preg_replace_callback('/<([a-z][a-z0-9]*)\b([^>]*?)\sstyle="([^"]*background-image:[^";]*url\([^)]+\)[^"]*)"([^>]*)>/i',
+		static function (array $m) use (&$seen) {
+			if ($seen++ === 0 || str_contains($m[0], 'data-sx-bg') || !preg_match('/background-image:([^;"]*);?/i', $m[3], $bg)) {
+				return $m[0];
+			}
+			$style = trim(str_replace($bg[0], '', $m[3]), '; ');
+			return '<' . $m[1] . $m[2] . ($style !== '' ? ' style="' . $style . '"' : '') . ' data-sx-bg="' . trim($bg[1]) . '"' . $m[4] . '>';
+		}, substr($html, $first, $end - $first));
+	if (!is_string($hero)) {
+		return null;
+	}
+	if ($seen < 2) {
+		return $html;
+	}
+	$script = '<script id="sidex-hero-bg">(function(){var done=false;function show(){if(done)return;done=true;'
+		. 'document.querySelectorAll("[data-sx-bg]").forEach(function(el){el.style.backgroundImage=el.getAttribute("data-sx-bg");el.removeAttribute("data-sx-bg");});}'
+		. 'window.addEventListener("load",show);setTimeout(show,4000);})();</script>';
+	$html = substr($html, 0, $first) . $hero . substr($html, $end);
+	$body = strripos($html, '</body>');
+	return $body === false ? $html . $script : substr($html, 0, $body) . $script . "\n" . substr($html, $body);
+}
+
+/**
+ * Feuilles d'extension chargées sur toutes les pages alors que seul un élément précis s'en sert : retirées de <head>
+ * (une requête bloquant l'affichage de moins) quand la page n'a pas cet élément. TablePress : 4 articles seulement.
+ */
+function sx_html_unused_styles(string $html): ?string
+{
+	$body = stripos($html, '<body');
+	if ($body === false || stripos($html, 'tablepress', $body) !== false) {
+		return $html;
+	}
+	return preg_replace('#<link\b[^>]*\bid=[\'"]tablepress-default-css[\'"][^>]*>\s*#i', '', $html, 1);
 }
 
 /** Liens sans texte (logo à alt vide, icône seule) : nom accessible déduit de la cible. */

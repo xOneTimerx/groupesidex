@@ -33,6 +33,38 @@ check('page normale : nom accessible du logo', str_contains($out, 'aria-label="G
 check('page normale : déclencheur clavier', str_contains($out, 'role="button" tabindex="0" aria-label="Menu"'));
 check('page normale : jumeau Markdown absolu', str_contains($out, 'href="https://www.groupesidex.com/?format=md"'));
 
+// 1b. Diaporama du premier écran : seule la première image de fond part tout de suite, les suivantes sont rendues par script.
+$slides = '<!doctype html><html><head><meta charset="UTF-8"></head><body><main id="main"><section>'
+	. '<div class="slide__inner" style="background-image:linear-gradient(rgba(10,10,10,0.69), rgba(10,10,10,0.69)), url(https://www.groupesidex.com/wp-content/uploads/a.webp);background-size:auto,  cover;"></div>'
+	. '<div class="slide__inner" style="background-image:linear-gradient(rgba(10,10,10,0.69), rgba(10,10,10,0.69)), url(https://www.groupesidex.com/wp-content/uploads/b.webp);background-size:auto,  cover;"></div>'
+	. '</section><section style="background-image:url(https://www.groupesidex.com/wp-content/uploads/c.webp)"></section></main></body></html>';
+$out = sx_html_filter($slides, $ctx, $errors);
+check('diaporama : aucune étape en échec', $errors === []);
+check('diaporama : 1re diapositive préchargée et gardée en fond', str_contains($out, 'rel="preload" as="image" href="https://www.groupesidex.com/wp-content/uploads/a.webp"')
+	&& str_contains($out, 'style="background-image:linear-gradient(rgba(10,10,10,0.69), rgba(10,10,10,0.69)), url(https://www.groupesidex.com/wp-content/uploads/a.webp)'));
+check('diaporama : 2e diapositive différée, reste du style conservé', str_contains($out,
+	'style="background-size:auto,  cover" data-sx-bg="linear-gradient(rgba(10,10,10,0.69), rgba(10,10,10,0.69)), url(https://www.groupesidex.com/wp-content/uploads/b.webp)"'));
+check('diaporama : sections suivantes intactes, script avant </body>', str_contains($out, '<section style="background-image:url(https://www.groupesidex.com/wp-content/uploads/c.webp)">')
+	&& preg_match('#<script id="sidex-hero-bg">.*</script>\s*</body>#s', $out) === 1);
+check('une seule image de fond : rien de différé', !str_contains(sx_html_filter($page, $ctx), 'data-sx-bg'));
+
+// 1c. srcset des téléversements (WordPress fournit les tailles) ; SVG, srcset existant et URL inconnue intacts.
+$sets = $ctx + ['srcset' => static fn(string $url) => str_ends_with($url, 'projet.webp')
+	? 'https://www.groupesidex.com/wp-content/uploads/projet-768x768.webp 768w, https://www.groupesidex.com/wp-content/uploads/projet.webp 1200w' : null];
+$imgs = '<!doctype html><html><head><meta charset="UTF-8"></head><body><main id="main"><section>Hero</section><section>'
+	. '<img src="/wp-content/uploads/projet.webp" width="1200" height="1200"><img src="/wp-content/uploads/autre.webp" width="10" height="10">'
+	. '<img src="/wp-content/uploads/projet.webp" srcset="x.webp 1w" width="1" height="1"><img src="/wp-content/uploads/logo.svg">'
+	. '</section></main></body></html>';
+$out = sx_html_filter($imgs, $sets, $errors);
+check('srcset : ajouté avec sizes="auto, 100vw"', str_contains($out, 'srcset="https://www.groupesidex.com/wp-content/uploads/projet-768x768.webp 768w, https://www.groupesidex.com/wp-content/uploads/projet.webp 1200w" sizes="auto, 100vw"'));
+check('srcset : un seul ajout (URL inconnue, srcset existant, SVG intacts)', substr_count($out, 'srcset=') === 2 && str_contains($out, 'srcset="x.webp 1w" width="1"'));
+
+// 1d. Feuille TablePress : retirée sans tableau, gardée avec.
+$tp = '<!doctype html><html><head><meta charset="UTF-8"><link rel=\'stylesheet\' id=\'tablepress-default-css\' href=\'/wp-content/tablepress-combined.min.css?ver=12\' media=\'all\' />'
+	. "\n</head><body><main id=\"main\">%s</main></body></html>";
+check('TablePress : feuille retirée sans tableau', !str_contains(sx_html_filter(sprintf($tp, '<p>Texte</p>'), $ctx), 'tablepress-default-css'));
+check('TablePress : feuille gardée avec un tableau', str_contains(sx_html_filter(sprintf($tp, '<table id="tablepress-1" class="tablepress tablepress-id-1"></table>'), $ctx), 'tablepress-default-css'));
+
 // 2. Erreur PCRE forcée (limite de backtracking minuscule, JIT coupé) sur une page lourde.
 function with_tiny_pcre_limit(callable $fn)
 {
