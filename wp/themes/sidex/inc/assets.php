@@ -11,7 +11,8 @@ add_action('wp_enqueue_scripts', static function () {
 	if (!sx_theme_owns_request()) {
 		return;
 	}
-	wp_enqueue_style('sidex-heebo', 'https://fonts.googleapis.com/css?family=Heebo:100,200,300,400,500,600,700,800,900', [], null);
+	// display=swap : le texte s'affiche tout de suite dans la police de repli (premier affichage plus rapide sur mobile).
+	wp_enqueue_style('sidex-heebo', 'https://fonts.googleapis.com/css?family=Heebo:100,200,300,400,500,600,700,800,900&display=swap', [], null);
 	wp_enqueue_style('sidex', sx_asset_url('app.css'), [], sx_asset_version('app.css'));
 	add_action('wp_enqueue_scripts', static function () {
 		wp_enqueue_style('sidex-site', sx_asset_url('site.css'), ['sidex'], sx_asset_version('site.css'));
@@ -20,19 +21,23 @@ add_action('wp_enqueue_scripts', static function () {
 	$js = static function (string $handle, string $file, array $deps = []) {
 		wp_enqueue_script($handle, sx_asset_url($file), $deps, sx_asset_version($file), ['in_footer' => true]);
 	};
+	// Splide et TextPlugin (GSAP) retirés : aucun élément ni script du site ne les utilisait (audit du 16 oct. 2026).
 	$js('sidex-aos', 'vendor/aos.js');
-	$js('sidex-splide', 'vendor/splide.min.js');
-	$js('sidex-splide-autoscroll', 'vendor/splide-extension-auto-scroll.min.js', ['sidex-splide']);
 	$js('sidex-external-links', 'vendor/oxy-toolbox-external-links.js', ['jquery']);
 	$js('sidex-gsap', 'vendor/gsap.min.js');
 	$js('sidex-gsap-scrolltrigger', 'vendor/ScrollTrigger.min.js', ['sidex-gsap']);
-	$js('sidex-gsap-text', 'vendor/TextPlugin.min.js', ['sidex-gsap']);
 	$js('sidex', 'js/oxygen-inline.js', ['jquery', 'sidex-aos']);
-	$js('sidex-advanced-scripts', 'js/advanced-scripts.js', ['jquery', 'sidex-gsap', 'sidex-gsap-scrolltrigger', 'sidex-gsap-text', 'sidex']);
-	// GLightbox (Advanced Scripts 143/144/248 : couleurs des revêtements).
-	wp_enqueue_style('sidex-glightbox', sx_asset_url('vendor/glightbox.min.css'), [], sx_asset_version('vendor/glightbox.min.css'));
-	$js('sidex-glightbox', 'vendor/glightbox.js');
+	$js('sidex-advanced-scripts', 'js/advanced-scripts.js', ['jquery', 'sidex-gsap', 'sidex-gsap-scrolltrigger', 'sidex']);
+	$js('sidex-a11y', 'js/a11y.js');
 }, 20);
+
+// Préconnexion à Google Fonts (la feuille Heebo est demandée dès <head>).
+add_filter('wp_resource_hints', static function (array $urls, string $relation) {
+	if ($relation === 'preconnect' && sx_theme_owns_request()) {
+		$urls[] = ['href' => 'https://fonts.gstatic.com', 'crossorigin'];
+	}
+	return $urls;
+}, 10, 2);
 
 /** Bibliothèque d'un élément d'extension (OxyExtras, galerie Oxygen), chargée seulement par les gabarits qui l'utilisent. */
 function sx_lib(string $lib): void
@@ -68,6 +73,11 @@ function sx_lib(string $lib): void
 			break;
 		case 'skeletabs':
 			$js('sidex-skeletabs', 'vendor/skeletabs.js');
+			break;
+		case 'glightbox':
+			// Advanced Scripts 143/144/248 : nuanciers des revêtements (classe glightbox-couleurs du contenu ACF).
+			wp_enqueue_style('sidex-glightbox', sx_asset_url('vendor/glightbox.min.css'), [], sx_asset_version('vendor/glightbox.min.css'));
+			$js('sidex-glightbox', 'vendor/glightbox.js', []);
 			break;
 		case 'extras-wpgb':
 			$js('sidex-extras-wpgb', 'vendor/gridbuildersupport.js');

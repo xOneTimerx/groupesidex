@@ -308,14 +308,14 @@ function output_types_new() {
 if (!function_exists('output_image_couleur')) {
 function output_image_couleur($size) { 
     $src = get_the_post_thumbnail_url(get_the_ID(), $size); ?>
-    <img class="glightbox-couleurs" src="<?php echo $src; ?>" data-glightbox="title: <?php the_title(); ?>">
+    <img class="glightbox-couleurs" src="<?php echo $src; ?>" alt="<?php echo esc_attr(get_the_title()); ?>" data-glightbox="title: <?php the_title(); ?>">
 <?php }
 }
 
 if (!function_exists('output_image_etape')) {
 function output_image_etape($size) { 
     $src = get_the_post_thumbnail_url(get_the_ID(), $size); ?>
-    <a href="<?php the_permalink(); ?>"><img class="" src="<?php echo $src; ?>"></a>
+    <a href="<?php the_permalink(); ?>"><img class="" src="<?php echo $src; ?>" alt="<?php echo esc_attr(get_the_title()); ?>"></a>
 <?php }
 }
 

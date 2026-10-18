@@ -2,6 +2,7 @@
 # Mise en ligne du thème « sidex » sur groupesidex.com (retrait d'Oxygen) — SANS toucher à la base.
 #
 #   bash wp/scripts/golive.sh check      # relevé du live (lecture seule) : ~/sidex/golive/avant-<date>.json
+#                                        # + dérive des gabarits Oxygen depuis la conversion (wp/tools/parity/drift.py)
 #   bash wp/scripts/golive.sh deploy     # sauvegardes → thème + mu-plugin → bascule → purge → vérification
 #   bash wp/scripts/golive.sh rollback   # retour à Oxygen (thème no-theme + 7 extensions réactivées) → purge
 #
@@ -24,6 +25,8 @@ MU="wp/mu-plugins/sidex-core.php wp/mu-plugins/sidex-html-sitemap-wpml.php"
 OUT=~/sidex/golive/$TARGET; mkdir -p "$OUT"
 STAMP=$(date +%Y%m%d-%H%M%S)
 SNAP=wp/tools/parity/snap.py
+DRIFT=wp/tools/parity/drift.py
+MAX_AGE=${MAX_AGE:-180}  # minutes : au-delà, le relevé « avant » ne reflète plus le live (contenu publié entre-temps)
 
 remote() { ssh "$HOST" "cd $ROOT && $*"; }
 confirm() {
@@ -54,10 +57,17 @@ case "${1:-}" in
 		python3 "$SNAP" "$SITE" "$OUT/avant-$STAMP.json"
 		ln -sf "$OUT/avant-$STAMP.json" "$OUT/avant.json"
 		echo "✓ relevé de référence : $OUT/avant.json"
+		echo "== dérive des gabarits Oxygen depuis la conversion"
+		python3 "$DRIFT" "$SITE" | grep -v '^✓' || { echo "✗ gabarits modifiés dans Oxygen : reconvertir avant la mise en ligne"; exit 1; }
 		;;
 
 	deploy)
 		[ -f "$OUT/avant.json" ] || { echo "Lancer d'abord : $0 check"; exit 1; }
+		[ -n "$(find -L "$OUT/avant.json" -mmin -"$MAX_AGE")" ] || { echo "Relevé « avant » de plus de $MAX_AGE min : relancer $0 check"; exit 1; }
+		# On déploie ce qui est versionné : CSS régénérées identiques et aucun fichier du thème modifié hors commit.
+		bash tools/build-css.sh >/dev/null
+		git diff --quiet HEAD -- wp/themes/sidex wp/mu-plugins || { echo "✗ thème ou mu-plugins modifiés hors commit (git status) : arrêt"; exit 1; }
+		echo "Version déployée : $(git log -1 --format='%h %s')"
 		confirm "mise en ligne du thème sidex, désactivation d'Oxygen"
 		echo "== état actuel"
 		state=$(remote "wp option get stylesheet && wp plugin is-active oxygen && echo oxygen-actif")
@@ -69,7 +79,6 @@ case "${1:-}" in
 		remote "mkdir -p ~/private && wp db export ~/private/sidex-pre-theme-$STAMP.sql --quiet && gzip -f ~/private/sidex-pre-theme-$STAMP.sql && ls -la ~/private/sidex-pre-theme-$STAMP.sql.gz"
 
 		echo "== fichiers (inertes avant la bascule)"
-		bash tools/build-css.sh >/dev/null
 		for f in $(find wp/themes/sidex wp/mu-plugins -name '*.php'); do php -l "$f" >/dev/null; done
 		rsync -az --delete --exclude src/ wp/themes/sidex/ "$HOST:$ROOT/wp-content/themes/sidex/"
 		rsync -az $MU "$HOST:$ROOT/wp-content/mu-plugins/"
@@ -99,5 +108,5 @@ case "${1:-}" in
 		echo "✓ Oxygen rétabli (le thème sidex reste en place, inactif)"
 		;;
 
-	*) sed -n 2,10p "$0"; exit 1 ;;
+	*) sed -n 2,11p "$0"; exit 1 ;;
 esac

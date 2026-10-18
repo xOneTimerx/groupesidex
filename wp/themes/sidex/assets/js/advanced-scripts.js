@@ -78,6 +78,8 @@ jQuery(".multi-trigger-soumission").click(function() {
 
 /* ── Advanced Scripts 144 Glightbox - JS ── */
 document.addEventListener("DOMContentLoaded", function loadGlightbox() {
+	// GLightbox n'est chargé que sur les gabarits qui ont des nuanciers (inc/oxy-libs.php).
+	if (typeof GLightbox === "undefined") return;
 	const lightboxProduits = GLightbox({
 	    selector: '.glightbox-couleurs',
 		moreLength: 0,

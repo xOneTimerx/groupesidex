@@ -65,7 +65,9 @@ if before:
     bad = 0
     for p, a in before.items():
         b = res.get(p, {})
-        diffs = [f"{k} : {a.get(k)!r} → {b.get(k)!r}" for k in ("status", "location", "title", "h1", "desc", "canonical", "forms") if a.get(k) != b.get(k)]
+        diffs = [f"{k} : {a.get(k)!r} → {b.get(k)!r}" for k in ("status", "location", "title", "h1", "desc", "canonical", "forms") if a.get(k) != b.get(k)
+                 # Voulu (audit du 16 oct. 2026) : le thème ajoute un <h1> aux archives du blogue qui n'en avaient pas.
+                 and not (k == "h1" and not a.get(k) and b.get(k) and expect == "sidex")]
         if b.get("php_error"): diffs.append("erreur PHP visible")
         if b.get("status") == 200 and a.get("render") in ("sidex", "oxygen") and b.get("render") != expect: diffs.append(f"rendu {b.get('render')}")
         if diffs:

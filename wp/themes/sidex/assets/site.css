@@ -7621,3 +7621,19 @@ select.ff-el-form-control:not([size]):not([multiple]) {
 .ct-FontAwesomeicon-tree{width:0.85714285714286em}
 .ct-FontAwesomeicon-trophy{width:0.92857142857143em}
 .ct-FontAwesomeicon-truck{width:1.0357142857143em}
+
+/* Accessibilité (audit du 16 oct. 2026) */
+/* Lien d'évitement : hors écran, visible au premier Tab. */
+.sx-skip-link{position:absolute;left:-9999px;top:0;z-index:2147483647;padding:12px 20px;background:#fff;color:#232122;font-weight:600;text-decoration:underline}
+.sx-skip-link:focus{left:16px;top:16px;outline:2px solid #232122;outline-offset:2px}
+main#main:focus{outline:none}
+/* Ordre des titres : le rôle des représentants (pied de page) passe de <h6> à <p>, même police. */
+[data-id="code_block-219-69"]{font-family:'Heebo'}
+/* <h1> du blogue (ex-<div> « Blogue ») : garde la couleur du texte courant. */
+#code_block-27-77{color:inherit}
+/* Articles : <h1> du contenu rendus en <h2 class="sx-h1"> (inc/setup.php), apparence d'origine conservée. */
+.article-content h2.sx-h1{font-family:'Heebo';color:#232122;font-size:42px;line-height:inherit;font-weight:400;letter-spacing:normal;margin:0;text-wrap:wrap}
+/* Cibles tactiles ≥ 24 px (téléphones et courriels des représentants) : zone agrandie sans déplacer la mise en page.
+   Téléphone agrandi vers le haut, courriel vers le bas : les deux zones ne se chevauchent pas. */
+a.footer-infos-content[href^="tel:"],[data-id="div_block-77-1726"]>a{padding-top:4px;margin-top:-4px}
+a.footer-infos-content[href^="mailto:"],[data-id="div_block-87-1726"]>a{padding-bottom:4px;margin-bottom:-4px}
