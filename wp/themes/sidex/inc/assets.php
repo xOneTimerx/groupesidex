@@ -21,7 +21,8 @@ add_action('wp_enqueue_scripts', static function () {
 	$js = static function (string $handle, string $file, array $deps = []) {
 		wp_enqueue_script($handle, sx_asset_url($file), $deps, sx_asset_version($file), ['in_footer' => true]);
 	};
-	// Splide et TextPlugin (GSAP) retirés : aucun élément ni script du site ne les utilisait (audit du 16 oct. 2026).
+	// Splide retiré : aucun élément ni script du site ne l'utilisait (audit du 16 oct. 2026). TextPlugin (GSAP) n'est chargé
+	// que par le gabarit qui s'en sert (accueil 1688 : compteur du héros), voir sx_lib('gsap-text').
 	$js('sidex-aos', 'vendor/aos.js');
 	$js('sidex-external-links', 'vendor/oxy-toolbox-external-links.js', ['jquery']);
 	$js('sidex-gsap', 'vendor/gsap.min.js');
@@ -73,6 +74,9 @@ function sx_lib(string $lib): void
 			break;
 		case 'skeletabs':
 			$js('sidex-skeletabs', 'vendor/skeletabs.js');
+			break;
+		case 'gsap-text':
+			$js('sidex-gsap-text', 'vendor/TextPlugin.min.js', ['sidex-gsap']);
 			break;
 		case 'glightbox':
 			// Advanced Scripts 143/144/248 : nuanciers des revêtements (classe glightbox-couleurs du contenu ACF).
