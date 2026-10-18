@@ -42,4 +42,35 @@
 	document.addEventListener('DOMContentLoaded', function () {
 		document.querySelectorAll('.flickity-slider > [aria-hidden]').forEach(sync);
 	});
+
+	/* Onglets Skeletabs (pages GEO) : sous 992 px ils deviennent un accordéon mais gardent role="tab" sans tablist,
+	   et tabindex="-1" sur les sections fermées (inatteignables au clavier). En mode accordéon : boutons ordinaires
+	   avec aria-expanded, panneaux en region ; en mode onglets : rôles d'origine. L'état vient de la classe
+	   oxy-dynamic-tabs_active (Skeletabs ne relit jamais les attributs ARIA). */
+	function tabs(inner) {
+		var accordion = inner.classList.contains('oxy-dynamic-tabs_mode-accordion');
+		inner.querySelectorAll('.oxy-dynamic-tabs_tab').forEach(function (tab) {
+			var panel = document.getElementById(tab.getAttribute('aria-controls'));
+			var open = tab.classList.contains('oxy-dynamic-tabs_active');
+			if (accordion) {
+				tab.removeAttribute('role');
+				tab.removeAttribute('aria-selected');
+				tab.setAttribute('aria-expanded', open ? 'true' : 'false');
+				tab.setAttribute('tabindex', '0');
+				panel && panel.setAttribute('role', 'region');
+			} else if (tab.getAttribute('role') !== 'tab') {
+				tab.setAttribute('role', 'tab');
+				tab.setAttribute('aria-selected', open ? 'true' : 'false');
+				tab.setAttribute('tabindex', open ? '0' : '-1');
+				tab.removeAttribute('aria-expanded');
+				panel && panel.setAttribute('role', 'tabpanel');
+			}
+		});
+	}
+	new MutationObserver(function (records) {
+		records.forEach(function (r) {
+			var inner = r.target.closest && r.target.closest('.oxy-dynamic-tabs_inner');
+			inner && tabs(inner);
+		});
+	}).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['class', 'aria-selected'] });
 })();
