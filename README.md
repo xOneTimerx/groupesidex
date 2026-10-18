@@ -11,7 +11,7 @@ Thème WordPress classique (ACF + Tailwind v4) qui remplace Oxygen Builder sur g
 
 - `wp/themes/sidex/` — le thème. `parts/oxy/*.php` : gabarits convertis par `tools/oxy2php.py`, puis retouchés à la main
   (ordre des titres, `<main>`) : ne pas les régénérer sans reporter ces retouches. `inc/html.php` : retouches du HTML final
-  (images, LCP, noms accessibles). CSS : `src/theme.css` → `bash tools/build-css.sh`.
+  (images, LCP, noms accessibles), test local : `php wp/tools/tests/html-filter-test.php`. CSS : `src/theme.css` → `bash tools/build-css.sh`.
 - `wp/mu-plugins/` — mu-plugins versionnés. `zz-dev-mail-killswitch.php` = **staging seulement**, ne jamais déployer sur le live.
 - `wp/scripts/` — déploiement staging, gel, bascule.
 

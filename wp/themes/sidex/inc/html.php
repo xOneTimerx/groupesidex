@@ -5,7 +5,7 @@
  * Appliquées sur la page entière plutôt que dans chaque gabarit converti : elles visent aussi le contenu ACF
  * et les extensions. Aucune ne change la mise en page : attributs seulement (dimensions, chargement différé,
  * priorité, noms accessibles, rôles), plus une balise <link rel="preload"> dans <head>.
- * sx_html_filter() est pure (HTML → HTML) : testable hors WordPress.
+ * sx_html_filter() est pure (HTML → HTML) : testable hors WordPress (wp/tools/tests/html-filter-test.php).
  */
 
 defined('ABSPATH') || exit;
@@ -14,33 +14,59 @@ add_action('template_redirect', static function () {
 	if (!sx_theme_owns_request() || is_feed() || is_robots() || isset($_GET['format'])) {
 		return;
 	}
-	ob_start(static fn(string $html): string => sx_html_filter($html, [
-		'home' => home_url('/'),
-		'site' => get_bloginfo('name'),
-		'lang' => sx_lang(),
-		'uploads' => wp_get_upload_dir(),
-	]));
+	ob_start(static function (string $html): string {
+		$out = sx_html_filter($html, [
+			'home' => home_url('/'),
+			'site' => get_bloginfo('name'),
+			'lang' => sx_lang(),
+			'uploads' => wp_get_upload_dir(),
+		], $errors);
+		// Une étape a échoué (HTML d'origine conservé pour elle) : une seule ligne de journal par jour, pas par requête.
+		if ($errors && !get_transient('sx_html_filter_error')) {
+			set_transient('sx_html_filter_error', 1, DAY_IN_SECONDS);
+			error_log('sidex inc/html.php : étape ignorée (' . implode(', ', $errors) . ') sur ' . ($_SERVER['REQUEST_URI'] ?? '?'));
+		}
+		return $out;
+	});
 }, 1000);
 
 /**
  * @param array{home:string,site:string,lang:string,uploads:array{baseurl:string,basedir:string}} $ctx
  */
-function sx_html_filter(string $html, array $ctx): string
+function sx_html_filter(string $html, array $ctx, ?array &$errors = null): string
 {
+	$errors = [];
 	if (stripos($html, '<html') === false) {
 		return $html;
 	}
-	$html = sx_html_images($html, $ctx);
-	$html = sx_html_links($html, $ctx);
-	$html = sx_html_triggers($html, $ctx);
-
-	// Icônes du sprite : décoratives (le nom vient du lien ou du bouton qui les porte).
-	$html = preg_replace('/<svg id="svg-(?![^>]*aria-hidden)/', '<svg aria-hidden="true" focusable="false" id="svg-', $html);
-
-	// Jumeau Markdown : URL absolue (les agents la lisent hors contexte de page).
-	$origin = preg_replace('#^(https?://[^/]+).*$#', '$1', $ctx['home']);
-	$html = preg_replace('#(<link\b[^>]*type="text/markdown"[^>]*\bhref=")/#', '$1' . $origin . '/', $html);
-
+	$steps = [
+		'images' => static fn(string $h) => sx_html_images($h, $ctx),
+		'links' => static fn(string $h) => sx_html_links($h, $ctx),
+		'triggers' => static fn(string $h) => sx_html_triggers($h, $ctx),
+		// Icônes du sprite : décoratives (le nom vient du lien ou du bouton qui les porte).
+		'icons' => static fn(string $h) => preg_replace('/<svg id="svg-(?![^>]*aria-hidden)/', '<svg aria-hidden="true" focusable="false" id="svg-', $h),
+		// Jumeau Markdown : URL absolue (les agents la lisent hors contexte de page).
+		'markdown' => static fn(string $h) => preg_replace('#(<link\b[^>]*type="text/markdown"[^>]*\bhref=")/#',
+			'$1' . preg_replace('#^(https?://[^/]+).*$#', '$1', (string) $ctx['home']) . '/', $h),
+	];
+	// Garde-fous : preg_* renvoie null sur erreur PCRE (limite de backtracking, pile JIT) ; une étape qui échoue ou lève
+	// une exception est ignorée et le HTML de l'étape précédente est gardé. Jamais de page blanche.
+	try {
+		foreach ($steps as $name => $step) {
+			try {
+				$next = $step($html);
+			} catch (Throwable $e) {
+				$next = null;
+			}
+			if (is_string($next) && $next !== '') {
+				$html = $next;
+			} else {
+				$errors[] = $name;
+			}
+		}
+	} catch (Throwable $e) {
+		$errors[] = 'filter';
+	}
 	return $html;
 }
 
@@ -49,7 +75,7 @@ function sx_html_filter(string $html, array $ctx): string
  * priorité haute ; les <img> des téléversements sans dimensions reçoivent width/height (ratio réservé) ; les <img>
  * dimensionnées plus bas sont différées (loading="lazy").
  */
-function sx_html_images(string $html, array $ctx): string
+function sx_html_images(string $html, array $ctx): ?string
 {
 	$main = strpos($html, '<main');
 	if ($main === false) {
@@ -67,10 +93,16 @@ function sx_html_images(string $html, array $ctx): string
 	if (preg_match('/background-image:[^;"]*url\(([^)]+\.(?:webp|jpe?g|png|avif))\)/i', $hero, $m)) {
 		$url = html_entity_decode(trim($m[1], '\'" '));
 		$preload = '<link rel="preload" as="image" href="' . htmlspecialchars($url, ENT_QUOTES) . '" fetchpriority="high">';
-		$html = preg_replace('/<meta charset="[^"]*"\s*\/?>/i', '$0' . "\n" . $preload, $html, 1);
-		$offset = strlen($preload) + 1;
-		$main += $offset;
-		$fold += $offset;
+		$with = preg_replace('/<meta charset="[^"]*"\s*\/?>/i', '$0' . "\n" . $preload, $html, 1, $done);
+		if (!is_string($with)) {
+			return null;
+		}
+		if ($done) {
+			$html = $with;
+			$offset = strlen($preload) + 1;
+			$main += $offset;
+			$fold += $offset;
+		}
 	} elseif (preg_match('/<img\b(?![^>]*\.svg)[^>]*>/i', substr($html, $main, $fold2 - $main), $m, PREG_OFFSET_CAPTURE)) {
 		$lcp_img = $main + $m[0][1];
 	}
@@ -119,7 +151,7 @@ function sx_html_upload_size(string $tag, array $ctx): ?array
 }
 
 /** Liens sans texte (logo à alt vide, icône seule) : nom accessible déduit de la cible. */
-function sx_html_links(string $html, array $ctx): string
+function sx_html_links(string $html, array $ctx): ?string
 {
 	$en = $ctx['lang'] === 'en';
 	$home = rtrim($ctx['home'], '/');
@@ -166,7 +198,7 @@ function sx_html_links(string $html, array $ctx): string
  * atteignables au clavier (role="button", tabindex) ; assets/js/a11y.js les active avec Entrée/Espace.
  * Icône seule : nom selon l'icône (menu ou fermer).
  */
-function sx_html_triggers(string $html, array $ctx): string
+function sx_html_triggers(string $html, array $ctx): ?string
 {
 	$en = $ctx['lang'] === 'en';
 	return preg_replace_callback('/<(div|span)\b([^>]*\bclass="[^"]*\bmulti-trigger(?:-soumission)?\b[^"]*"[^>]*)>/i', static function (array $m) use ($html, $en) {
