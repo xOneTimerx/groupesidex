@@ -49,6 +49,20 @@ check('diaporama : 2e diapositive différée, reste du style conservé', str_con
 check('diaporama : sections suivantes intactes, script avant </body>', str_contains($out, '<section style="background-image:url(https://www.groupesidex.com/wp-content/uploads/c.webp)">')
 	&& preg_match('#<script id="sidex-hero-bg">.*</script>\s*</body>#s', $out) === 1);
 check('une seule image de fond : rien de différé', !str_contains(sx_html_filter($page, $ctx), 'data-sx-bg'));
+// Diaporama de l'accueil (balisage réel) : diapositives 2+ masquées en attribut jusqu'à GSAP, la 1re intacte.
+$home = '<!doctype html><html><head><meta charset="UTF-8"></head><body><main id="main"><section><div class="oxy-dynamic-list slides-repeater">'
+	. '<div id="div_block-162-1688-1" class="ct-div-block slide"><div class="ct-div-block slide__inner" style="background-image:url(https://www.groupesidex.com/wp-content/uploads/a.webp)"></div><a class="slide-thumbnails-wrapper"></a></div>'
+	. '<div id="div_block-162-1688-2" class="ct-div-block slide"><div class="ct-div-block slide__inner" style="background-image:url(https://www.groupesidex.com/wp-content/uploads/b.webp)"></div></div>'
+	. '<div id="div_block-162-1688-3" class="ct-div-block slide" style="z-index:1;"></div>'
+	. '</div></section><section><div class="slide"></div></section></main></body></html>';
+$out = sx_html_filter($home, $ctx, $errors);
+check('diaporama accueil : aucune étape en échec', $errors === []);
+check('diaporama accueil : 1re diapositive visible', str_contains($out, '<div id="div_block-162-1688-1" class="ct-div-block slide">'));
+check('diaporama accueil : 2e et 3e masquées en attribut', str_contains($out, '<div id="div_block-162-1688-2" class="ct-div-block slide" style="visibility:hidden">')
+	&& str_contains($out, '<div id="div_block-162-1688-3" class="ct-div-block slide" style="z-index:1;visibility:hidden">'));
+check('diaporama accueil : intérieurs et sections suivantes intacts', !str_contains($out, 'slide__inner" style="visibility')
+	&& str_contains($out, '<section><div class="slide"></div></section>') && substr_count($out, 'visibility:hidden') === 2);
+check('diaporama accueil : filtre idempotent', substr_count(sx_html_hero_backgrounds($out), 'visibility:hidden') === 2);
 
 // 1c. srcset des téléversements (WordPress fournit les tailles) ; SVG, srcset existant et URL inconnue intacts.
 $sets = $ctx + ['srcset' => static fn(string $url) => str_ends_with($url, 'projet.webp')

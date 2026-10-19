@@ -202,6 +202,10 @@ function sx_upload_srcset(string $url): ?string
  * suite (c'est l'élément LCP, préchargé) ; les suivantes passent en data-sx-bg et un petit script les remet au
  * chargement de la page, au plus tard 4 s après (la 2e diapositive arrive à 7,5 s). Sur mobile, ≈ 400 Ko de moins en
  * concurrence avec l'image LCP.
+ * Les diapositives 2 et suivantes sont aussi masquées en attribut (visibility:hidden) jusqu'à GSAP, qui les rend
+ * visibles lui-même (autoAlpha, o-1688.js) : même règle que src/theme.css, mais le CSS utilisé de WP Rocket (Remove
+ * Unused CSS, live) l'a perdue à sa régénération du 19 oct. 2026. Sans elle, la dernière diapositive recouvre la
+ * première avant les scripts et le LCP mobile n'est retenu qu'après eux (PSI : 3,6 → 5,3 s).
  */
 function sx_html_hero_backgrounds(string $html): ?string
 {
@@ -220,11 +224,24 @@ function sx_html_hero_backgrounds(string $html): ?string
 			$style = trim(str_replace($bg[0], '', $m[3]), '; ');
 			return '<' . $m[1] . $m[2] . ($style !== '' ? ' style="' . $style . '"' : '') . ' data-sx-bg="' . trim($bg[1]) . '"' . $m[4] . '>';
 		}, substr($html, $first, $end - $first));
+	$repeater = is_string($hero) ? strpos($hero, 'slides-repeater') : false;
+	if ($repeater !== false) {
+		$slide = 0;
+		$slides = preg_replace_callback('/<div\b(?=[^>]*\sclass="(?:[^"]*\s)?slide(?:\s[^"]*)?")[^>]*>/i', static function (array $m) use (&$slide) {
+			$style = preg_match('/\sstyle="([^"]*)"/i', $m[0], $st) ? rtrim(trim($st[1]), '; ') : null;
+			if ($slide++ === 0 || ($style !== null && stripos($style, 'visibility') !== false)) {
+				return $m[0];
+			}
+			$hidden = ' style="' . ($style ? $style . ';' : '') . 'visibility:hidden"';
+			return $style === null ? preg_replace('/\s*\/?>$/', $hidden . '$0', $m[0], 1) : str_replace($st[0], $hidden, $m[0]);
+		}, substr($hero, $repeater));
+		$hero = is_string($slides) ? substr($hero, 0, $repeater) . $slides : null;
+	}
 	if (!is_string($hero)) {
 		return null;
 	}
 	if ($seen < 2) {
-		return $html;
+		return $repeater === false ? $html : substr($html, 0, $first) . $hero . substr($html, $end);
 	}
 	$script = '<script id="sidex-hero-bg">(function(){var done=false;function show(){if(done)return;done=true;'
 		. 'document.querySelectorAll("[data-sx-bg]").forEach(function(el){el.style.backgroundImage=el.getAttribute("data-sx-bg");el.removeAttribute("data-sx-bg");'
