@@ -108,7 +108,14 @@ GTM_ID=GTM-NT9CHCD
 if [ "$TARGET" = live ] || grep -q gtm-actif <<< "$state"; then GTM=1; else GTM=0; echo "  (GTM non contrôlé : GTM4WP inactive sur le staging)"; fi
 
 echo "== contrôle de fumée avant mise à jour"
-smoke avant || { echo "✗ le site échoue déjà aux contrôles : rien n'a été modifié, arrêt"; exit 1; }
+# Un échec ici peut être ce que la mise à jour corrige ; mais le retour arrière ramènerait cet état déjà en échec.
+if ! smoke avant; then
+	echo "⚠ le site échoue déjà à des contrôles (rien n'a été modifié) ; un retour arrière ramènerait cet état"
+	if [ "$TARGET" = live ]; then
+		read -r -p "Continuer quand même ? (o/N) " go </dev/tty
+		[ "$go" = o ] || { echo "Annulé."; exit 1; }
+	fi
+fi
 
 confirm "mise à jour du thème sidex et des mu-plugins ($VER)"
 
