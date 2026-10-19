@@ -52,7 +52,8 @@ purge() {
 # préchargement de WP Rocket remplit le cache avec l'ancien code.
 opcache_wait() { sleep 5; }
 
-# Contrôle de fumée GET seulement : 200 sans redirection, rendu du thème sidex, aucune erreur fatale, GTM, Fluent Forms.
+# Contrôle de fumée GET seulement : 200 sans redirection, rendu du thème sidex, aucune erreur fatale, GTM, Fluent Forms
+# (+ TextPlugin sur l'accueil).
 smoke() {
 	local u code h bad=0 f
 	f=$(mktemp)
@@ -64,6 +65,8 @@ smoke() {
 		grep -qiE 'Fatal error|Parse error|critical error on this website|erreur critique' "$f" && h+=("erreur fatale")
 		[ "$GTM" = 0 ] || grep -q "googletagmanager.com/ns.html?id=$GTM_ID" "$f" || h+=("GTM absent")
 		grep -q 'frm-fluent-form' "$f" || h+=("formulaire Fluent absent")
+		# Compteur du héros (gabarit 1688) : TextPlugin de GSAP, déjà perdu une fois (PR #1, rétabli par PR #4).
+		[ "$u" != / ] || grep -qE "id=['\"]sidex-gsap-text-js['\"]" "$f" || h+=("sidex-gsap-text-js absent")
 		if [ "$FORCE_FAIL" = 1 ] && [ "$1" = apres ] && [ "$u" = / ]; then h+=("échec forcé (FORCE_FAIL=1)"); fi
 		if [ ${#h[@]} = 0 ]; then echo "  ✓ $u"; else echo "  ✗ $u — $(IFS=,; echo "${h[*]}" | sed 's/,/ | /g')"; bad=1; fi
 	done
