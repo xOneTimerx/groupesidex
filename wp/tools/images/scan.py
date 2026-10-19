@@ -3,12 +3,13 @@
 
 Pour chaque page : images JPEG/PNG du premier écran (de <body> à la fin de la 2e <section> de <main>, comme
 inc/html.php) — <img> (src, srcset, data-*), fonds en style="background-image:url(…)" et data-sx-bg / data-bg —
-et tous les GIF de la page. Poids lu par HEAD (Content-Length) sur le site.
+fonds déclarés en CSS (feuilles liées, <style>, fonds différés de WP Rocket) dont le sélecteur vise un élément de ce premier écran (type css), et tous les GIF
+de la page. Poids lu par HEAD (Content-Length) sur le site.
 
     python3 wp/tools/images/scan.py https://www.groupesidex.com / /en/ /projets/        # pages données
     python3 wp/tools/images/scan.py https://www.groupesidex.com --sitemaps page,post     # pages des sitemaps Rank Math
 
-Sortie TSV sur stdout : type (img|bg|gif) ⇥ octets ⇥ chemin dans uploads ⇥ page. Une ligne par couple fichier/page ;
+Sortie TSV sur stdout : type (img|bg|css|gif) ⇥ octets ⇥ chemin dans uploads ⇥ page. Une ligne par couple fichier/page ;
 une image retenue (plus gros candidat ≥ --min-kb) vient avec tous les candidats de son srcset.
 """
 
@@ -79,11 +80,67 @@ def elements(fragment):
             yield kind, [p for p in paths if re.search(r'\.(jpe?g|png)$', p, re.I)]
 
 
+_css = {}
+
+
+def css_rules(css, base):
+    """(sélecteur, chemins JPEG/PNG des téléversements) des règles de fond d'un texte CSS : background,
+    background-image, et variables --wpr-bg-… de WP Rocket (fonds CSS différés, live)."""
+    rules = []
+    for sel, body in re.findall(r'([^{}]+)\{([^{}]*)\}', re.sub(r'/\*.*?\*/', '', css, flags=re.S)):
+        for decl in re.findall(r'(?:background(?:-image)?|--wpr-bg-[\w-]+)\s*:([^;]*)', body, re.I):
+            paths = [urllib.parse.unquote(urllib.parse.urlsplit(urllib.parse.urljoin(base, u.strip('\'" '))).path)
+                     for u in re.findall(r'url\(([^)]+)\)', decl)]
+            paths = [re.sub(r'\.(jpe?g|png)\.webp$', r'.\1', p, flags=re.I) for p in paths]
+            paths = [p for p in paths if p.startswith(UPLOADS) and re.search(r'\.(jpe?g|png)$', p, re.I)]
+            if paths:
+                rules.append((sel.strip(), paths))
+    return rules
+
+
+def page_css_rules(site, url, html):
+    """Règles de fond de la page : feuilles liées du même site, <style> en ligne (dont le CSS utilisé de WP Rocket) et
+    paires des fonds différés de WP Rocket (JSON, barres obliques échappées)."""
+    rules = []
+    for href in re.findall(r'<link\b(?=[^>]*\brel=[\'"]stylesheet)[^>]*\bhref=[\'"]([^\'"]+)', html, re.I):
+        css_url = urllib.parse.urljoin(url, href.replace('&amp;', '&'))
+        if urllib.parse.urlsplit(css_url).netloc != urllib.parse.urlsplit(site).netloc:
+            continue
+        if css_url not in _css:
+            try:
+                _css[css_url] = css_rules(get(css_url), css_url)
+            except Exception:
+                _css[css_url] = []
+        rules += _css[css_url]
+    for css in re.findall(r'<style\b[^>]*>(.*?)</style>', html, re.S | re.I):
+        rules += css_rules(css, url)
+    for css in re.findall(r'"style":"((?:[^"\\]|\\.)*)"', html):
+        rules += css_rules(css.replace('\\/', '/'), url)
+    return rules
+
+
+def selector_in(selector, fragment):
+    """Un des sélecteurs de la liste vise-t-il un élément du fragment ? (dernier composé : #id, sinon .classes)"""
+    ids = set(re.findall(r'\sid="([^"]+)"', fragment))
+    classes = set(c for v in re.findall(r'\sclass="([^"]+)"', fragment) for c in v.split())
+    for sel in selector.split(','):
+        last = re.split(r'[\s>+~]+', sel.strip())[-1]
+        i = re.findall(r'#([\w-]+)', last)
+        c = re.findall(r'\.([\w-]+)', last)
+        if (i and all(x in ids for x in i)) or (not i and c and all(x in classes for x in c)) or (not i and not c):
+            return True
+    return False
+
+
 def scan_page(site, path):
     html = get(site + path)
     body = max(html.find('<body'), 0)
     fold = first_screen_end(html)
     groups = [(k, tuple(dict.fromkeys(ps))) for k, ps in elements(html[body:fold]) if k != 'gif' and ps]
+    # Fonds déclarés en CSS (ex. héros de /carrieres/ dans o-120.css) visant un élément du premier écran.
+    for sel, ps in page_css_rules(site, site + path, html):
+        if selector_in(sel, html[body:fold]):
+            groups.append(('css', tuple(dict.fromkeys(ps))))
     groups += [(k, tuple(dict.fromkeys(ps))) for k, ps in elements(html[body:]) if k == 'gif']
     return path, set(groups)
 

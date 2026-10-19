@@ -110,6 +110,37 @@ check('variantes : GIF → vidéo (id, classes, dimensions, nom accessible)', st
 check('variantes : GIF sans vidéo intact, script des vidéos avant </body>', str_contains($out, 'src="' . $U . '/autre.gif"')
 	&& preg_match('#<script id="sidex-gif-video">.*</script>\s*</body>#s', $out) === 1);
 check('variantes : aucune variante → étape sans effet', sx_html_filter($var, $ctx) === sx_html_filter($var, ['uploads' => ['baseurl' => $U, 'basedir' => "$up/absent"]] + $ctx));
+// Fond déclaré dans une feuille du thème (ex. héros de /carrieres/, o-120.css).
+@mkdir("$up/theme/assets/css", 0777, true);
+file_put_contents("$up/theme/assets/css/o-120.css", '@font-face{font-family:x;src:url(f.woff2)}#section-2-120{background-image:url(/wp-content/uploads/hero.jpg);background-attachment:fixed}'
+	. '@media (max-width:767px){#section-2-120{background:#000 url("../img/mobile.png") center/cover}}.x{color:red}.y{background:url(data:image/svg+xml;utf8,<svg/>)}');
+file_put_contents("$up/theme/assets/css/o-75.css", '#a{background-image:url(/wp-content/uploads/sans-variante.jpg)}');
+$tctx = $vctx + ['theme' => ['url' => 'https://www.groupesidex.com/wp-content/themes/sidex', 'dir' => "$up/theme"]];
+$css = "<!doctype html><html><head><meta charset=\"UTF-8\"><link rel='stylesheet' id='o-120-css' href='https://www.groupesidex.com/wp-content/themes/sidex/assets/css/o-120.css?ver=1' media='all' />\n"
+	. "<link rel='stylesheet' id='o-75-css' href='https://www.groupesidex.com/wp-content/themes/sidex/assets/css/o-75.css?ver=1' media='all' /></head><body><main id=\"main\"><section id=\"section-2-120\"></section></main></body></html>";
+$out = sx_html_filter($css, $tctx, $errors);
+check('fond CSS : aucune étape en échec', $errors === []);
+check('fond CSS : feuille servie en ligne à sa place, déclaration suivie de image-set() dans la même règle', str_contains($out,
+	'<style id="o-120-css" data-sx-css="https://www.groupesidex.com/wp-content/themes/sidex/assets/css/o-120.css?ver=1">@font-face{font-family:x;src:url(/wp-content/themes/sidex/assets/css/f.woff2)}'
+	. "#section-2-120{background-image:url(/wp-content/uploads/hero.jpg);background-image:image-set(url(/wp-content/uploads/hero.jpg.webp) type('image/webp'), url(/wp-content/uploads/hero.jpg) type('image/jpeg'));background-attachment:fixed}"
+	. '@media (max-width:767px){#section-2-120{background:#000 url("/wp-content/themes/sidex/assets/css/../img/mobile.png") center/cover}}'));
+check('fond CSS : feuille sans variante gardée en <link>, URI data: intacte', str_contains($out, "<link rel='stylesheet' id='o-75-css'") && str_contains($out, '.y{background:url(data:image/svg+xml;utf8,<svg/>)}'));
+check('fond CSS : rien quand WP Rocket gère le CSS (live)', !str_contains(sx_html_filter($css, ['rocket_css' => true] + $tctx), 'data-sx-css'));
+check('fond CSS : raccourci background et !important', sx_css_rewrite('a{background:#fff url(/wp-content/uploads/hero.jpg) no-repeat!important}', $variant = static fn($u, $x) => sx_html_variant_url($u, $x, $vctx))
+	=== "a{background:#fff url(/wp-content/uploads/hero.jpg) no-repeat!important;background-image:image-set(url(/wp-content/uploads/hero.jpg.webp) type('image/webp'), url(/wp-content/uploads/hero.jpg) type('image/jpeg'))!important}");
+// Live (WP Rocket : Remove Unused CSS + fonds CSS différés), extrait réel de /carrieres/ ramené à hero.jpg.
+$live = '<!doctype html><html><head><style id="wpr-usedcss">#section-2-120{background-image:var(--wpr-bg-3263);background-attachment:fixed}.z{background-image:url(/wp-content/uploads/hero.jpg)}</style></head><body>'
+	. "<style id=\"wpr-lazyload-bg-exclusion\">#section-2-120{--wpr-bg-3263: url('https://www.groupesidex.com/wp-content/uploads/hero.jpg');}</style>"
+	. '<script>const rocket_pairs = [{"selector":".q","style":".q{--wpr-bg-77aa: url(\'https:\\/\\/www.groupesidex.com\\/wp-content\\/uploads\\/lazy.jpg\');}","hash":"77aa"},'
+	. '{"selector":".r","style":".r{--wpr-bg-88bb: url(\'https:\\/\\/www.groupesidex.com\\/wp-content\\/uploads\\/sans-variante.jpg\');}","hash":"88bb"}];</script></body></html>';
+$out = sx_html_rocket_css($live, $vctx);
+check('WP Rocket : variable du fond du premier écran vers le WebP', str_contains($out, "#section-2-120{--wpr-bg-3263: url('https://www.groupesidex.com/wp-content/uploads/hero.jpg.webp');}"));
+check('WP Rocket : paire différée (JSON échappé) vers le WebP, sans variante intacte', str_contains($out, ".q{--wpr-bg-77aa: url('https:\\/\\/www.groupesidex.com\\/wp-content\\/uploads\\/lazy.jpg.webp');}")
+	&& str_contains($out, 'sans-variante.jpg\');'));
+check('WP Rocket : CSS utilisé réécrit en place', str_contains($out, ".z{background-image:url(/wp-content/uploads/hero.jpg);background-image:image-set(url(/wp-content/uploads/hero.jpg.webp)"));
+check('WP Rocket : feuille déjà servie en ligne par le thème non réécrite deux fois', sx_html_rocket_css($t = sx_html_filter($css, $tctx), $vctx) === $t);
+array_map('unlink', glob("$up/theme/assets/css/*"));
+rmdir("$up/theme/assets/css"); rmdir("$up/theme/assets"); rmdir("$up/theme");
 $rocket = '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">';
 check('WP Rocket : son préchargement LCP passe au WebP s\'il existe, sinon intact', sx_html_rocket_preload($rocket, $vctx)
 	=== '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg.webp" type="image/webp" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">');

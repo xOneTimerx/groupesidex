@@ -10,16 +10,20 @@
 #
 # Fichiers visés (relevé wp/tools/images/scan.py sur le site cible) : JPEG/PNG du premier écran des pages et articles
 # (sitemaps Rank Math) et des archives, dont le plus gros candidat dépasse MIN_KB, avec tous les candidats de leur
-# srcset ; tous les GIF des mêmes pages.
+# srcset ; fonds déclarés en CSS visant ce premier écran (feuilles du thème, CSS utilisé et fonds différés de WP Rocket) ;
+# tous les GIF des mêmes pages.
 #   <image>.jpg|png → <image>.jpg|png.webp  cwebp sur le serveur, qualité QUALITY (65, -sharp_yuv, profil ICC gardé),
 #                                           gardée seulement si au moins MIN_GAIN % plus légère ; JPEG pivotés
 #                                           (EXIF Orientation) ignorés, cwebp ne lit pas cette balise.
-#   <anim>.gif      → <anim>.gif.mp4 (H.264, sans son), <anim>.gif.webm (VP9), <anim>.gif.poster.webp (1re image)
-#                     ffmpeg en local (absent des serveurs Kinsta), copie par rsync --ignore-existing.
+#   <anim>.gif      → <anim>.gif.mp4 (H.264, sans son) et <anim>.gif.poster.webp (1re image) pour CHAQUE GIF, même si
+#                     le MP4 pèse plus que le GIF (signalé) ; <anim>.gif.webm (VP9) en plus seulement s'il est plus
+#                     léger que le MP4. ffmpeg en local (absent des serveurs Kinsta), copie par rsync --ignore-existing.
 #                     ffmpeg : celui du PATH, sinon FFMPEG=…, sinon imageio-ffmpeg
 #                     (pip install --target ~/.cache/sidex-images/py imageio-ffmpeg).
-# ONLY=webp ou ONLY=gif : une seule des deux parties. Journal : ~/sidex/images-variants-<cible>-<date>.log (+ relevé .tsv).
+# ONLY=webp ou ONLY=gif : une seule des deux parties. FILES=<fichier> : liste explicite (un chemin relatif à uploads par
+# ligne) à la place du relevé. Journal : ~/sidex/images-variants-<cible>-<date>.log (+ relevé .tsv).
 set -euo pipefail
+FILES=${FILES:+$(realpath "$FILES")}
 cd "$(dirname "$0")/../.."
 
 APPLY=0
@@ -58,10 +62,14 @@ fi
 ko() { awk -v b="$1" 'BEGIN { printf "%.0f Ko", b / 1024 }'; }
 
 echo "== relevé des pages ($SITE, sitemaps page et post + $PAGES)"
-# shellcheck disable=SC2086
-python3 wp/tools/images/scan.py "$SITE" --sitemaps page,post --min-kb "$MIN_KB" $PAGES > "$TSV"
+if [ -n "$FILES" ]; then
+	awk 'NF { t = tolower($0) ~ /\.gif$/ ? "gif" : "img"; print t "\t0\t" $0 "\t(FILES)" }' "$FILES" > "$TSV"
+else
+	# shellcheck disable=SC2086
+	python3 wp/tools/images/scan.py "$SITE" --sitemaps page,post --min-kb "$MIN_KB" $PAGES > "$TSV"
+fi
 cut -f1,3 "$TSV" | sort -u > "$WORK/files"
-grep -P '^(img|bg)\t' "$WORK/files" | cut -f2 | sort -u > "$WORK/images" || true
+grep -P '^(img|bg|css)\t' "$WORK/files" | cut -f2 | sort -u > "$WORK/images" || true
 grep -P '^gif\t' "$WORK/files" | cut -f2 > "$WORK/gifs" || true
 echo "  $(cut -f4 "$TSV" | sort -u | wc -l) pages, $(wc -l < "$WORK/images") JPEG/PNG, $(wc -l < "$WORK/gifs") GIF (relevé : $TSV)"
 
@@ -114,23 +122,29 @@ if [ -s "$WORK/gifs" ]; then
 	while IFS= read -r g; do
 		case "$g" in /*|*..*) echo "refusé	0	0	$g" | tee -a "$WORK/gif.tsv"; continue ;; esac
 		have=$(ssh -n "$HOST" "cd $UP && for s in mp4 webm poster.webp; do [ -e '$g'.\$s ] && echo \$s; done; true" | paste -sd ' ')
-		if [ "$have" = "mp4 webm poster.webp" ]; then echo "existe	0	0	$g" | tee -a "$WORK/gif.tsv"; continue; fi
+		# MP4 et aperçu présents = GIF déjà traité (le WebM est facultatif).
+		if [[ " $have " == *" mp4 "* && " $have " == *" poster.webp "* ]]; then echo "existe	0	0	$g" | tee -a "$WORK/gif.tsv"; continue; fi
 		d=$WORK/gif/$(dirname "$g"); mkdir -p "$d"; src=$WORK/gif/$g
 		rsync -a "$HOST:$UP/$g" "$src"
-		"$FFMPEG" -v error -y -i "$src" -an -movflags +faststart -pix_fmt yuv420p -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' \
-			-c:v libx264 -preset veryslow -profile:v high -crf "$CRF_MP4" "$src.mp4"
-		"$FFMPEG" -v error -y -i "$src" -an -pix_fmt yuv420p -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' \
-			-c:v libvpx-vp9 -b:v 0 -crf "$CRF_WEBM" -row-mt 1 "$src.webm"
-		"$FFMPEG" -v error -y -i "$src" -frames:v 1 -c:v libwebp -quality 80 "$src.poster.webp"
+		if ! { "$FFMPEG" -v error -y -i "$src" -an -movflags +faststart -pix_fmt yuv420p -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' \
+				-c:v libx264 -preset veryslow -crf "$CRF_MP4" "$src.mp4" \
+			&& "$FFMPEG" -v error -y -i "$src" -an -pix_fmt yuv420p -vf 'scale=trunc(iw/2)*2:trunc(ih/2)*2' \
+				-c:v libvpx-vp9 -b:v 0 -crf "$CRF_WEBM" -row-mt 1 "$src.webm" \
+			&& "$FFMPEG" -v error -y -i "$src" -frames:v 1 -c:v libwebp -quality 80 "$src.poster.webp"; }; then
+			echo "erreur	$(stat -c %s "$src")	0	$g	(ffmpeg)" | tee -a "$WORK/gif.tsv"; continue
+		fi
 		a=$(stat -c %s "$src"); m=$(stat -c %s "$src.mp4"); w=$(stat -c %s "$src.webm")
-		if [ "$m" -ge "$a" ]; then echo "gain-faible	$a	$m	$g" | tee -a "$WORK/gif.tsv"; continue; fi
+		# Vidéo et aperçu toujours livrés ; le WebM seulement s'il allège (sinon le navigateur prend le MP4).
+		files=("$src.mp4" "$src.poster.webp"); served=$m; note="webm $(ko "$w") non gardé (≥ MP4)"
+		if [ "$w" -lt "$m" ]; then files+=("$src.webm"); served=$w; note="webm $(ko "$w")"; fi
+		[ "$m" -ge "$a" ] && note="$note ; ⚠ MP4 plus lourd que le GIF"
 		state=à-écrire
 		if [ $APPLY = 1 ]; then
-			chmod 644 "$src".*
-			rsync -a --ignore-existing "$src.mp4" "$src.webm" "$src.poster.webp" "$HOST:$UP/$(dirname "$g")/"
+			chmod 644 "${files[@]}"
+			rsync -a --ignore-existing "${files[@]}" "$HOST:$UP/$(dirname "$g")/"
 			state=écrit
 		fi
-		echo "$state	$a	$m	$g	(webm $(ko "$w"), aperçu $(ko "$(stat -c %s "$src.poster.webp")"))" | tee -a "$WORK/gif.tsv"
+		echo "$state	$a	$served	$g	(mp4 $(ko "$m"), $note, aperçu $(ko "$(stat -c %s "$src.poster.webp")"))" | tee -a "$WORK/gif.tsv"
 	done < "$WORK/gifs"
 fi
 
@@ -140,7 +154,7 @@ cat "$WORK/webp.tsv" "$WORK/gif.tsv" | awk -F'\t' '
 	$1 == "écrit" || $1 == "à-écrire" || $1 == "existe" { a += $2; b += $3; k++ }
 	END {
 		for (s in n) printf "  %-12s %d\n", s, n[s]
-		if (k) printf "  variantes servies (%d) : %.0f Ko → %.0f Ko (−%.0f %%) ; GIF comptés en MP4, le WebM est plus léger encore\n", k, a / 1024, b / 1024, 100 * (a - b) / a
+		if (k) printf "  variantes servies (%d) : %.0f Ko → %.0f Ko (−%.0f %%) ; GIF comptés au format servi (WebM si gardé, sinon MP4)\n", k, a / 1024, b / 1024, 100 * (a - b) / a
 	}'
 if [ $APPLY = 1 ] && grep -q '^écrit' "$WORK/webp.tsv" "$WORK/gif.tsv"; then
 	# Le HTML mis en cache (WP Rocket, Kinsta) ne connaît pas encore les nouvelles variantes.

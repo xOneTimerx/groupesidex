@@ -21,6 +21,10 @@ add_action('template_redirect', static function () {
 			'lang' => sx_lang(),
 			'uploads' => wp_get_upload_dir(),
 			'srcset' => 'sx_upload_srcset',
+			'theme' => ['url' => get_stylesheet_directory_uri(), 'dir' => get_stylesheet_directory()],
+			// Live : WP Rocket retire les feuilles (Remove Unused CSS) et diffère les fonds CSS ; ses sorties sont reprises
+			// dans rocket_buffer (sx_html_rocket_css), pas ici.
+			'rocket_css' => function_exists('get_rocket_option') && (get_rocket_option('remove_unused_css') || get_rocket_option('lazyload_css_bg_img')),
 		], $errors);
 		// Une étape a échoué (HTML d'origine conservé pour elle) : une seule ligne de journal par jour, pas par requête.
 		if ($errors && !get_transient('sx_html_filter_error')) {
@@ -243,6 +247,9 @@ function sx_html_hero_backgrounds(string $html): ?string
  * - fond style="background-image:url(…)" → seconde déclaration image-set(WebP, original) : un navigateur qui ne
  *   connaît pas image-set() garde la première. Fond différé du diaporama (data-sx-bg) : data-sx-bg-webp.
  * - préchargement de l'image LCP → la variante WebP, avec type="image/webp" (ignoré sans prise en charge).
+ * - fond déclaré dans une feuille du thème (ex. héros de /carrieres/, o-120.css) : la feuille est servie en ligne, à
+ *   la même place, avec chaque déclaration de fond suivie de sa version image-set() (sx_css_rewrite). Avec les
+ *   options CSS de WP Rocket (live), voir sx_html_rocket_css.
  * - <img> GIF → <video autoplay muted loop playsinline> : même id, mêmes classes et dimensions (même cadrage), nom
  *   accessible repris de alt (role="img" + aria-label). Sources et image d'aperçu posées à l'approche de l'écran,
  *   comme le GIF qui était différé par WP Rocket (rien n'est chargé quand le bloc est masqué, sur mobile).
@@ -331,6 +338,15 @@ function sx_html_variants(string $html, array $ctx): ?string
 		$v = $variant(html_entity_decode($m[1]), '.webp');
 		return $v ? '<link rel="preload" as="image" href="' . $esc($v) . '" type="image/webp"' : $m[0];
 	}, $html, 1);
+	if (!is_string($html)) {
+		return null;
+	}
+
+	if (!empty($ctx['theme']) && empty($ctx['rocket_css'])) {
+		$html = preg_replace_callback('/<link\b(?=[^>]*\brel=[\'"]stylesheet[\'"])[^>]*\bhref=[\'"]([^\'"]+)[\'"][^>]*>/i', static function (array $m) use ($ctx, $variant) {
+			return sx_html_css_inline($m[0], html_entity_decode($m[1]), $ctx, $variant) ?? $m[0];
+		}, $html);
+	}
 	if (!is_string($html) || $videos === 0) {
 		return $html;
 	}
@@ -347,14 +363,24 @@ function sx_html_variants(string $html, array $ctx): ?string
 
 /*
  * WP Rocket (live) ajoute son propre préchargement de l'image LCP (<link … data-rocket-preload>), relevée par son script
- * de mesure : tant que ce relevé désigne l'original, le navigateur chargerait l'original ET la variante. rocket_buffer
- * passe sur le HTML final, après l'ajout de ce lien (priorité maximale).
+ * de mesure : tant que ce relevé désigne l'original, le navigateur chargerait l'original ET la variante. Il retire aussi
+ * les feuilles et diffère les fonds CSS (sx_html_rocket_css). rocket_buffer passe sur le HTML final, après WP Rocket
+ * (priorité maximale).
  */
 add_filter('rocket_buffer', static function ($html) {
-	if (!is_string($html) || !str_contains($html, 'data-rocket-preload')) {
+	if (!is_string($html) || stripos($html, '<html') === false) {
 		return $html;
 	}
-	return sx_html_rocket_preload($html, ['uploads' => wp_get_upload_dir()]) ?? $html;
+	$ctx = ['uploads' => wp_get_upload_dir()];
+	foreach (['sx_html_rocket_preload', 'sx_html_rocket_css'] as $step) {
+		try {
+			$next = $step($html, $ctx);
+		} catch (Throwable $e) {
+			$next = null;
+		}
+		$html = is_string($next) && $next !== '' ? $next : $html;
+	}
+	return $html;
 }, PHP_INT_MAX);
 
 function sx_html_rocket_preload(string $html, array $ctx): ?string
@@ -366,6 +392,115 @@ function sx_html_rocket_preload(string $html, array $ctx): ?string
 		}
 		return str_replace($h[0], ' href="' . htmlspecialchars($v, ENT_QUOTES) . '" type="image/webp"', $m[0]);
 	}, $html);
+}
+
+/**
+ * Feuille du thème qui déclare un fond ayant une variante WebP : <style> en ligne à la place du <link> (même place dans
+ * la cascade, même media), contenu réécrit par sx_css_rewrite et url() relatives rendues absolues. null : feuille
+ * hors thème, absente ou sans variante (le <link> reste).
+ */
+function sx_html_css_inline(string $link, string $href, array $ctx, callable $variant): ?string
+{
+	static $cache = [];
+	$theme = rtrim((string) parse_url($ctx['theme']['url'], PHP_URL_PATH), '/') . '/';
+	$path = parse_url($href, PHP_URL_PATH) ?: '';
+	if (!str_starts_with($path, $theme) || !str_ends_with($path, '.css') || str_contains($path, '..')) {
+		return null;
+	}
+	$file = rtrim($ctx['theme']['dir'], '/') . '/' . substr($path, strlen($theme));
+	if (!array_key_exists($file, $cache)) {
+		$css = is_file($file) ? (string) file_get_contents($file) : '';
+		$css = preg_match('/url\([^)]*\.(?:jpe?g|png)/i', $css) ? sx_css_rewrite(sx_css_absolute($css, $path), $variant) : null;
+		$cache[$file] = $css === null ? null : str_replace('</', '<\\/', $css);
+	}
+	if ($cache[$file] === null) {
+		return null;
+	}
+	$id = preg_match('/\sid=[\'"]([^\'"]+)[\'"]/i', $link, $i) ? ' id="' . htmlspecialchars($i[1], ENT_QUOTES) . '"' : '';
+	$media = preg_match('/\smedia=[\'"]([^\'"]+)[\'"]/i', $link, $md) && !in_array(strtolower(trim($md[1])), ['all', ''], true) ? $md[1] : '';
+	return '<style' . $id . ' data-sx-css="' . htmlspecialchars($href, ENT_QUOTES) . '"' . ($media !== '' ? ' media="' . htmlspecialchars($media, ENT_QUOTES) . '"' : '') . '>'
+		. $cache[$file] . '</style>';
+}
+
+/** url() relatives d'une feuille rendues absolues (chemin de la feuille $path), pour la servir en ligne. */
+function sx_css_absolute(string $css, string $path): string
+{
+	$dir = preg_replace('#[^/]*$#', '', $path);
+	return (string) preg_replace_callback('/url\(\s*([\'"]?)([^\'")]+)\1\s*\)/i', static fn(array $u) =>
+		preg_match('#^(?:[a-z][a-z0-9+.-]*:|/|\#)#i', $u[2]) ? $u[0] : 'url(' . $u[1] . $dir . $u[2] . $u[1] . ')', $css);
+}
+
+/**
+ * Réécriture en place d'un texte CSS : chaque déclaration background / background-image dont une image a une variante
+ * WebP est suivie, DANS LA MÊME RÈGLE, de background-image: image-set(WebP, original). L'ordre de la cascade ne change
+ * pas ; un navigateur sans image-set() garde la déclaration d'origine. null : aucune variante.
+ */
+function sx_css_rewrite(string $css, callable $variant): ?string
+{
+	$hit = false;
+	$out = preg_replace_callback('/([{;]\s*)(background(?:-image)?)(\s*:\s*)([^;{}]*?)(\s*!\s*important)?(?=\s*[;}])/i', static function (array $m) use ($variant, &$hit) {
+		$value = $m[4];
+		if (stripos($value, 'url(') === false || preg_match('/data:|var\(|image-set\(/i', $value)) {
+			return $m[0];
+		}
+		$found = false;
+		$webp = preg_replace_callback('/url\(\s*([\'"]?)([^\'")]+)\1\s*\)/i', static function (array $u) use ($variant, &$found) {
+			if (!preg_match('/\.(jpe?g|png)(?:[?#]|$)/i', $u[2], $ext) || !($v = $variant($u[2], '.webp'))) {
+				return $u[0];
+			}
+			$found = true;
+			return "image-set(url($v) type('image/webp'), url({$u[2]}) type('image/" . (strtolower($ext[1]) === 'png' ? 'png' : 'jpeg') . "'))";
+		}, strcasecmp($m[2], 'background') === 0 ? sx_css_shorthand_images($value) : $value);
+		if (!$found || !is_string($webp)) {
+			return $m[0];
+		}
+		$hit = true;
+		return $m[0] . ';background-image:' . $webp . ($m[5] ?? '');
+	}, $css);
+	return $hit && is_string($out) ? $out : null;
+}
+
+/**
+ * Sorties CSS de WP Rocket sur le HTML final (rocket_buffer, après WP Rocket) :
+ * - <style> en ligne, dont le CSS utilisé (wpr-usedcss, Remove Unused CSS) : réécrits en place par sx_css_rewrite ;
+ * - fonds CSS différés : WP Rocket remplace l'image par var(--wpr-bg-…) et définit la variable (balise
+ *   wpr-lazyload-bg-exclusion pour le premier écran, paires rocket_pairs posées par son script à l'approche de l'écran).
+ *   La définition passe à url(<variante WebP>) : une variable ne peut pas porter de repli image-set() (valeur invalide
+ *   = aucun fond), et tous les navigateurs actuels lisent le WebP (Safari depuis la version 14).
+ */
+function sx_html_rocket_css(string $html, array $ctx): ?string
+{
+	$variant = static fn(string $url, string $suffix): ?string => sx_html_variant_url($url, $suffix, $ctx);
+	$html = preg_replace_callback('#(<style\b(?![^>]*\sdata-sx-css)[^>]*>)(.*?)(</style>)#is', static function (array $m) use ($variant) {
+		return stripos($m[2], 'url(') === false ? $m[0] : $m[1] . (sx_css_rewrite($m[2], $variant) ?? $m[2]) . $m[3];
+	}, $html);
+	if (!is_string($html) || !str_contains($html, '--wpr-bg-')) {
+		return $html;
+	}
+	// Dans les paires JSON, les barres obliques sont échappées (\/) : comparées sans, réécrites avec.
+	return preg_replace_callback('/(--wpr-bg-[\w-]+\s*:\s*url\(\s*([\'"]?))([^\'")]+)(\2\s*\))/i', static function (array $m) use ($variant) {
+		$url = str_replace('\\/', '/', $m[3]);
+		if (!preg_match('/\.(?:jpe?g|png)(?:[?#]|$)/i', $url) || !($v = $variant($url, '.webp'))) {
+			return $m[0];
+		}
+		return $m[1] . (str_contains($m[3], '\\/') ? str_replace('/', '\\/', $v) : $v) . $m[4];
+	}, $html);
+}
+
+/** Images d'un raccourci background (une par couche, « none » si la couche n'en a pas). */
+function sx_css_shorthand_images(string $value): string
+{
+	$layers = [''];
+	$depth = 0;
+	foreach (str_split($value) as $c) {
+		$depth += $c === '(' ? 1 : ($c === ')' ? -1 : 0);
+		if ($c === ',' && $depth === 0) {
+			$layers[] = '';
+		} else {
+			$layers[count($layers) - 1] .= $c;
+		}
+	}
+	return implode(', ', array_map(static fn(string $l) => preg_match('/(?:url|(?:repeating-)?(?:linear|radial|conic)-gradient|image-set)\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/i', $l, $m) ? $m[0] : 'none', $layers));
 }
 
 /** URL de la variante d'un fichier des téléversements (<url><suffixe>) si le fichier existe, sinon null. */
