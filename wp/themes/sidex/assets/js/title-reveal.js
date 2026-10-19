@@ -15,8 +15,11 @@
 			if (node.nodeType === 3) {
 				node.nodeValue.split(/\s+/).forEach(function (word) {
 					if (word) {
+						// inline-block, comme SplitText : un mot à trait d'union (Baie-Saint-Paul) ne se coupe pas à la mesure.
 						var span = document.createElement('span');
+						span.style.display = 'inline-block';
 						span.textContent = word;
+						span.sxWord = true;
 						out.push(span);
 					}
 				});
@@ -61,7 +64,7 @@
 				if (i) {
 					child.appendChild(document.createTextNode(' '));
 				}
-				child.appendChild(w.nodeName === 'SPAN' && !w.attributes.length ? document.createTextNode(w.textContent) : w);
+				child.appendChild(w.sxWord ? document.createTextNode(w.textContent) : w);
 			});
 			parent.appendChild(child);
 			el.appendChild(parent);
