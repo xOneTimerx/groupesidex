@@ -158,6 +158,10 @@ check('WP Rocket : son préchargement LCP passe au WebP s\'il existe, sinon inta
 $heroImg = '<img class="slide__img" src="' . $U . '/hero.jpg" srcset="' . $U . '/hero-480.jpg 480w, ' . $U . '/hero.jpg 1921w" sizes="100vw" data-sx-lcp="1">';
 check('WP Rocket : préchargement du src de la 1re diapositive (<img data-sx-lcp srcset>) retiré, les autres gardés',
 	sx_html_rocket_preload($rocket . $heroImg, $vctx) === '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">' . $heroImg);
+$css = "<link rel='stylesheet' id='fluent-form-styles-css' href='" . $U . "/wp-content/plugins/fluentform/assets/css/a.css?ver=1' media='all' /><link rel='stylesheet' href='" . $U . "/wp-content/themes/sidex/assets/css/o-1.css' media='all' />";
+$def = sx_html_defer_form_css($css . $heroImg, $vctx);
+check('feuilles de plugin du bas de page non bloquantes (accueil), feuilles du thème intactes',
+	str_contains($def, "media=\"print\" onload=\"this.media='all'\"><noscript><link rel='stylesheet' id='fluent-form-styles-css'") && str_contains($def, "o-1.css' media='all' />") && sx_html_defer_form_css($css, $vctx) === null);
 array_map('unlink', glob("$up/*"));
 rmdir($up);
 

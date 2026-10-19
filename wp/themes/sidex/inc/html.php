@@ -394,7 +394,7 @@ add_filter('rocket_buffer', static function ($html) {
 		return $html;
 	}
 	$ctx = ['uploads' => wp_get_upload_dir()];
-	foreach (['sx_html_rocket_preload', 'sx_html_rocket_css'] as $step) {
+	foreach (['sx_html_rocket_preload', 'sx_html_rocket_css', 'sx_html_defer_form_css'] as $step) {
 		try {
 			$next = $step($html, $ctx);
 		} catch (Throwable $e) {
@@ -404,6 +404,28 @@ add_filter('rocket_buffer', static function ($html) {
 	}
 	return $html;
 }, PHP_INT_MAX);
+
+/**
+ * Accueil : les feuilles des plugins qui n'habillent que le bas de page (CleanTalk, Fluent Forms et flatpickr du
+ * formulaire du panneau, grille WP Grid Builder, sélecteur de langue WPML) bloquaient le premier rendu (≈ 35 Ko,
+ * ≈ 290 ms estimés par Lighthouse sur mobile). Elles se chargent maintenant sans bloquer (media="print" puis « all »),
+ * avec <noscript> de secours. Seulement quand la 1re diapositive est l'<img data-sx-lcp> (accueil).
+ */
+function sx_html_defer_form_css(string $html, array $ctx): ?string
+{
+	if (!str_contains($html, 'data-sx-lcp')) {
+		return null;
+	}
+	return preg_replace_callback('/<link\b(?=[^>]*\srel=[\'"]stylesheet[\'"])(?=[^>]*\shref=[\'"][^\'"]*(?:cleantalk-spam-protect\/|fluentform\/assets\/|wp-grid-builder\/public\/css\/|uploads\/wpgb\/grids\/|language-switchers\/)[^\'"]*[\'"])[^>]*>/i', static function (array $m) {
+		$tag = $m[0];
+		if (preg_match('/\smedia=[\'"]print[\'"]/i', $tag)) {
+			return $tag;
+		}
+		$deferred = preg_replace('/\smedia=([\'"])[^\'"]*\1/i', '', $tag);
+		$deferred = preg_replace('/\s*\/?>$/', ' media="print" onload="this.media=\'all\'">', $deferred);
+		return $deferred . '<noscript>' . $tag . '</noscript>';
+	}, $html);
+}
 
 function sx_html_rocket_preload(string $html, array $ctx): ?string
 {

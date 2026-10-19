@@ -27,11 +27,20 @@
 | Avant (d4b2a64) | 0,79–0,86 | 1,8–1,9 s | 3,6–4,4 s |
 | JS différé seulement | 0,90–0,91 | 1,2 s | 3,0–3,2 s |
 | + préchargement WP Rocket de l'original retiré | 0,96–0,98 | 1,2 s | 2,0–2,3 s |
+| + feuilles de plugins du bas de page non bloquantes (5 passages) | 0,95–0,98 | 1,2 s | 1,8–1,9 s, CLS 0 |
 
 Cause du dernier gain : WP Rocket ajoute `<link rel="preload" data-rocket-preload as="image">` vers le `src` de la 1re
 diapositive (l'original de 1921 px, ≈ 200 Ko) sans `imagesrcset`, alors que l'`<img>` choisit un candidat de ≈ 40 Ko sur
 mobile : deux téléchargements, le gros en concurrence avec le LCP. `sx_html_rocket_preload` (rocket_buffer) retire ce
 préchargement quand le HTML contient l'`<img data-sx-lcp srcset>` (déjà en `fetchpriority=high`, vu par l'analyseur).
+
+Feuilles non bloquantes (`sx_html_defer_form_css`, accueil seulement) : CleanTalk, Fluent Forms, flatpickr, WP Grid Builder et
+WPML (≈ 35 Ko) passent en `media="print"` puis « all » au chargement, avec `<noscript>`. Rocket n'applique ses traitements
+qu'aux URL sans paramètre : mesurer l'URL nue, pas `/?x=1`.
+
+Limite : le TTFB du staging (1,5–2,8 s, page jamais servie par le cache WP Rocket ni Kinsta) s'ajoute au LCP sous
+émulation brute (CDP, 150 ms, 1,6 Mbps, CPU 4x : LCP − TTFB ≈ 1,7–2,0 s). Un passage au LCP > 2,5 s sur staging vient de
+ce TTFB ; sur le live, la page est servie en cache (TTFB ≈ 0,35 s).
 
 ## Envoi de formulaire (staging, Playwright)
 Clé reCAPTCHA de test Google et CleanTalk « forms__contact_forms_test » coupé le temps du test, réglages restaurés
