@@ -29,6 +29,7 @@ $page = '<!doctype html><html><head><meta charset="UTF-8"><link rel="alternate" 
 $out = sx_html_filter($page, $ctx, $errors);
 check('page normale : aucune étape en échec', $errors === []);
 check('page normale : préchargement du hero', str_contains($out, 'rel="preload" as="image"'));
+check('page normale : fond du hero exclu du chargement différé de WP Rocket', str_contains($out, '<section data-no-lazy="1" style="background-image:url(https://www.groupesidex.com/wp-content/uploads/hero.webp)">'));
 check('page normale : nom accessible du logo', str_contains($out, 'aria-label="Groupe Sidex — accueil"'));
 check('page normale : déclencheur clavier', str_contains($out, 'role="button" tabindex="0" aria-label="Menu"'));
 check('page normale : jumeau Markdown absolu', str_contains($out, 'href="https://www.groupesidex.com/?format=md"'));

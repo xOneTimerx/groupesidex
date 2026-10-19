@@ -97,6 +97,13 @@ function sx_html_images(string $html, array $ctx): ?string
 	$hero = $first !== false ? substr($html, $first, $fold - $first) : '';
 	if (preg_match('/background-image:[^;"]*url\(([^)]+\.(?:webp|jpe?g|png|avif))\)/i', $hero, $m)) {
 		$url = html_entity_decode(trim($m[1], '\'" '));
+		// L'élément qui porte ce fond est exclu du chargement différé de WP Rocket (sinon le fond, élément LCP, passe
+		// en data-bg et n'est appliqué qu'après son script : mesuré sur les pages GEO).
+		if (preg_match('/<[a-z][a-z0-9]*\b(?=[^>]*background-image:[^;"]*url\()(?![^>]*data-no-lazy)/i', $hero, $tag, PREG_OFFSET_CAPTURE)) {
+			$at = $first + $tag[0][1] + strlen($tag[0][0]);
+			$html = substr($html, 0, $at) . ' data-no-lazy="1"' . substr($html, $at);
+			$fold += 17;
+		}
 		$preload = '<link rel="preload" as="image" href="' . htmlspecialchars($url, ENT_QUOTES) . '" fetchpriority="high">';
 		$with = preg_replace('/<meta charset="[^"]*"\s*\/?>/i', '$0' . "\n" . $preload, $html, 1, $done);
 		if (!is_string($with)) {
