@@ -1180,5 +1180,4 @@ main#main:focus{outline:none}
 [data-id="code_block-219-69"]{font-family:'Heebo'}
 a.footer-infos-content[href^="tel:"],[data-id="div_block-77-1726"]>a{padding-top:4px;margin-top:-4px}
 a.footer-infos-content[href^="mailto:"],[data-id="div_block-87-1726"]>a{padding-bottom:4px;margin-bottom:-4px}
-.slides-repeater .slide:not(:nth-of-type(1)) .slide__outer{transform:translate(100%,0)}
-.slides-repeater .slide:nth-of-type(1){z-index:2}
+.slides-repeater .slide:not(:nth-of-type(1)){visibility:hidden}
