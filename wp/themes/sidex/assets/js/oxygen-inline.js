@@ -334,10 +334,12 @@ jQuery(document).ready(function() {
 
 /* ── AOS des lignes verticales ── */
 jQuery('.vertical-line').attr({'data-aos-enable': 'true','data-aos': 'slide-down','data-aos-once': 'true',});
-	  	AOS.init({
-	  		  		  		  		  		  		  				  			})
-		
-				jQuery('body').addClass('oxygen-aos-enabled');
+// AOS n'est chargé que sur les pages qui ont des éléments data-aos (inc/html.php). La classe reste posée partout :
+// app.css et site.css y accrochent overflow-x (débordement horizontal coupé, diaporama compris).
+if (window.AOS) {
+	AOS.init({});
+}
+jQuery('body').addClass('oxygen-aos-enabled');
 
 /* ── Menu coulissant (OxyExtras) ── */
 document.addEventListener(

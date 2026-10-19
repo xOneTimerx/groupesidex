@@ -37,3 +37,10 @@ main#main:focus{outline:none}
    Téléphone agrandi vers le haut, courriel vers le bas : les deux zones ne se chevauchent pas. */
 a.footer-infos-content[href^="tel:"],[data-id="div_block-77-1726"]>a{padding-top:4px;margin-top:-4px}
 a.footer-infos-content[href^="mailto:"],[data-id="div_block-87-1726"]>a{padding-bottom:4px;margin-bottom:-4px}
+
+/* Performance (lot 2, 18 oct. 2026) */
+/* Diaporama de l'accueil avant GSAP : seule la 1re diapositive est peinte. Sans cela, la dernière diapositive du DOM
+   recouvrait la première jusqu'à l'exécution des scripts et Chrome retenait une autre image que celle préchargée comme
+   élément LCP. visibility et non transform : GSAP lit la transform calculée comme un décalage x (les diapositives
+   restaient alors hors écran) ; il rend lui-même visible chaque diapositive qu'il fait entrer (autoAlpha). */
+.slides-repeater .slide:not(:nth-of-type(1)){visibility:hidden}
