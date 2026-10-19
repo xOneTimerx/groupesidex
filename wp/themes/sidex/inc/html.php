@@ -43,6 +43,7 @@ function sx_html_filter(string $html, array $ctx, ?array &$errors = null): strin
 	$steps = [
 		'images' => static fn(string $h) => sx_html_images($h, $ctx),
 		'backgrounds' => static fn(string $h) => sx_html_hero_backgrounds($h),
+		'variants' => static fn(string $h) => sx_html_variants($h, $ctx),
 		'unused' => static fn(string $h) => sx_html_unused_assets($h),
 		'links' => static fn(string $h) => sx_html_links($h, $ctx),
 		'triggers' => static fn(string $h) => sx_html_triggers($h, $ctx),
@@ -222,11 +223,138 @@ function sx_html_hero_backgrounds(string $html): ?string
 		return $html;
 	}
 	$script = '<script id="sidex-hero-bg">(function(){var done=false;function show(){if(done)return;done=true;'
-		. 'document.querySelectorAll("[data-sx-bg]").forEach(function(el){el.style.backgroundImage=el.getAttribute("data-sx-bg");el.removeAttribute("data-sx-bg");});}'
+		. 'document.querySelectorAll("[data-sx-bg]").forEach(function(el){el.style.backgroundImage=el.getAttribute("data-sx-bg");el.removeAttribute("data-sx-bg");'
+		// Variante WebP (sx_html_variants) : image-set() ignoré par un navigateur qui ne le connaît pas, l'original reste.
+		. 'var w=el.getAttribute("data-sx-bg-webp");if(w){el.style.backgroundImage=w;el.removeAttribute("data-sx-bg-webp");}});}'
 		. 'window.addEventListener("load",show);setTimeout(show,4000);})();</script>';
 	$html = substr($html, 0, $first) . $hero . substr($html, $end);
 	$body = strripos($html, '</body>');
 	return $body === false ? $html . $script : substr($html, 0, $body) . $script . "\n" . substr($html, $body);
+}
+
+/**
+ * Variantes légères générées À CÔTÉ des originaux par wp/scripts/images-variants.sh (les originaux et la base ne
+ * changent jamais) : <fichier>.webp pour un JPEG/PNG ; <fichier>.mp4, .webm et .poster.webp pour un GIF animé.
+ * Une variante n'est servie que si son fichier existe ; sinon l'original reste : rien ne casse s'il en manque une.
+ * - <img> JPEG/PNG → <picture style="display:contents"><source type="image/webp" srcset="…">…</picture>. Un candidat du
+ *   srcset sans variante garde son URL d'origine dans la source WebP (valide : le type ne sert qu'à choisir la source).
+ *   display:contents laisse l'<img> à sa place dans la mise en page (flex, grille) ; aucune enveloppe sous un parent
+ *   visé par un sélecteur enfant « > img » des feuilles d'Oxygen.
+ * - fond style="background-image:url(…)" → seconde déclaration image-set(WebP, original) : un navigateur qui ne
+ *   connaît pas image-set() garde la première. Fond différé du diaporama (data-sx-bg) : data-sx-bg-webp.
+ * - préchargement de l'image LCP → la variante WebP, avec type="image/webp" (ignoré sans prise en charge).
+ * - <img> GIF → <video autoplay muted loop playsinline> : même id, mêmes classes et dimensions (même cadrage), nom
+ *   accessible repris de alt (role="img" + aria-label). Sources et image d'aperçu posées à l'approche de l'écran,
+ *   comme le GIF qui était différé par WP Rocket (rien n'est chargé quand le bloc est masqué, sur mobile).
+ */
+function sx_html_variants(string $html, array $ctx): ?string
+{
+	$variant = static fn(string $url, string $suffix): ?string => sx_html_variant_url($url, $suffix, $ctx);
+	$esc = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES);
+	$videos = 0;
+
+	$html = preg_replace_callback('/<img\b[^>]*>/i', static function (array $m) use ($html, $variant, $esc, &$videos) {
+		[$tag, $pos] = $m[0];
+		if (!preg_match('/\ssrc="([^"]+)"/i', $tag, $src)) {
+			return $tag;
+		}
+		$before = substr($html, max(0, $pos - 400), min(400, $pos));
+		if (preg_match('/<(?:picture|source)\b[^>]*>\s*$/i', $before)
+			|| preg_match('/<[a-z][^<>]*(?:--aspect-ratio|oxy-pricing-box-graphic|data-cta=)[^<>]*>\s*$/i', $before)) {
+			return $tag;
+		}
+		$url = html_entity_decode($src[1]);
+
+		if (preg_match('/\.gif(?:[?#]|$)/i', $url)) {
+			if (!($mp4 = $variant($url, '.mp4'))) {
+				return $tag;
+			}
+			$webm = $variant($url, '.webm');
+			$poster = $variant($url, '.poster.webp');
+			$alt = preg_match('/\salt="([^"]*)"/i', $tag, $a) ? $a[1] : '';
+			$attrs = preg_replace(['/\s(?:src|srcset|sizes|alt|loading|decoding|fetchpriority)="[^"]*"/i', '/\s*\/?>$/'], '', substr($tag, 4));
+			$videos++;
+			return '<video' . $attrs . (trim($alt) !== '' ? ' role="img" aria-label="' . $alt . '"' : ' aria-hidden="true"')
+				. ' autoplay muted loop playsinline disablepictureinpicture preload="none" data-sx-video'
+				. ($poster ? ' data-poster="' . $esc($poster) . '"' : '') . '>'
+				. ($webm ? '<source data-src="' . $esc($webm) . '" type="video/webm">' : '')
+				. '<source data-src="' . $esc($mp4) . '" type="video/mp4"></video>';
+		}
+
+		if (!preg_match('/\.(?:jpe?g|png)(?:[?#]|$)/i', $url)) {
+			return $tag;
+		}
+		$hit = false;
+		$set = preg_match('/\ssrcset="([^"]+)"/i', $tag, $s) ? html_entity_decode($s[1]) : $url;
+		$webp = array_map(static function (string $c) use ($variant, &$hit) {
+			[$u, $d] = array_pad(preg_split('/\s+/', trim($c), 2), 2, '');
+			$v = $variant($u, '.webp');
+			$hit = $hit || $v !== null;
+			return trim(($v ?? $u) . ' ' . $d);
+		}, explode(',', $set));
+		if (!$hit) {
+			return $tag;
+		}
+		$sizes = preg_match('/\ssizes="[^"]*"/i', $tag, $z) ? $z[0] : '';
+		return '<picture style="display:contents"><source type="image/webp" srcset="' . $esc(implode(', ', $webp)) . '"' . $sizes . '>' . $tag . '</picture>';
+	}, $html, -1, $count, PREG_OFFSET_CAPTURE);
+	if (!is_string($html)) {
+		return null;
+	}
+
+	$html = preg_replace_callback('/\s(style|data-sx-bg)="([^"]*url\([^"]*)"/i', static function (array $m) use ($variant, $esc) {
+		$style = strcasecmp($m[1], 'style') === 0;
+		if ($style && !preg_match('/background-image:([^;]*)/i', $m[2], $bg)) {
+			return $m[0];
+		}
+		$hit = false;
+		$set = preg_replace_callback('/url\(([^)]+)\)/i', static function (array $u) use ($variant, $esc, &$hit) {
+			$url = html_entity_decode(trim($u[1], '\'" '));
+			if (!preg_match('/\.(jpe?g|png)(?:[?#]|$)/i', $url, $ext) || !($v = $variant($url, '.webp'))) {
+				return $u[0];
+			}
+			$hit = true;
+			return "image-set(url(" . $esc($v) . ") type('image/webp'), " . $u[0] . " type('image/" . (strtolower($ext[1]) === 'png' ? 'png' : 'jpeg') . "'))";
+		}, $style ? $bg[1] : $m[2]);
+		if (!$hit || !is_string($set)) {
+			return $m[0];
+		}
+		return $style ? ' style="' . rtrim($m[2], '; ') . ';background-image:' . trim($set) . '"' : $m[0] . ' data-sx-bg-webp="' . trim($set) . '"';
+	}, $html);
+	if (!is_string($html)) {
+		return null;
+	}
+
+	$html = preg_replace_callback('/<link rel="preload" as="image" href="([^"]+)"/i', static function (array $m) use ($variant, $esc) {
+		$v = $variant(html_entity_decode($m[1]), '.webp');
+		return $v ? '<link rel="preload" as="image" href="' . $esc($v) . '" type="image/webp"' : $m[0];
+	}, $html, 1);
+	if (!is_string($html) || $videos === 0) {
+		return $html;
+	}
+
+	$script = '<script id="sidex-gif-video">(function(){var vs=document.querySelectorAll("video[data-sx-video]");'
+		. 'function go(v){if(v.getAttribute("data-sx-on"))return;v.setAttribute("data-sx-on","1");var p=v.getAttribute("data-poster");if(p)v.poster=p;'
+		. 'v.querySelectorAll("source[data-src]").forEach(function(s){s.src=s.getAttribute("data-src");});v.load();var r=v.play();if(r&&r.catch)r.catch(function(){});}'
+		. 'if(!("IntersectionObserver" in window)){vs.forEach(go);return;}'
+		. 'var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);go(e.target);}});},{rootMargin:"300px"});'
+		. 'vs.forEach(function(v){io.observe(v);});})();</script>';
+	$body = strripos($html, '</body>');
+	return $body === false ? $html . $script : substr($html, 0, $body) . $script . "\n" . substr($html, $body);
+}
+
+/** URL de la variante d'un fichier des téléversements (<url><suffixe>) si le fichier existe, sinon null. */
+function sx_html_variant_url(string $url, string $suffix, array $ctx): ?string
+{
+	static $cache = [];
+	$path = parse_url($url, PHP_URL_PATH) ?: '';
+	$base = parse_url($ctx['uploads']['baseurl'], PHP_URL_PATH) ?: '/wp-content/uploads';
+	if (!str_starts_with($path, $base . '/') || str_contains($path, '..')) {
+		return null;
+	}
+	$file = $ctx['uploads']['basedir'] . substr(rawurldecode($path), strlen($base)) . $suffix;
+	$cache[$file] ??= is_file($file) && filesize($file) > 0;
+	return $cache[$file] ? preg_replace('/[?#].*$/', '', $url) . $suffix : null;
 }
 
 /**

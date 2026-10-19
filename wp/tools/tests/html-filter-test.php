@@ -76,6 +76,42 @@ check('AOS : retiré sans data-aos', !str_contains(sx_html_filter(sprintf($aos, 
 check('AOS : gardé avec data-aos', str_contains(sx_html_filter(sprintf($aos, '<img data-aos="fade" src="/x.webp">'), $ctx), 'sidex-aos-js'));
 check('AOS : gardé avec une ligne verticale', str_contains(sx_html_filter(sprintf($aos, '<div class="ct-div-block vertical-line"></div>'), $ctx), 'sidex-aos-js'));
 
+// 1f. Variantes légères (wp/scripts/images-variants.sh) : servies seulement si leur fichier existe.
+$up = sys_get_temp_dir() . '/sx-variants-' . getmypid();
+@mkdir($up);
+foreach (['hero.jpg.webp', 'lazy.jpg.webp', 'carte.png.webp', 'carte-768x768.png.webp', 'anim.gif.mp4', 'anim.gif.webm', 'anim.gif.poster.webp', 'diapo2.jpg.webp'] as $f) {
+	file_put_contents("$up/$f", 'x');
+}
+$vctx = ['uploads' => ['baseurl' => 'https://www.groupesidex.com/wp-content/uploads', 'basedir' => $up]] + $ctx;
+$U = 'https://www.groupesidex.com/wp-content/uploads';
+$var = '<!doctype html><html><head><meta charset="UTF-8"></head><body><main id="main">'
+	. '<section><div class="slide" style="background-image:linear-gradient(red, red), url(' . $U . '/hero.jpg);background-size:cover"></div>'
+	. '<div class="slide" style="background-image:url(' . $U . '/diapo2.jpg)"></div></section>'
+	. '<section><img id="image-1" class="ct-image" src="' . $U . '/carte.png" srcset="' . $U . '/carte-768x768.png 768w, ' . $U . '/carte-480x480.png 480w" sizes="(max-width: 768px) 100vw, 768px" width="1024" height="1024" alt="Carte">'
+	. '<img src="' . $U . '/sans-variante.jpg" width="10" height="10" alt="">'
+	. '<div style="--aspect-ratio:1"><img src="' . $U . '/lazy.jpg" width="10" height="10" alt=""></div>'
+	. '<div style="background-image:url(' . $U . '/lazy.jpg)"></div>'
+	. '<div><img id="image-9-1621" alt="animation projets" src="' . $U . '/anim.gif" class="ct-image" width="400" height="400" loading="lazy"></div>'
+	. '<img src="' . $U . '/autre.gif" width="400" height="400" alt="x"></section></main></body></html>';
+$out = sx_html_filter($var, $vctx, $errors);
+check('variantes : aucune étape en échec', $errors === []);
+check('variantes : préchargement LCP vers le WebP', str_contains($out, '<link rel="preload" as="image" href="' . $U . '/hero.jpg.webp" type="image/webp" fetchpriority="high">'));
+check('variantes : fond du héros en image-set après l\'original', str_contains($out,
+	'style="background-image:linear-gradient(red, red), url(' . $U . '/hero.jpg);background-size:cover;background-image:linear-gradient(red, red), image-set(url(' . $U . "/hero.jpg.webp) type('image/webp'), url(" . $U . "/hero.jpg) type('image/jpeg'))\""));
+check('variantes : fond différé du diaporama avec data-sx-bg-webp', str_contains($out, 'data-sx-bg="url(' . $U . '/diapo2.jpg)" data-sx-bg-webp="image-set(url(' . $U . '/diapo2.jpg.webp)'));
+check('variantes : <picture> avec srcset WebP (candidat sans variante gardé)', str_contains($out,
+	'<picture style="display:contents"><source type="image/webp" srcset="' . $U . '/carte-768x768.png.webp 768w, ' . $U . '/carte-480x480.png 480w" sizes="(max-width: 768px) 100vw, 768px"><img id="image-1"'));
+check('variantes : image sans variante intacte', substr_count($out, '<picture') === 1 && !str_contains($out, 'sans-variante.jpg.webp'));
+check('variantes : pas d\'enveloppe sous un sélecteur « > img »', str_contains($out, '<div style="--aspect-ratio:1"><img src="' . $U . '/lazy.jpg"'));
+check('variantes : GIF → vidéo (id, classes, dimensions, nom accessible)', str_contains($out,
+	'<video id="image-9-1621" class="ct-image" width="400" height="400" role="img" aria-label="animation projets" autoplay muted loop playsinline disablepictureinpicture preload="none" data-sx-video data-poster="' . $U . '/anim.gif.poster.webp">'
+	. '<source data-src="' . $U . '/anim.gif.webm" type="video/webm"><source data-src="' . $U . '/anim.gif.mp4" type="video/mp4"></video>'));
+check('variantes : GIF sans vidéo intact, script des vidéos avant </body>', str_contains($out, 'src="' . $U . '/autre.gif"')
+	&& preg_match('#<script id="sidex-gif-video">.*</script>\s*</body>#s', $out) === 1);
+check('variantes : aucune variante → étape sans effet', sx_html_filter($var, $ctx) === sx_html_filter($var, ['uploads' => ['baseurl' => $U, 'basedir' => "$up/absent"]] + $ctx));
+array_map('unlink', glob("$up/*"));
+rmdir($up);
+
 // 2. Erreur PCRE forcée (limite de backtracking minuscule, JIT coupé) sur une page lourde.
 function with_tiny_pcre_limit(callable $fn)
 {
