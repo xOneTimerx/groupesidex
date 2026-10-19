@@ -16,6 +16,9 @@ Thème WordPress classique (ACF + Tailwind v4) qui remplace Oxygen Builder sur g
   des classes nouvelles (ou un nouveau gabarit) : `python3 tools/css_usage.py` (lecture du live), puis `bash tools/build-css.sh`.
 - `wp/mu-plugins/` — mu-plugins versionnés. `zz-dev-mail-killswitch.php` = **staging seulement**, ne jamais déployer sur le live.
 - `wp/scripts/` — déploiement staging, gel, bascule.
+- `wp/scripts/images-variants.sh` — variantes légères à côté des originaux (`<image>.webp`, `<anim>.gif.mp4/.webm/.poster.webp`),
+  servies par `inc/html.php` seulement si le fichier existe. Simulation par défaut, `--apply` pour écrire (`TARGET=live` :
+  confirmation). Relevé seul : `python3 wp/tools/images/scan.py <site> --sitemaps page,post`.
 
 ## Mise en ligne (Vincent, dans un terminal WSL)
 
