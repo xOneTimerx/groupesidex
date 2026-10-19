@@ -25,11 +25,13 @@
 | | Perf | FCP | LCP |
 |---|---|---|---|
 | Avant (d4b2a64) | 0,79–0,86 | 1,8–1,9 s | 3,6–4,4 s |
-| Après | 0,90–0,91 | 1,2 s | 3,0–3,2 s |
+| JS différé seulement | 0,90–0,91 | 1,2 s | 3,0–3,2 s |
+| + préchargement WP Rocket de l'original retiré | 0,96–0,98 | 1,2 s | 2,0–2,3 s |
 
-Le TTFB du staging est de 1,5–2,8 s (cache Kinsta en `BYPASS`) contre ≈ 0,35–0,7 s sur le live : c'est lui qui garde le
-LCP au-dessus de 2,5 s sur staging. Hors TTFB, l'image du héros s'affiche ≈ 190 ms après la réponse (avant : 180–490 ms,
-et FCP 0,7 s plus tard). Avec le TTFB du live, le LCP attendu est ≈ 1 s ; à confirmer par une mesure en prod après report.
+Cause du dernier gain : WP Rocket ajoute `<link rel="preload" data-rocket-preload as="image">` vers le `src` de la 1re
+diapositive (l'original de 1921 px, ≈ 200 Ko) sans `imagesrcset`, alors que l'`<img>` choisit un candidat de ≈ 40 Ko sur
+mobile : deux téléchargements, le gros en concurrence avec le LCP. `sx_html_rocket_preload` (rocket_buffer) retire ce
+préchargement quand le HTML contient l'`<img data-sx-lcp srcset>` (déjà en `fetchpriority=high`, vu par l'analyseur).
 
 ## Envoi de formulaire (staging, Playwright)
 Clé reCAPTCHA de test Google et CleanTalk « forms__contact_forms_test » coupé le temps du test, réglages restaurés

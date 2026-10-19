@@ -407,6 +407,14 @@ add_filter('rocket_buffer', static function ($html) {
 
 function sx_html_rocket_preload(string $html, array $ctx): ?string
 {
+	// 1re diapositive rendue en <img data-sx-lcp srcset> : WP Rocket précharge pourtant son src (l'original de 1921 px,
+	// ≈ 200 Ko), sans srcset, en plus du candidat que l'<img> choisit (≈ 40 Ko sur mobile) : deux téléchargements, le
+	// gros en concurrence avec le LCP. L'<img> est dans le HTML avec fetchpriority=high : ce préchargement est retiré.
+	if (preg_match('/<img\b(?=[^>]*\sdata-sx-lcp)(?=[^>]*\ssrcset=)[^>]*>/i', $html, $img) && preg_match('/\ssrc="([^"]+)"/i', $img[0], $src)) {
+		$html = preg_replace_callback('/<link\b(?=[^>]*\sdata-rocket-preload)(?=[^>]*\sas="image")[^>]*>\s*/i', static function (array $m) use ($src) {
+			return preg_match('/\shref="([^"]+)"/i', $m[0], $h) && html_entity_decode($h[1]) === html_entity_decode($src[1]) ? '' : $m[0];
+		}, $html) ?? $html;
+	}
 	return preg_replace_callback('/<link\b(?=[^>]*\sdata-rocket-preload)(?=[^>]*\sas="image")[^>]*>/i', static function (array $m) use ($ctx) {
 		if (preg_match('/\s(?:type|imagesrcset)=/i', $m[0]) || !preg_match('/\shref="([^"]+)"/i', $m[0], $h)
 			|| !preg_match('/\.(?:jpe?g|png)(?:[?#]|$)/i', $h[1]) || !($v = sx_html_variant_url(html_entity_decode($h[1]), '.webp', $ctx))) {

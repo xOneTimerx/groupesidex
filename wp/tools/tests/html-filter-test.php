@@ -155,6 +155,9 @@ rmdir("$up/theme/assets/css"); rmdir("$up/theme/assets"); rmdir("$up/theme");
 $rocket = '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">';
 check('WP Rocket : son préchargement LCP passe au WebP s\'il existe, sinon intact', sx_html_rocket_preload($rocket, $vctx)
 	=== '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg.webp" type="image/webp" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">');
+$heroImg = '<img class="slide__img" src="' . $U . '/hero.jpg" srcset="' . $U . '/hero-480.jpg 480w, ' . $U . '/hero.jpg 1921w" sizes="100vw" data-sx-lcp="1">';
+check('WP Rocket : préchargement du src de la 1re diapositive (<img data-sx-lcp srcset>) retiré, les autres gardés',
+	sx_html_rocket_preload($rocket . $heroImg, $vctx) === '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">' . $heroImg);
 array_map('unlink', glob("$up/*"));
 rmdir($up);
 
