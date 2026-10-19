@@ -5,7 +5,8 @@
 #   bash wp/scripts/theme-update-live.sh                    # live : demande de taper « live » (lire /dev/tty :
 #                                                           # lancer dans un vrai terminal WSL, pas par « ! »)
 #   TARGET=staging bash wp/scripts/theme-update-live.sh     # répétition sur le staging, sans confirmation
-#   TARGET=staging FORCE_FAIL=1 bash wp/scripts/…           # répétition du retour arrière (contrôle forcé en échec)
+#   TARGET=staging FORCE_FAIL=1 bash wp/scripts/…           # répétition du retour arrière (contrôle de fumée en échec)
+#   TARGET=staging FORCE_FAIL=rsync bash wp/scripts/…       # idem, comparaison des fichiers déployés impossible
 #
 # Étapes : vérifications → contrôle de fumée « avant » → sauvegarde tgz dans ~/private → rsync → purge → contrôle de
 # fumée → retour arrière automatique vers la sauvegarde si un contrôle échoue (ou si une étape plante après la copie).
@@ -20,7 +21,7 @@ case "$TARGET" in
 	*) echo "TARGET inconnu : $TARGET"; exit 1 ;;
 esac
 FORCE_FAIL=${FORCE_FAIL:-0}
-[ "$FORCE_FAIL" = 1 ] && [ "$TARGET" != staging ] && { echo "FORCE_FAIL réservé au staging"; exit 1; }
+[ "$FORCE_FAIL" != 0 ] && [ "$TARGET" != staging ] && { echo "FORCE_FAIL réservé au staging"; exit 1; }
 ROOT=/www/groupesidexcom_665/public
 WPC=$ROOT/wp-content
 # mu-plugins reportés sur le live (comme golive.sh). Exclus : sidex-oxygen-bridge.php (coexistence avec Oxygen,
@@ -136,15 +137,20 @@ opcache_wait
 purge
 
 # Le serveur doit porter exactement le paquet (sommes de contrôle) : sur le staging partagé, un autre déploiement
-# peut avoir écrasé le thème entre-temps ; le contrôle de fumée ne vaudrait alors rien.
+# peut avoir écrasé le thème entre-temps ; le contrôle de fumée ne vaudrait alors rien. Comparaison impossible ou
+# écart = contrôle échoué : retour arrière, sur le staging comme sur le live.
 echo "== vérification des fichiers déployés"
 sleep 5
-diff=$(rsync -rlnc --delete -i "$PKG/wp/themes/sidex/" "$HOST:$WPC/themes/sidex/"; rsync -rlnc -i $(printf "$PKG/wp/mu-plugins/%s " $MU) "$HOST:$WPC/mu-plugins/")
-diff=$(grep -v '^\.d' <<< "$diff" || true)
+cmp_host=$HOST
+if [ "$FORCE_FAIL" = rsync ]; then cmp_host=$HOST-introuvable; fi
+cmp_theme=$(rsync -rlnc --delete -i "$PKG/wp/themes/sidex/" "$cmp_host:$WPC/themes/sidex/") \
+	|| { echo "✗ comparaison du thème impossible (rsync)"; restore; }
+cmp_mu=$(rsync -rlnc -i $(printf "$PKG/wp/mu-plugins/%s " $MU) "$HOST:$WPC/mu-plugins/") \
+	|| { echo "✗ comparaison des mu-plugins impossible (rsync)"; restore; }
+diff=$(printf '%s\n%s\n' "$cmp_theme" "$cmp_mu" | grep -v -e '^\.d' -e '^$' || true)
 if [ -n "$diff" ]; then
 	echo "$diff" | head -10 | sed 's/^/  /'
-	if [ "$TARGET" = staging ]; then trap - ERR; echo "✗ le staging ne porte plus $VER (autre déploiement ?) : recommencer plus tard"; exit 2; fi
-	echo "✗ fichiers du live différents du paquet"; restore
+	echo "✗ fichiers du serveur différents du paquet (autre déploiement sur le staging partagé ?)"; restore
 fi
 echo "  ✓ le serveur porte exactement $VER"
 
