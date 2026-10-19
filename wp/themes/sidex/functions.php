@@ -13,4 +13,5 @@ require SIDEX_DIR . '/inc/oxy-runtime.php';
 require SIDEX_DIR . '/inc/templates.php';
 require SIDEX_DIR . '/inc/assets.php';
 require SIDEX_DIR . '/inc/forms-defer.php';
+require SIDEX_DIR . '/inc/js-defer.php';
 require SIDEX_DIR . '/inc/html.php';

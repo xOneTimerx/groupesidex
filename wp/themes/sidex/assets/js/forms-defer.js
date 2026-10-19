@@ -1,9 +1,14 @@
 /* Fluent Forms à la demande (inc/forms-defer.php l'imprime en ligne avec window.sxFormsDefer = { groupe: [URL, …] }).
    Les bibliothèques se chargent quand un formulaire approche de l'écran (≈ 400 px) ou reçoit le focus, le doigt ou
-   le clic, puis sont branchées par les chemins de Fluent Forms (reinitExtras, reInitExtras, fluentform_reset). */
+   le clic, puis sont branchées par les chemins de Fluent Forms (reinitExtras, reInitExtras, fluentform_reset).
+   Groupes « fluentform » (JS de Fluent Forms) et « cleantalk » (protection anti-pourriel) : chargés les premiers ;
+   un envoi arrivé avant leur fin est retenu puis rejoué. */
 (function () {
 	var groups = window.sxFormsDefer || {};
 	var requested = false;
+	var core = ['fluentform', 'cleantalk'].filter(function (name) { return groups[name]; });
+	var coreDone = 0;
+	var held = null;
 
 	function forEachForm(fn) {
 		if (window.jQuery) {
@@ -91,9 +96,40 @@
 				if (window.console) {
 					console.error('sidex: échec du chargement de ' + s.src);
 				}
+				next(); // un script bloqué (CleanTalk, extension) ne doit pas retenir le formulaire
 			};
 			document.body.appendChild(s);
 		})();
+	}
+
+	// Fluent Forms et CleanTalk prêts : on rejoue l'envoi retenu (le gestionnaire jQuery de Fluent Forms est branché au « ready »).
+	function coreReady() {
+		coreDone++;
+		if (coreDone < core.length) {
+			return;
+		}
+		jQuery(function () {
+			setTimeout(function () {
+				var form = held;
+				held = null;
+				if (form) {
+					form.requestSubmit ? form.requestSubmit() : form.submit();
+				}
+			}, 0);
+		});
+	}
+
+	// Aucun envoi natif tant que Fluent Forms et CleanTalk ne sont pas chargés.
+	if (core.length) {
+		document.addEventListener('submit', function (e) {
+			if (coreDone >= core.length || !e.target.matches || !e.target.matches('form.frm-fluent-form')) {
+				return;
+			}
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			held = e.target;
+			load();
+		}, true);
 	}
 
 	function load() {
@@ -101,12 +137,27 @@
 			return;
 		}
 		requested = true;
-		Object.keys(groups).forEach(function (name) {
-			loadGroup(groups[name], ready[name] && function () {
-				// Après l'initialisation de Fluent Forms et des scripts en ligne des champs (jQuery ready).
-				jQuery(ready[name]);
+		var extras = Object.keys(groups).filter(function (name) { return core.indexOf(name) < 0; });
+		var loadExtras = function () {
+			extras.forEach(function (name) {
+				loadGroup(groups[name], ready[name] && function () {
+					// Après l'initialisation de Fluent Forms et des scripts en ligne des champs (jQuery ready).
+					jQuery(ready[name]);
+				});
 			});
-		});
+		};
+		// Les bibliothèques de champs s'appuient sur Fluent Forms : elles partent après son script.
+		if (groups.fluentform) {
+			loadGroup(groups.fluentform, function () {
+				coreReady();
+				loadExtras();
+			});
+		} else {
+			loadExtras();
+		}
+		if (groups.cleantalk) {
+			loadGroup(groups.cleantalk, coreReady);
+		}
 	}
 
 	function start() {
