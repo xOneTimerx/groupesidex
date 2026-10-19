@@ -55,7 +55,8 @@ function sx_oxy_assets(int $id): void
 	}
 	$js = 'js/o-' . $id . '.js';
 	if (is_file(SIDEX_DIR . '/assets/' . $js)) {
-		wp_enqueue_script('sidex-o-' . $id, sx_asset_url($js), ['sidex', 'sidex-advanced-scripts'], sx_asset_version($js), ['in_footer' => true]);
+		$deps = in_array('gsap-text', SX_OXY_LIBS[$id] ?? [], true) ? ['sidex', 'sidex-advanced-scripts', 'sidex-gsap-text'] : ['sidex', 'sidex-advanced-scripts'];
+		wp_enqueue_script('sidex-o-' . $id, sx_asset_url($js), $deps, sx_asset_version($js), ['in_footer' => true]);
 	}
 }
 
