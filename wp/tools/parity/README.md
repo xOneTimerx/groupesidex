@@ -8,6 +8,8 @@ Outils utilisés pour porter chaque gabarit. Dépendances : `puppeteer-core` et 
   Objectif : écart de hauteur 0 et aucun texte déplacé de plus de 3 px à 390/768/1024/1280/1440/1920.
 - `sbs.py <dossier>` — captures côte à côte réduites (Oxygen à gauche).
 - `functional.js <url>` — menus, carrousel, vidéo, en-tête collant, menu mobile, console.
+- `forms-defer-check.js <chemin> [mobile|desktop] [scroll]` — Fluent Forms différé (staging) : rien au chargement, widget
+  reCAPTCHA, calendrier, champs fichier et masques branchés à l'ouverture du panneau ou au défilement. Envoi réel : `form-test.js`.
 - `survey.js`, `show.py`, `geo.js` — relevés de styles calculés ; `cssq.py` — règles CSS Oxygen par sélecteur.
 
 Règle apprise : ne pas se fier aux media queries des fichiers Oxygen (la cascade en écrase plusieurs) ;

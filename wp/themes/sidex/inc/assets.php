@@ -32,10 +32,10 @@ add_action('wp_enqueue_scripts', static function () {
 	$js = static function (string $handle, string $file, array $deps = []) {
 		wp_enqueue_script($handle, sx_asset_url($file), $deps, sx_asset_version($file), ['in_footer' => true]);
 	};
-	// Splide et TextPlugin (GSAP) retirés : aucun élément ni script du site ne les utilisait (audit du 16 oct. 2026).
+	// Splide retiré : aucun élément ni script du site ne l'utilisait (audit du 16 oct. 2026).
 	// GSAP + ScrollTrigger + SplitText ne servaient plus qu'à la révélation des titres : js/title-reveal.js (natif).
-	// GSAP reste pour le diaporama de l'accueil (o-1688.js, inc/oxy-runtime.php). AOS : retiré des pages sans
-	// élément data-aos par inc/html.php.
+	// GSAP reste pour le diaporama de l'accueil (o-1688.js, inc/oxy-runtime.php), avec TextPlugin pour le compteur
+	// du héros, voir sx_lib('gsap-text'). AOS : retiré des pages sans élément data-aos par inc/html.php.
 	wp_register_script('sidex-gsap', sx_asset_url('vendor/gsap.min.js'), [], sx_asset_version('vendor/gsap.min.js'), ['in_footer' => true]);
 	$js('sidex-aos', 'vendor/aos.js');
 	$js('sidex-external-links', 'vendor/oxy-toolbox-external-links.js', ['jquery']);
@@ -97,6 +97,9 @@ function sx_lib(string $lib): void
 			break;
 		case 'skeletabs':
 			$js('sidex-skeletabs', 'vendor/skeletabs.js');
+			break;
+		case 'gsap-text':
+			$js('sidex-gsap-text', 'vendor/TextPlugin.min.js', ['sidex-gsap']);
 			break;
 		case 'glightbox':
 			// Advanced Scripts 143/144/248 : nuanciers des revêtements (classe glightbox-couleurs du contenu ACF).

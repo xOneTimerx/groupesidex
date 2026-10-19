@@ -59,6 +59,9 @@ function sx_oxy_assets(int $id): void
 		if (str_contains((string) file_get_contents(SIDEX_DIR . '/assets/' . $js), 'gsap.')) {
 			$deps[] = 'sidex-gsap'; // diaporama de l'accueil (1688)
 		}
+		if (in_array('gsap-text', SX_OXY_LIBS[$id] ?? [], true)) {
+			$deps[] = 'sidex-gsap-text'; // compteur du héros (1688)
+		}
 		wp_enqueue_script('sidex-o-' . $id, sx_asset_url($js), $deps, sx_asset_version($js), ['in_footer' => true]);
 	}
 }
