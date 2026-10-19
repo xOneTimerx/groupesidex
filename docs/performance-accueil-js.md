@@ -43,8 +43,12 @@ Limite : le TTFB du staging (1,5–2,8 s, page jamais servie par le cache WP Roc
 ce TTFB ; sur le live, la page est servie en cache (TTFB ≈ 0,35 s).
 
 ## Envoi de formulaire (staging, Playwright)
-Clé reCAPTCHA de test Google et CleanTalk « forms__contact_forms_test » coupé le temps du test, réglages restaurés
-ensuite : envoi sans aucune interaction préalable (scripts encore non chargés), avec et sans `requestSubmit` →
-POST `admin-ajax` unique, redirection vers `/merci/soumission/`. Avec CleanTalk actif, le POST atteint le serveur et
-CleanTalk répond (« envois trop fréquents » : limitation par IP après les essais répétés), donc la protection reste
-appliquée sur le chemin différé.
+- CleanTalk coupé (« forms__contact_forms_test » = 0) et clé reCAPTCHA de test Google, réglages restaurés ensuite : envoi sans
+  aucune interaction préalable (scripts encore non chargés), avec et sans `requestSubmit` → POST `admin-ajax` unique,
+  redirection vers `/merci/soumission/`.
+- CleanTalk actif : le POST atteint le serveur, qui répond HTTP 422 « envois trop fréquents » (CleanTalk). Ce refus n'est pas
+  causé par le report : même réponse avec le code d'avant (d4b2a64, scripts chargés normalement), depuis une autre adresse IP
+  (sortie par le serveur Kinsta), avec `approved@cleantalk.org`, et 25 min après le dernier essai. La clé CleanTalk du staging
+  est la même que celle du live : le refus vient du nuage CleanTalk, pas de l'IP. Un envoi réussi sous CleanTalk actif reste
+  donc à confirmer à la main (vrai navigateur, adresse non limitée) ; la protection est bien appliquée sur le chemin différé
+  puisque son verdict est rendu.
