@@ -113,7 +113,18 @@
 				var form = held;
 				held = null;
 				if (form) {
-					form.requestSubmit ? form.requestSubmit() : form.submit();
+					if (form.requestSubmit) {
+						form.requestSubmit();
+					} else {
+						// Sans requestSubmit : un clic sur le bouton déclenche l'événement « submit » que Fluent Forms écoute
+						// (form.submit() l'éviterait et enverrait la page en natif).
+						var btn = form.querySelector('button[type="submit"], input[type="submit"]');
+						if (btn) {
+							btn.click();
+						} else {
+							form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+						}
+					}
 				}
 			}, 0);
 		});
