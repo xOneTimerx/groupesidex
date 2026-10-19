@@ -68,10 +68,17 @@ confirm() {
 	read -r -p "PRODUCTION $SITE — « $1 ». Taper « live » pour confirmer : " ok </dev/tty
 	[ "$ok" = live ] || { echo "Annulé."; exit 1; }
 }
-# Kinsta : --all = cache de page + edge + CDN + objet. WP Rocket est actif : le vider aussi.
+# Kinsta : --all = cache de page + edge + CDN + objet. WP Rocket est actif : le vider aussi, CSS utilisé compris.
+# Remove Unused CSS garde son CSS par URL jusqu'à un vidage explicite (ni rocket_clean_domain ni la purge Kinsta n'y
+# touchent) : sans ce vidage, le CSS calculé sur l'ancien thème reste servi (le 19 oct. 2026 : Heebo encore déclarée sur
+# fonts.gstatic.com, voir inc/assets.php). Même opération que « Vider le CSS utilisé » de l'admin (WP Rocket 3.23) ;
+# les pages sont servies avec les feuilles complètes le temps que WP Rocket recalcule leur CSS.
 # Cloudflare : aucun moyen de purge dans le dépôt (pas de zone ni de jeton) ; la couche edge de Kinsta est couverte par --all.
 purge() {
-	remote "wp eval 'if (function_exists(\"rocket_clean_domain\")) { rocket_clean_domain(); rocket_clean_minify(); echo \"WP Rocket vidé\n\"; }' && wp kinsta cache purge --all"
+	remote "wp eval 'if (function_exists(\"rocket_clean_domain\")) { rocket_clean_domain(); rocket_clean_minify(); echo \"WP Rocket vidé\n\"; }
+		\$c = apply_filters(\"rocket_container\", null);
+		if (function_exists(\"get_rocket_option\") && get_rocket_option(\"remove_unused_css\") && is_object(\$c) && \$c->has(\"rucss_admin_subscriber\")) {
+			\$c->get(\"rucss_admin_subscriber\")->delete_used_css_rows(); echo \"CSS utilisé (Remove Unused CSS) vidé\n\"; }' && wp kinsta cache purge --all"
 }
 # OPcache revalide les fichiers PHP toutes les 2 s (opcache.revalidate_freq) : attendre avant de purger, sinon le
 # préchargement de WP Rocket remplit le cache avec l'ancien code.

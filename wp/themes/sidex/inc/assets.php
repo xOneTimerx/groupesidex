@@ -61,7 +61,30 @@ add_action('wp_head', static function () {
 		. "@font-face{font-family:'Heebo';font-style:normal;font-weight:100 900;font-display:swap;src:url(" . $font('heebo-latin.woff2') . ") format('woff2');"
 		. 'unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}' . "\n"
 		. "</style>\n";
+	$GLOBALS['sx_heebo'] = true;
 }, 2);
+
+/* WP Rocket (live), Remove Unused CSS : il vide les <style> en ligne, reporte leur contenu dans son CSS utilisé
+   (wpr-usedcss, calculé à distance) et garde ce CSS par URL jusqu'à un vidage explicite. Le 19 oct. 2026, celui de
+   639 lignes sur 944 (accueil compris) datait d'avant l'auto-hébergement et déclarait Heebo sur fonts.gstatic.com :
+   police téléchargée deux fois. Désormais, la seule déclaration de Heebo est sidex-heebo :
+   - la balise est exclue de RUCSS (gardée telle quelle dans la page) ;
+   - toute déclaration @font-face de Heebo est retirée du CSS utilisé à l'affichage, qu'il soit périmé ou non ;
+   - plus d'indice dns-prefetch / preconnect vers fonts.googleapis.com ou fonts.gstatic.com (relevé du script de
+     mesure de WP Rocket d'avant la bascule, conservé lui aussi). */
+add_filter('rocket_rucss_inline_atts_exclusions', static fn($ex) => array_merge((array) $ex, ['sidex-heebo']));
+add_filter('rocket_usedcss_content', static fn($css) => is_string($css) && !empty($GLOBALS['sx_heebo']) ? sx_css_drop_font_face($css, 'Heebo') : $css);
+add_filter('rocket_head_items', static fn($items) => is_array($items) ? array_filter($items, static fn($item) =>
+	!is_array($item) || !preg_match('#^(?:https?:)?//fonts\.(?:googleapis|gstatic)\.com#i', (string) ($item['href'] ?? ''))) : $items, 20);
+
+/** Retire d'un texte CSS les règles @font-face de la famille $family. */
+function sx_css_drop_font_face(string $css, string $family): string
+{
+	$family = preg_quote($family, '/');
+	$out = preg_replace_callback('/@font-face\s*\{[^{}]*\}/i', static fn(array $m) =>
+		preg_match('/font-family\s*:\s*([\'"]?)' . $family . '\1\s*(?:[;}]|!)/i', $m[0]) ? '' : $m[0], $css);
+	return is_string($out) ? $out : $css;
+}
 
 /** Bibliothèque d'un élément d'extension (OxyExtras, galerie Oxygen), chargée seulement par les gabarits qui l'utilisent. */
 function sx_lib(string $lib): void

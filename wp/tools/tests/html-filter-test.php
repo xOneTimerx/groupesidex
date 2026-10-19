@@ -8,6 +8,7 @@ define('ABSPATH', __DIR__ . '/');
 function add_action(...$args): void {}
 function add_filter(...$args): void {}
 require __DIR__ . '/../../themes/sidex/inc/html.php';
+require __DIR__ . '/../../themes/sidex/inc/assets.php';
 
 $fails = 0;
 function check(string $name, bool $ok): void
@@ -181,6 +182,13 @@ check('exception : les autres étapes s\'appliquent', str_contains($out, 'aria-l
 
 // 4. Ce qui n'est pas une page HTML ressort tel quel.
 check('réponse non HTML inchangée', sx_html_filter('{"ok":true}', $ctx) === '{"ok":true}');
+
+// 5. CSS utilisé de WP Rocket : déclarations de Heebo retirées (périmées sur fonts.gstatic.com ou locales), le reste intact.
+$used = "@font-face{font-family:Heebo;font-style:normal;font-weight:100;font-display:swap;src:url(https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9H2TbFhsqMA.woff2) format('woff2')}"
+	. "h1{font-family:Heebo;font-size:42px}@font-face{font-family:'Heebo';font-weight:100 900;src:url(/wp-content/themes/sidex/assets/fonts/heebo-latin.woff2)}"
+	. '@font-face{font-family:"Heebo Sans";src:url(x.woff2)}@font-face{font-family:Lineariconsicon;src:url(l.woff)}@media (max-width:767px){h1{font-size:30px}}';
+check('CSS utilisé : @font-face de Heebo retirées, autres familles et règles intactes', sx_css_drop_font_face($used, 'Heebo')
+	=== 'h1{font-family:Heebo;font-size:42px}@font-face{font-family:"Heebo Sans";src:url(x.woff2)}@font-face{font-family:Lineariconsicon;src:url(l.woff)}@media (max-width:767px){h1{font-size:30px}}');
 
 echo $fails ? "$fails échec(s)\n" : "tous les tests passent\n";
 exit($fails ? 1 : 0);
