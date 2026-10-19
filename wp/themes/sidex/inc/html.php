@@ -100,7 +100,9 @@ function sx_html_images(string $html, array $ctx): ?string
 	// Candidat LCP : fond de la première section, sinon première <img> matricielle des deux premières sections.
 	$lcp_img = null;
 	$hero = $first !== false ? substr($html, $first, $fold - $first) : '';
-	if (preg_match('/background-image:[^;"]*url\(([^)]+\.(?:webp|jpe?g|png|avif))\)/i', $hero, $m)) {
+	// 1re diapositive de l'accueil rendue en <img data-sx-lcp> (sx_hero_slide_img) : sa balise se découvre dans le HTML,
+	// pas de préchargement ; les fonds des diapositives suivantes ne sont pas des candidats.
+	if (!str_contains($hero, 'data-sx-lcp') && preg_match('/background-image:[^;"]*url\(([^)]+\.(?:webp|jpe?g|png|avif))\)/i', $hero, $m)) {
 		$url = html_entity_decode(trim($m[1], '\'" '));
 		// L'élément qui porte ce fond est exclu du chargement différé de WP Rocket (sinon le fond, élément LCP, passe
 		// en data-bg et n'est appliqué qu'après son script : mesuré sur les pages GEO).
@@ -198,6 +200,25 @@ function sx_upload_srcset(string $url): ?string
 }
 
 /**
+ * 1re diapositive de l'accueil (gabarit 1688) : <img> au lieu du fond (l'élément LCP se découvre et se priorise
+ * dans le HTML), suivie de la teinte sombre qu'ajoutait le dégradé du fond. Même cadrage : object-fit cover, centré.
+ * Dimensions et srcset viennent de la médiathèque ; sans métadonnées, l'image seule (sans srcset) et sans ratio.
+ */
+function sx_hero_slide_img(string $url): string
+{
+	if ($url === '') {
+		return '';
+	}
+	$abs = str_starts_with($url, '/') ? preg_replace('#^(https?://[^/]+).*$#', '$1', wp_get_upload_dir()['baseurl']) . $url : $url;
+	$id = attachment_url_to_postid($abs);
+	$meta = $id ? wp_get_attachment_metadata($id) : false;
+	$dims = is_array($meta) && !empty($meta['width']) && !empty($meta['height']) ? ' width="' . (int) $meta['width'] . '" height="' . (int) $meta['height'] . '"' : '';
+	$set = function_exists('sx_upload_srcset') ? sx_upload_srcset($url) : null;
+	return '<img class="slide__img" alt="" src="' . esc_url($url) . '"' . ($set ? ' srcset="' . esc_attr($set) . '" sizes="100vw"' : '') . $dims
+		. ' fetchpriority="high" decoding="async" data-no-lazy="1" data-sx-lcp="1"><span class="slide__shade"></span>';
+}
+
+/**
  * Diaporama du premier écran (accueil : 4 diapositives en image de fond) : seule la première image se charge tout de
  * suite (c'est l'élément LCP, préchargé) ; les suivantes passent en data-sx-bg et un petit script les remet au
  * chargement de la page, au plus tard 4 s après (la 2e diapositive arrive à 7,5 s). Sur mobile, ≈ 400 Ko de moins en
@@ -211,7 +232,8 @@ function sx_html_hero_backgrounds(string $html): ?string
 	if ($end === false) {
 		return $html;
 	}
-	$seen = 0;
+	// 1re diapositive en <img data-sx-lcp> : tous les fonds du premier écran sont différés.
+	$seen = str_contains(substr($html, $first, $end - $first), 'data-sx-lcp') ? 1 : 0;
 	$hero = preg_replace_callback('/<([a-z][a-z0-9]*)\b([^>]*?)\sstyle="([^"]*background-image:[^";]*url\([^)]+\)[^"]*)"([^>]*)>/i',
 		static function (array $m) use (&$seen) {
 			if ($seen++ === 0 || str_contains($m[0], 'data-sx-bg') || !preg_match('/background-image:([^;"]*);?/i', $m[3], $bg)) {

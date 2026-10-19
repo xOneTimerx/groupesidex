@@ -49,6 +49,16 @@ check('diaporama : 2e diapositive différée, reste du style conservé', str_con
 	'style="background-size:auto,  cover" data-sx-bg="linear-gradient(rgba(10,10,10,0.69), rgba(10,10,10,0.69)), url(https://www.groupesidex.com/wp-content/uploads/b.webp)"'));
 check('diaporama : sections suivantes intactes, script avant </body>', str_contains($out, '<section style="background-image:url(https://www.groupesidex.com/wp-content/uploads/c.webp)">')
 	&& preg_match('#<script id="sidex-hero-bg">.*</script>\s*</body>#s', $out) === 1);
+// 1b. 1re diapositive en <img data-sx-lcp> : pas de préchargement, fonds des autres diapositives tous différés.
+$lcp = '<!doctype html><html><head><meta charset="UTF-8"></head><body><main id="main"><section>'
+	. '<div class="slide__inner"><img class="slide__img" alt="" src="https://www.groupesidex.com/wp-content/uploads/a.webp" width="1920" height="1080" fetchpriority="high" decoding="async" data-no-lazy="1" data-sx-lcp="1"><span class="slide__shade"></span></div>'
+	. '<div class="slide__inner" style="background-image:linear-gradient(red, red), url(https://www.groupesidex.com/wp-content/uploads/b.webp);background-size:auto,  cover;"></div>'
+	. '</section></main></body></html>';
+$out = sx_html_filter($lcp, $ctx, $errors);
+check('diapo 1 en <img> : aucune étape en échec', $errors === []);
+check('diapo 1 en <img> : aucun préchargement en double', !str_contains($out, 'rel="preload" as="image"'));
+check('diapo 1 en <img> : image sans lazy, priorité haute', substr_count($out, 'fetchpriority="high"') === 1 && !str_contains($out, 'loading="lazy"'));
+check('diapo 1 en <img> : 2e diapositive différée', str_contains($out, 'data-sx-bg="linear-gradient(red, red), url(https://www.groupesidex.com/wp-content/uploads/b.webp)"'));
 check('une seule image de fond : rien de différé', !str_contains(sx_html_filter($page, $ctx), 'data-sx-bg'));
 
 // 1c. srcset des téléversements (WordPress fournit les tailles) ; SVG, srcset existant et URL inconnue intacts.
