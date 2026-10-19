@@ -109,14 +109,22 @@ smoke() {
 	return $bad
 }
 
-# Cache public (edge Kinsta/Cloudflare) : les pages SANS paramètre doivent servir la nouvelle version (marqueur ?ver=$MARK
-# sur une ressource du thème). Non bloquant : un cache encore ancien ne justifie pas un retour arrière.
+# Versions (?ver=) des ressources du thème appelées directement dans le HTML, une par ligne, sans doublon. Les copies
+# minifiées de WP Rocket (wp-content/cache/min/…) portent la version de WP Rocket, pas celle du thème : ignorées.
+theme_vers() {
+	grep -oE "[^\"'( ]*wp-content/themes/sidex/[^\"' )]*\?ver=[0-9]+" "$1" | grep -v '/cache/' | sed -E 's/.*\?ver=//' | sort -u || true
+}
+
+# Cache public (edge Kinsta/Cloudflare) : les pages SANS paramètre doivent servir la nouvelle version, c.-à-d. TOUTES les
+# ressources du thème en ?ver=$MARK (une seule version ancienne = HTML ancien ou mélangé). Non bloquant : un cache
+# encore ancien ne justifie pas un retour arrière.
 edge_wait() {
-	local u f hf pending left end=$((SECONDS + EDGE_WAIT)) cache
+	local u f hf pending left end=$((SECONDS + EDGE_WAIT)) cache v
 	f=$(mktemp); hf=$(mktemp)
 	curl -s -o "$f" -A "$UA" -H 'Cache-Control: no-cache' --max-time 90 "$SITE/?sxsmoke=$STAMP-marque" || true
-	if ! grep -qE "wp-content/themes/sidex/[^\"' ]*\?ver=$MARK" "$f" && [ "$FORCE_FAIL" != edge ]; then
-		echo "  (marqueur ?ver=$MARK absent même à l'origine : cache public non vérifiable, contrôler à la main)"
+	v=$(theme_vers "$f" | paste -sd ' ')
+	if [ "$v" != "$MARK" ] && [ "$FORCE_FAIL" != edge ]; then
+		echo "  (à l'origine, versions du thème « ${v:-aucune} », attendu « $MARK » seulement : cache public non vérifiable, contrôler à la main)"
 		rm -f "$f" "$hf"; return 0
 	fi
 	pending=$EDGE_URLS
@@ -125,16 +133,18 @@ edge_wait() {
 		for u in $pending; do
 			curl -s -o "$f" -D "$hf" -A "$UA" --max-time 60 "$SITE$u" || true
 			cache=$(tr -d '\r' < "$hf" | grep -iE '^(cf-cache-status|x-kinsta-cache|ki-cache-type|age):' | cut -d: -f2- | paste -sd '/' | tr -d ' ')
-			if grep -qE "wp-content/themes/sidex/[^\"' ]*\?ver=$MARK" "$f"; then
+			v=$(theme_vers "$f" | paste -sd ' ')
+			if [ "$v" = "$MARK" ]; then
 				echo "  ✓ $u nouvelle version publique ($cache)"
 			else
+				echo "  … $u versions du thème « ${v:-aucune} » ($cache)"
 				left="$left $u"
 			fi
 		done
 		pending=$left
 		[ -z "$pending" ] && { rm -f "$f" "$hf"; return 0; }
 		[ $SECONDS -ge $end ] && break
-		echo "  … ancienne version encore servie :$pending ($cache) — nouvel essai dans 20 s"
+		echo "  … ancienne version encore servie :$pending — nouvel essai dans 20 s"
 		sleep 20
 	done
 	rm -f "$f" "$hf"
