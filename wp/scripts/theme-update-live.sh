@@ -33,6 +33,8 @@ UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
 URLS="/ /en/ /contact/ /en/contact/ /prix/ /en/quote/ /revetement-exterieur-bois/ /en/exterior-wood-siding/
 /revetement-exterieur-bois-saint-sauveur/ /blogue/ /en/blog/ /cedre-blanc-ou-cedre-rouge/ /opaque/
 /projets/ /projets/projet-27742/ /en/projets/project-27742/"
+# Dernier commit du paquet (thème + mu-plugins), indépendant des commits qui ne touchent que les scripts.
+VER=$(git log -1 --format=%h -- wp/themes/sidex wp/mu-plugins)
 PKG=$(mktemp -d); trap 'rm -rf "$PKG"' EXIT
 
 remote() { ssh "$HOST" "cd $ROOT && $*"; }
@@ -92,7 +94,7 @@ rm -rf "$PKG/wp/themes/sidex/src"
 [ -f "$PKG/wp/themes/sidex/style.css" ] || { echo "✗ paquet incomplet (style.css absent)"; exit 1; }
 n=0; while IFS= read -r f; do php -l "$f" >/dev/null || { echo "✗ erreur PHP : ${f#"$PKG"/}"; exit 1; }; n=$((n + 1)); done \
 	< <(find "$PKG" -name '*.php')
-echo "  ✓ paquet $(git log -1 --format='%h %s') — $n fichiers PHP valides (branche $(git rev-parse --abbrev-ref HEAD))"
+echo "  ✓ paquet $VER $(git log -1 --format=%s "$VER") — $n fichiers PHP valides (branche $(git rev-parse --abbrev-ref HEAD))"
 state=$(remote "wp option get home && wp option get stylesheet && (wp plugin is-active duracelltomi-google-tag-manager && echo gtm-actif || true)")
 home=$(sed -n 1p <<< "$state"); theme=$(sed -n 2p <<< "$state")
 [ "${home%/}" = "$SITE" ] || { echo "✗ home du site = $home, attendu $SITE : arrêt"; exit 1; }
@@ -105,7 +107,7 @@ if [ "$TARGET" = live ] || grep -q gtm-actif <<< "$state"; then GTM=1; else GTM=
 echo "== contrôle de fumée avant mise à jour"
 smoke avant || { echo "✗ le site échoue déjà aux contrôles : rien n'a été modifié, arrêt"; exit 1; }
 
-confirm "mise à jour du thème sidex et des mu-plugins ($(git log -1 --format=%h))"
+confirm "mise à jour du thème sidex et des mu-plugins ($VER)"
 
 echo "== sauvegarde"
 remote "set -e; mkdir -p ~/private; cd $WPC; m=''; for f in $MU; do [ -f mu-plugins/\$f ] && m=\"\$m mu-plugins/\$f\"; done;
@@ -131,12 +133,12 @@ diff=$(rsync -rlnc --delete -i "$PKG/wp/themes/sidex/" "$HOST:$WPC/themes/sidex/
 diff=$(grep -v '^\.d' <<< "$diff" || true)
 if [ -n "$diff" ]; then
 	echo "$diff" | head -10 | sed 's/^/  /'
-	if [ "$TARGET" = staging ]; then trap - ERR; echo "✗ le staging ne porte plus $(git log -1 --format=%h) (autre déploiement ?) : recommencer plus tard"; exit 2; fi
+	if [ "$TARGET" = staging ]; then trap - ERR; echo "✗ le staging ne porte plus $VER (autre déploiement ?) : recommencer plus tard"; exit 2; fi
 	echo "✗ fichiers du live différents du paquet"; restore
 fi
-echo "  ✓ le serveur porte exactement $(git log -1 --format=%h)"
+echo "  ✓ le serveur porte exactement $VER"
 
 echo "== contrôle de fumée après mise à jour"
 smoke apres || restore
 trap - ERR
-echo "✓ thème sidex $(git log -1 --format=%h) en ligne sur $SITE (sauvegarde : $BACKUP sur $HOST)"
+echo "✓ thème sidex $VER en ligne sur $SITE (sauvegarde : $BACKUP sur $HOST)"
