@@ -61,7 +61,7 @@ echo "== relevé des pages ($SITE, sitemaps page et post + $PAGES)"
 # shellcheck disable=SC2086
 python3 wp/tools/images/scan.py "$SITE" --sitemaps page,post --min-kb "$MIN_KB" $PAGES > "$TSV"
 cut -f1,3 "$TSV" | sort -u > "$WORK/files"
-grep -P '^(img|bg)\t' "$WORK/files" | cut -f2 > "$WORK/images" || true
+grep -P '^(img|bg)\t' "$WORK/files" | cut -f2 | sort -u > "$WORK/images" || true
 grep -P '^gif\t' "$WORK/files" | cut -f2 > "$WORK/gifs" || true
 echo "  $(cut -f4 "$TSV" | sort -u | wc -l) pages, $(wc -l < "$WORK/images") JPEG/PNG, $(wc -l < "$WORK/gifs") GIF (relevé : $TSV)"
 
