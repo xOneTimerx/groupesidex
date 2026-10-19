@@ -6,6 +6,7 @@
  */
 define('ABSPATH', __DIR__ . '/');
 function add_action(...$args): void {}
+function add_filter(...$args): void {}
 require __DIR__ . '/../../themes/sidex/inc/html.php';
 
 $fails = 0;
@@ -109,6 +110,9 @@ check('variantes : GIF → vidéo (id, classes, dimensions, nom accessible)', st
 check('variantes : GIF sans vidéo intact, script des vidéos avant </body>', str_contains($out, 'src="' . $U . '/autre.gif"')
 	&& preg_match('#<script id="sidex-gif-video">.*</script>\s*</body>#s', $out) === 1);
 check('variantes : aucune variante → étape sans effet', sx_html_filter($var, $ctx) === sx_html_filter($var, ['uploads' => ['baseurl' => $U, 'basedir' => "$up/absent"]] + $ctx));
+$rocket = '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">';
+check('WP Rocket : son préchargement LCP passe au WebP s\'il existe, sinon intact', sx_html_rocket_preload($rocket, $vctx)
+	=== '<link rel="preload" data-rocket-preload as="image" href="' . $U . '/hero.jpg.webp" type="image/webp" fetchpriority="high"><link rel="preload" data-rocket-preload as="image" href="' . $U . '/autre.jpg">');
 array_map('unlink', glob("$up/*"));
 rmdir($up);
 

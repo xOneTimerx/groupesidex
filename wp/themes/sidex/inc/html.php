@@ -343,6 +343,29 @@ function sx_html_variants(string $html, array $ctx): ?string
 	return $body === false ? $html . $script : substr($html, 0, $body) . $script . "\n" . substr($html, $body);
 }
 
+/*
+ * WP Rocket (live) ajoute son propre préchargement de l'image LCP (<link … data-rocket-preload>), relevée par son script
+ * de mesure : tant que ce relevé désigne l'original, le navigateur chargerait l'original ET la variante. rocket_buffer
+ * passe sur le HTML final, après l'ajout de ce lien (priorité maximale).
+ */
+add_filter('rocket_buffer', static function ($html) {
+	if (!is_string($html) || !str_contains($html, 'data-rocket-preload')) {
+		return $html;
+	}
+	return sx_html_rocket_preload($html, ['uploads' => wp_get_upload_dir()]) ?? $html;
+}, PHP_INT_MAX);
+
+function sx_html_rocket_preload(string $html, array $ctx): ?string
+{
+	return preg_replace_callback('/<link\b(?=[^>]*\sdata-rocket-preload)(?=[^>]*\sas="image")[^>]*>/i', static function (array $m) use ($ctx) {
+		if (preg_match('/\s(?:type|imagesrcset)=/i', $m[0]) || !preg_match('/\shref="([^"]+)"/i', $m[0], $h)
+			|| !preg_match('/\.(?:jpe?g|png)(?:[?#]|$)/i', $h[1]) || !($v = sx_html_variant_url(html_entity_decode($h[1]), '.webp', $ctx))) {
+			return $m[0];
+		}
+		return str_replace($h[0], ' href="' . htmlspecialchars($v, ENT_QUOTES) . '" type="image/webp"', $m[0]);
+	}, $html);
+}
+
 /** URL de la variante d'un fichier des téléversements (<url><suffixe>) si le fichier existe, sinon null. */
 function sx_html_variant_url(string $url, string $suffix, array $ctx): ?string
 {
