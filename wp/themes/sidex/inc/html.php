@@ -273,6 +273,8 @@ function sx_html_variants(string $html, array $ctx): ?string
 			$poster = $variant($url, '.poster.webp');
 			$alt = preg_match('/\salt="([^"]*)"/i', $tag, $a) ? $a[1] : '';
 			$attrs = preg_replace(['/\s(?:src|srcset|sizes|alt|loading|decoding|fetchpriority)="[^"]*"/i', '/\s*\/?>$/'], '', substr($tag, 4));
+			// Hauteur déduite de la largeur comme pour l'<img> (sinon l'attribut height l'emporte quand le CSS réduit la largeur).
+			$attrs = preg_match('/\sstyle="/i', $attrs) ? preg_replace('/\sstyle="([^"]*?);?\s*"/i', ' style="$1;height:auto"', $attrs, 1) : $attrs . ' style="height:auto"';
 			$videos++;
 			return '<video' . $attrs . (trim($alt) !== '' ? ' role="img" aria-label="' . $alt . '"' : ' aria-hidden="true"')
 				. ' autoplay muted loop playsinline disablepictureinpicture preload="none" data-sx-video'

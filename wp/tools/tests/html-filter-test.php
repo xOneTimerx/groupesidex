@@ -105,7 +105,7 @@ check('variantes : <picture> avec srcset WebP (candidat sans variante gardé)', 
 check('variantes : image sans variante intacte', substr_count($out, '<picture') === 1 && !str_contains($out, 'sans-variante.jpg.webp'));
 check('variantes : pas d\'enveloppe sous un sélecteur « > img »', str_contains($out, '<div style="--aspect-ratio:1"><img src="' . $U . '/lazy.jpg"'));
 check('variantes : GIF → vidéo (id, classes, dimensions, nom accessible)', str_contains($out,
-	'<video id="image-9-1621" class="ct-image" width="400" height="400" role="img" aria-label="animation projets" autoplay muted loop playsinline disablepictureinpicture preload="none" data-sx-video data-poster="' . $U . '/anim.gif.poster.webp">'
+	'<video id="image-9-1621" class="ct-image" width="400" height="400" style="height:auto" role="img" aria-label="animation projets" autoplay muted loop playsinline disablepictureinpicture preload="none" data-sx-video data-poster="' . $U . '/anim.gif.poster.webp">'
 	. '<source data-src="' . $U . '/anim.gif.webm" type="video/webm"><source data-src="' . $U . '/anim.gif.mp4" type="video/mp4"></video>'));
 check('variantes : GIF sans vidéo intact, script des vidéos avant </body>', str_contains($out, 'src="' . $U . '/autre.gif"')
 	&& preg_match('#<script id="sidex-gif-video">.*</script>\s*</body>#s', $out) === 1);
