@@ -42,13 +42,12 @@ Limite : le TTFB du staging (1,5–2,8 s, page jamais servie par le cache WP Roc
 émulation brute (CDP, 150 ms, 1,6 Mbps, CPU 4x : LCP − TTFB ≈ 1,7–2,0 s). Un passage au LCP > 2,5 s sur staging vient de
 ce TTFB ; sur le live, la page est servie en cache (TTFB ≈ 0,35 s).
 
-## Envoi de formulaire (staging, Playwright)
-- CleanTalk coupé (« forms__contact_forms_test » = 0) et clé reCAPTCHA de test Google, réglages restaurés ensuite : envoi sans
-  aucune interaction préalable (scripts encore non chargés), avec et sans `requestSubmit` → POST `admin-ajax` unique,
-  redirection vers `/merci/soumission/`.
-- CleanTalk actif : le POST atteint le serveur, qui répond HTTP 422 « envois trop fréquents » (CleanTalk). Ce refus n'est pas
-  causé par le report : même réponse avec le code d'avant (d4b2a64, scripts chargés normalement), depuis une autre adresse IP
-  (sortie par le serveur Kinsta), avec `approved@cleantalk.org`, et 25 min après le dernier essai. La clé CleanTalk du staging
-  est la même que celle du live : le refus vient du nuage CleanTalk, pas de l'IP. Un envoi réussi sous CleanTalk actif reste
-  donc à confirmer à la main (vrai navigateur, adresse non limitée) ; la protection est bien appliquée sur le chemin différé
-  puisque son verdict est rendu.
+## Envoi de formulaire (staging, Playwright, 21 oct. 2026)
+- Parcours réel (ouverture du panneau « soumission » → chargement différé Fluent Forms + CleanTalk + reCAPTCHA → formulaire en
+  3 étapes → widget → envoi), CleanTalk actif, clé reCAPTCHA de test Google, e-mail `approved@cleantalk.org` : POST `admin-ajax`
+  200 puis `/merci/soumission/`, sur la branche comme sur main (d4b2a64) et avant la PR #3 (8029eb8).
+- Widget reCAPTCHA non résolu (vraies clés, navigateur sans tête) : 422 « reCaptcha verification failed » identique sur les
+  trois états : ce n'est pas une régression du chargement différé.
+- CleanTalk refuse (422) les envois remplis d'un coup par script (« envois trop fréquents ») et les e-mails @example.com
+  (« Email seems to be spammer ») : comportement de CleanTalk, identique sur main. Pour tester, taper les champs et utiliser
+  `approved@cleantalk.org`.
