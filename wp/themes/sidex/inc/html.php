@@ -394,7 +394,7 @@ add_filter('rocket_buffer', static function ($html) {
 		return $html;
 	}
 	$ctx = ['uploads' => wp_get_upload_dir()];
-	foreach (['sx_html_rocket_preload', 'sx_html_rocket_css'] as $step) {
+	foreach (['sx_html_rocket_preload', 'sx_html_rocket_css', 'sx_html_defer_form_css'] as $step) {
 		try {
 			$next = $step($html, $ctx);
 		} catch (Throwable $e) {
@@ -405,8 +405,38 @@ add_filter('rocket_buffer', static function ($html) {
 	return $html;
 }, PHP_INT_MAX);
 
+/**
+ * Accueil : les feuilles des plugins qui n'habillent que le bas de page (CleanTalk, Fluent Forms et flatpickr du
+ * formulaire du panneau, grille WP Grid Builder, sélecteur de langue WPML) bloquaient le premier rendu (≈ 35 Ko,
+ * ≈ 290 ms estimés par Lighthouse sur mobile). Elles se chargent maintenant sans bloquer (media="print" puis « all »),
+ * avec <noscript> de secours. Seulement quand la 1re diapositive est l'<img data-sx-lcp> (accueil).
+ */
+function sx_html_defer_form_css(string $html, array $ctx): ?string
+{
+	if (!str_contains($html, 'data-sx-lcp')) {
+		return null;
+	}
+	return preg_replace_callback('/<link\b(?=[^>]*\srel=[\'"]stylesheet[\'"])(?=[^>]*\shref=[\'"][^\'"]*(?:cleantalk-spam-protect\/|fluentform\/assets\/|wp-grid-builder\/public\/css\/|uploads\/wpgb\/grids\/|language-switchers\/)[^\'"]*[\'"])[^>]*>/i', static function (array $m) {
+		$tag = $m[0];
+		if (preg_match('/\smedia=[\'"]print[\'"]/i', $tag)) {
+			return $tag;
+		}
+		$deferred = preg_replace('/\smedia=([\'"])[^\'"]*\1/i', '', $tag);
+		$deferred = preg_replace('/\s*\/?>$/', ' media="print" onload="this.media=\'all\'">', $deferred);
+		return $deferred . '<noscript>' . $tag . '</noscript>';
+	}, $html);
+}
+
 function sx_html_rocket_preload(string $html, array $ctx): ?string
 {
+	// 1re diapositive rendue en <img data-sx-lcp srcset> : WP Rocket précharge pourtant son src (l'original de 1921 px,
+	// ≈ 200 Ko), sans srcset, en plus du candidat que l'<img> choisit (≈ 40 Ko sur mobile) : deux téléchargements, le
+	// gros en concurrence avec le LCP. L'<img> est dans le HTML avec fetchpriority=high : ce préchargement est retiré.
+	if (preg_match('/<img\b(?=[^>]*\sdata-sx-lcp)(?=[^>]*\ssrcset=)[^>]*>/i', $html, $img) && preg_match('/\ssrc="([^"]+)"/i', $img[0], $src)) {
+		$html = preg_replace_callback('/<link\b(?=[^>]*\sdata-rocket-preload)(?=[^>]*\sas="image")[^>]*>\s*/i', static function (array $m) use ($src) {
+			return preg_match('/\shref="([^"]+)"/i', $m[0], $h) && html_entity_decode($h[1]) === html_entity_decode($src[1]) ? '' : $m[0];
+		}, $html) ?? $html;
+	}
 	return preg_replace_callback('/<link\b(?=[^>]*\sdata-rocket-preload)(?=[^>]*\sas="image")[^>]*>/i', static function (array $m) use ($ctx) {
 		if (preg_match('/\s(?:type|imagesrcset)=/i', $m[0]) || !preg_match('/\shref="([^"]+)"/i', $m[0], $h)
 			|| !preg_match('/\.(?:jpe?g|png)(?:[?#]|$)/i', $h[1]) || !($v = sx_html_variant_url(html_entity_decode($h[1]), '.webp', $ctx))) {

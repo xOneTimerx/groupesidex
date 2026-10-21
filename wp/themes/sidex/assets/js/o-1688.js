@@ -1,5 +1,6 @@
 /* code_block-209-1688 */
-document.addEventListener("DOMContentLoaded", (heroSlider) => {
+/* Chargé après le LCP (inc/home-defer.php) : DOMContentLoaded est déjà passé, on démarre tout de suite. */
+const heroSlider = () => {
 const sections = gsap.utils.toArray(".slide");
 const outerWrappers = gsap.utils.toArray(".slide__outer");
 const innerWrappers = gsap.utils.toArray(".slide__inner");
@@ -76,4 +77,9 @@ function gotoSection(index, direction) {
 
 	currentIndex = index;
 }
-	});
+	};
+if (document.readyState === "loading") {
+	document.addEventListener("DOMContentLoaded", heroSlider);
+} else {
+	heroSlider();
+}

@@ -1,6 +1,7 @@
 /* Révélation des titres (ex-Advanced Scripts 82 + 84 : GSAP SplitText + ScrollTrigger, ≈ 85 Ko), en JS natif.
    Même rendu : chaque ligne du titre (.title-reveal) monte de 100 % de sa hauteur en apparaissant, 0,75 s,
-   lignes décalées de 0,25 s, quand le haut du titre entre dans l'écran. Même structure que SplitText :
+   lignes décalées de 0,25 s, quand le haut du titre entre dans l'écran. Le héros de l'accueil (titres fixes et
+   1re diapositive) n'est pas animé : il est le LCP, le texte s'affiche avec le premier rendu. Même structure que SplitText :
    div.lineParent > div.lineChild par ligne. Rien ne bouge si l'utilisateur a demandé moins d'animations. */
 (function () {
 	if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -97,6 +98,9 @@
 			});
 		});
 		document.querySelectorAll('.title-reveal').forEach(function (title) {
+			if (title.closest('.slider-wrapper-content, .slide:first-of-type')) {
+				return;
+			}
 			title.sxLines = split(title);
 			io.observe(title);
 		});
