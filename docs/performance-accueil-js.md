@@ -51,3 +51,11 @@ ce TTFB ; sur le live, la page est servie en cache (TTFB ≈ 0,35 s).
 - CleanTalk refuse (422) les envois remplis d'un coup par script (« envois trop fréquents ») et les e-mails @example.com
   (« Email seems to be spammer ») : comportement de CleanTalk, identique sur main. Pour tester, taper les champs et utiliser
   `approved@cleantalk.org`.
+
+## Échec de chargement de CleanTalk ou de Fluent Forms (réseau, bloqueur de contenu)
+`forms-defer.js` suit l'état de chaque groupe (`pending` / `ok` / `failed`). Un envoi retenu n'est rejoué que si les deux
+sont `ok`. Si l'un a échoué : aucun envoi, message dans le formulaire (FR/EN) et relance du chargement au clic suivant ;
+après deux échecs (bloqueur durable), l'envoi passe tel quel afin de ne pas perdre de demandes : la vérification CleanTalk
+côté serveur (PHP) s'applique toujours, seuls les champs JavaScript de CleanTalk manquent. Test staging (Chromium, requêtes
+`cleantalk-spam-protect/*.js` et `fd.cleantalk.org` bloquées) : envois 1 et 2 → 0 POST + message ; envoi 3 → POST ; sans
+blocage → POST puis `/merci/soumission/`.
