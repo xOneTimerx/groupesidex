@@ -55,7 +55,6 @@ ce TTFB ; sur le live, la page est servie en cache (TTFB ≈ 0,35 s).
 ## Échec de chargement de CleanTalk ou de Fluent Forms (réseau, bloqueur de contenu)
 `forms-defer.js` suit l'état de chaque groupe (`pending` / `ok` / `failed`). Un envoi retenu n'est rejoué que si les deux
 sont `ok`. Si l'un a échoué : aucun envoi, message dans le formulaire (FR/EN) et relance du chargement au clic suivant ;
-après deux échecs (bloqueur durable), l'envoi passe tel quel afin de ne pas perdre de demandes : la vérification CleanTalk
-côté serveur (PHP) s'applique toujours, seuls les champs JavaScript de CleanTalk manquent. Test staging (Chromium, requêtes
-`cleantalk-spam-protect/*.js` et `fd.cleantalk.org` bloquées) : envois 1 et 2 → 0 POST + message ; envoi 3 → POST ; sans
-blocage → POST puis `/merci/soumission/`.
+jamais d'envoi sans la protection chargée, même après plusieurs échecs : le message (FR/EN) invite à vérifier la connexion,
+désactiver le bloqueur de contenu ou appeler. Test staging (Chromium, requêtes `cleantalk-spam-protect/*.js` et
+`fd.cleantalk.org` bloquées) : envois 1, 2 et 3 → 0 POST + message ; sans blocage → POST puis `/merci/soumission/`.

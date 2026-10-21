@@ -106,7 +106,6 @@
 
 	// État des groupes « fluentform » et « cleantalk » : 'pending' | 'ok' | 'failed'.
 	var state = {};
-	var failedSubmits = 0;
 	core.forEach(function (name) { state[name] = 'pending'; });
 
 	function coreStatus() {
@@ -158,10 +157,9 @@
 				setTimeout(function () { replay(form); }, 0);
 			});
 		} else {
-			failedSubmits++;
 			notice(form, /^en/i.test(document.documentElement.lang)
-				? 'The form protection could not be loaded. Please check your connection and submit again.'
-				: 'La protection du formulaire n\u2019a pas pu se charger. Vérifiez votre connexion et envoyez de nouveau.');
+				? 'The form protection could not be loaded, so the form was not sent. Check your connection, disable any content blocker and try again, or call us at 819 843-6286.'
+				: 'La protection du formulaire n\u2019a pas pu se charger, le formulaire n\u2019a donc pas été envoyé. Vérifiez votre connexion, désactivez votre bloqueur de contenu et réessayez, ou appelez-nous au 819 843-6286.');
 		}
 	}
 
@@ -191,15 +189,14 @@
 	}
 
 	// Aucun envoi sans Fluent Forms et CleanTalk chargés : retenu tant que ça charge, bloqué avec message si un des deux a
-	// échoué (relance du chargement au clic suivant). Après deux échecs (bloqueur de contenu), l'envoi passe tel quel : la
-	// vérification CleanTalk côté serveur (PHP) s'applique toujours, seuls ses champs JavaScript manquent.
+	// échoué (relance du chargement au clic suivant). Jamais d'envoi sans la protection chargée, même après plusieurs échecs.
 	if (core.length) {
 		document.addEventListener('submit', function (e) {
 			if (!e.target.matches || !e.target.matches('form.frm-fluent-form')) {
 				return;
 			}
 			var status = coreStatus();
-			if (status === 'ok' || status === 'failed' && failedSubmits >= 2) {
+			if (status === 'ok') {
 				return;
 			}
 			e.preventDefault();
