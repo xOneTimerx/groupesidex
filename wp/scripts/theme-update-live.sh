@@ -126,8 +126,9 @@ smoke() {
 		grep -qiE 'Fatal error|Parse error|critical error on this website|erreur critique' "$f" && h+=("erreur fatale")
 		[ "$GTM" = 0 ] || grep -q "googletagmanager.com/ns.html?id=$GTM_ID" "$f" || h+=("GTM absent")
 		grep -q 'frm-fluent-form' "$f" || h+=("formulaire Fluent absent")
-		# Compteur du héros (gabarit 1688) : TextPlugin de GSAP, déjà perdu une fois (PR #1, rétabli par PR #4).
-		[ "$u" != / ] || grep -qE "id=['\"]sidex-gsap-text-js['\"]" "$f" || h+=("sidex-gsap-text-js absent")
+		# Compteur du héros (gabarit 1688) : TextPlugin de GSAP, déjà perdu une fois (PR #1, rétabli par PR #4). Depuis la
+		# PR #11, il n'est plus une balise script mais une URL du chargeur après LCP (inc/js-defer.php, « sidex-after-lcp »).
+		[ "$u" != / ] || grep -qE "id=['\"]sidex-gsap-text-js['\"]|assets/vendor/TextPlugin\.min\.js" "$f" || h+=("TextPlugin (compteur du héros) absent")
 		if [ "$FORCE_FAIL" = 1 ] && [ "$1" = apres ] && [ "$u" = / ]; then h+=("échec forcé (FORCE_FAIL=1)"); fi
 		if [ ${#h[@]} = 0 ]; then echo "  ✓ $u"; else echo "  ✗ $u — $(IFS=,; echo "${h[*]}" | sed 's/,/ | /g')"; bad=1; fi
 	done
