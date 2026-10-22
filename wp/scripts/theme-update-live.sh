@@ -16,6 +16,9 @@
 #
 # Les contrôles de fumée interrogent l'ORIGINE : paramètre unique ?sxsmoke=… + Cache-Control: no-cache (le 19 oct. 2026,
 # le cache edge du live a servi l'ancien HTML juste après la purge et déclenché un retour arrière à tort).
+# Toutes les requêtes HTTP de contrôle partent du SERVEUR (curl par SSH), pas du poste : CleanTalk (SpamFireWall) répond
+# 403 (page à défi JavaScript) au poste de travail dès que le cache public ne sert pas la page (les 20 et 21 oct. 2026,
+# les 16 contrôles « avant » ont échoué ainsi et la mise à jour a été annulée) ; vu du serveur, la même URL répond 200.
 # Journal complet : ~/sidex/theme-update-<cible>-<date>.log en local (LOGDIR) et ~/private/sidex-theme-update-<date>.log
 # sur le serveur. SIGHUP ignoré : fermer le terminal n'interrompt ni la copie ni un retour arrière.
 set -eEuo pipefail
@@ -84,6 +87,22 @@ purge() {
 # préchargement de WP Rocket remplit le cache avec l'ancien code.
 opcache_wait() { sleep 5; }
 
+# Requête HTTP depuis le serveur, par le nom public (Cloudflare et l'edge Kinsta restent sur le chemin : leurs en-têtes
+# sont lisibles). fetch <url> <fichier corps> <fichier en-têtes> [nocache] ; affiche le code HTTP (000 : pas de réponse).
+fetch() {
+	local url=$1 body=$2 hdr=$3 opt="" raw code
+	[ "${4:-}" = nocache ] && opt="-H 'Cache-Control: no-cache'"
+	raw=$(mktemp)
+	ssh "$HOST" "curl -s -D - -A '$UA' --max-time 90 $opt '$url'" > "$raw" 2>/dev/null || true
+	# En-têtes jusqu'à la première ligne vide, corps ensuite.
+	: > "$body"; : > "$hdr"
+	awk -v h="$hdr" -v b="$body" 'BEGIN { p = 1 } p && /^\r?$/ { p = 0; next } { print > (p ? h : b) }' "$raw"
+	rm -f "$raw"
+	code=$(head -1 "$hdr" | awk '{ print $2 }')
+	case "$code" in [0-9][0-9][0-9]) ;; *) code=000 ;; esac
+	echo "$code"
+}
+
 # Réponse servie par un cache (Kinsta ou Cloudflare) au lieu de l'origine.
 CACHED='^(cf-cache-status: *(HIT|STALE|UPDATING|REVALIDATED)|x-kinsta-cache: *HIT|ki-cache-type: *Edge)'
 
@@ -96,7 +115,7 @@ smoke() {
 		n=$((n + 1))
 		for try in 1 2 3; do
 			q="?sxsmoke=$STAMP-$1-$n-$try"
-			code=$(curl -s -o "$f" -D "$hf" -w '%{http_code}' -A "$UA" -H 'Cache-Control: no-cache' --max-time 90 "$SITE$u$q") || code=000
+			code=$(fetch "$SITE$u$q" "$f" "$hf" nocache)
 			cache=$(tr -d '\r' < "$hf" | grep -iE "$CACHED" | paste -sd ' ' || true)
 			[ -z "$cache" ] && break
 		done
@@ -107,8 +126,9 @@ smoke() {
 		grep -qiE 'Fatal error|Parse error|critical error on this website|erreur critique' "$f" && h+=("erreur fatale")
 		[ "$GTM" = 0 ] || grep -q "googletagmanager.com/ns.html?id=$GTM_ID" "$f" || h+=("GTM absent")
 		grep -q 'frm-fluent-form' "$f" || h+=("formulaire Fluent absent")
-		# Compteur du héros (gabarit 1688) : TextPlugin de GSAP, déjà perdu une fois (PR #1, rétabli par PR #4).
-		[ "$u" != / ] || grep -qE "id=['\"]sidex-gsap-text-js['\"]" "$f" || h+=("sidex-gsap-text-js absent")
+		# Compteur du héros (gabarit 1688) : TextPlugin de GSAP, déjà perdu une fois (PR #1, rétabli par PR #4). Depuis la
+		# PR #11, il n'est plus une balise script mais une URL du chargeur après LCP (inc/js-defer.php, « sidex-after-lcp »).
+		[ "$u" != / ] || grep -qE "id=['\"]sidex-gsap-text-js['\"]|assets/vendor/TextPlugin\.min\.js" "$f" || h+=("TextPlugin (compteur du héros) absent")
 		if [ "$FORCE_FAIL" = 1 ] && [ "$1" = apres ] && [ "$u" = / ]; then h+=("échec forcé (FORCE_FAIL=1)"); fi
 		if [ ${#h[@]} = 0 ]; then echo "  ✓ $u"; else echo "  ✗ $u — $(IFS=,; echo "${h[*]}" | sed 's/,/ | /g')"; bad=1; fi
 	done
@@ -128,7 +148,7 @@ theme_vers() {
 edge_wait() {
 	local u f hf pending left end=$((SECONDS + EDGE_WAIT)) cache v
 	f=$(mktemp); hf=$(mktemp)
-	curl -s -o "$f" -A "$UA" -H 'Cache-Control: no-cache' --max-time 90 "$SITE/?sxsmoke=$STAMP-marque" || true
+	fetch "$SITE/?sxsmoke=$STAMP-marque" "$f" "$hf" nocache >/dev/null
 	v=$(theme_vers "$f" | paste -sd ' ')
 	if [ "$v" != "$MARK" ] && [ "$FORCE_FAIL" != edge ]; then
 		echo "  (à l'origine, versions du thème « ${v:-aucune} », attendu « $MARK » seulement : cache public non vérifiable, contrôler à la main)"
@@ -138,7 +158,7 @@ edge_wait() {
 	while :; do
 		left=""
 		for u in $pending; do
-			curl -s -o "$f" -D "$hf" -A "$UA" --max-time 60 "$SITE$u" || true
+			fetch "$SITE$u" "$f" "$hf" >/dev/null
 			cache=$(tr -d '\r' < "$hf" | grep -iE '^(cf-cache-status|x-kinsta-cache|ki-cache-type|age):' | cut -d: -f2- | paste -sd '/' | tr -d ' ')
 			v=$(theme_vers "$f" | paste -sd ' ')
 			if [ "$v" = "$MARK" ]; then
@@ -158,7 +178,7 @@ edge_wait() {
 	echo "⚠ après ${EDGE_WAIT} s, le cache public sert encore l'ANCIEN HTML :$pending"
 	echo "  L'origine est vérifiée (contrôle de fumée réussi) : pas de retour arrière."
 	echo "  Purger : MyKinsta > Sites > groupesidex > Cache > « Clear edge cache » (ou relancer : ssh $HOST 'cd $ROOT && wp kinsta cache purge --all'),"
-	echo "  puis vérifier : curl -sI $SITE/ | grep -iE 'cf-cache-status|ki-cache-type|x-kinsta-cache'"
+	echo "  puis vérifier : ssh $HOST \"curl -sI $SITE/\" | grep -iE 'cf-cache-status|ki-cache-type|x-kinsta-cache'"
 }
 
 restore() {
